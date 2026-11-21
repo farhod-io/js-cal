@@ -76,6 +76,8 @@ function route() {
 function go(hash) { location.hash = hash; }
 
 function renderNav() {
+  const sidebar = list.closest('aside');
+  const sidebarScrollTop = sidebar.scrollTop;
   const r = route();
   list.replaceChildren();
   const home = document.createElement('button');
@@ -117,6 +119,7 @@ function renderNav() {
     message.className = 'empty'; message.textContent = 'Dars topilmadi.'; list.append(message);
   }
   document.querySelector('#count').textContent = `${doneLessons().length}/${lessons.length} o‘qilgan · ${questions.length} test`;
+  sidebar.scrollTop = sidebarScrollTop;
 }
 
 // ============================================================

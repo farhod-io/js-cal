@@ -47,3 +47,10 @@ nav button.done::before{content:'✓ ';font-weight:700}
 .ai-status.bad{color:#a43a31}
 .ai-status:not(.ok):not(.bad){color:#7a8670}
 @media(max-width:760px){.ai-settings input{font-size:16px}}
+/* Keep desktop navigation and lesson content in separate scroll containers. */
+@media(min-width:761px){
+  html,body{height:100%;overflow:hidden}
+  body{height:100vh;height:100dvh;min-height:0;grid-template-columns:290px minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
+  aside,main{min-width:0;min-height:0;height:100%;overflow-y:auto;overscroll-behavior-y:contain}
+  aside{position:static}
+}
