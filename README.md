@@ -7,7 +7,7 @@ Ochish: `index.html` faylini brauzerda oching. O‘rnatish talab qilinmaydi.
 ## Bo‘limlar
 
 - **Darslar** — 52 dars: tushuncha, kod misoli, natija, xulosa va mashq. Hamma narsa 0 dan tushuntirilgan. Har darsda **"O‘qilgan deb belgilash"** tugmasi bor.
-- **🧠 AI test** — faqat o‘qilgan deb belgilagan darslaring bo‘yicha savol beradi. Xato javob bergan darslardan ko‘proq savol keladi (adaptiv). Shuningdek o‘z OpenAI-mos API kaliting bilan yangi savol yaratish mumkin.
+- **🧠 AI test** — faqat o‘qilgan deb belgilagan darslaring bo‘yicha savol beradi. Xato javob bergan darslardan ko‘proq savol keladi (adaptiv). Shuningdek Gemini yoki DeepSeek API kaliti bilan o‘qilgan darslardan 1, 5 yoki 10 ta yangi savol yaratish mumkin. OpenAI-mos xizmatlar ham saqlangan.
 - **Intervyu testlari** — 56 ta A/B/C/D savol; javobdan keyin tushuntirish va kodni qadam-baqadam tahlil qilish.
 - **Kod o‘qish laboratoriyasi** — 10 ta misol, kod satr-ma-satr izohlangan.
 - **Yo‘l xaritasi** — 16 bosqich va o‘zlashtirish belgilari.
@@ -18,7 +18,7 @@ Barcha natijalar brauzerning `localStorage` idasida `jsdaftar_progress_v1` kalit
 
 - **O‘qilgan darslar** — darsni belgilaganda yashil belgi paydo bo‘ladi va sahifa qayta yuklanganda ham saqlanadi.
 - **Test javoblari** — har bir savolga berilgan javob va ko‘rsatilgan tushuntirish.
-- **AI sozlamalari** — endpoint, model va API kalit (faqat shu brauzerda; faqat tanlangan endpoint ga yuboriladi).
+- **AI sozlamalari** — tanlangan xizmat va har bir xizmat uchun alohida model hamda API kalit (faqat shu brauzerda saqlanadi). Gemini kaliti Google API’ga, DeepSeek kaliti DeepSeek API’ga yuboriladi.
 
 AI kalit kiritilmasa ham adaptiv test ishlayveradi — u saytning o‘z 56 savolidan, faqat o‘qigan darslaring bo‘yicha tanlaydi.
 
@@ -43,3 +43,15 @@ Tuzilma ataylab oddiy: barcha o‘quv ma’lumotlari bitta faylda, interfeys bit
 - `window.codeLabs` — kod o‘qish misollari.
 
 Har bir massiv element qo‘shganda interfeys ularni avtomatik ko‘rsatadi.
+
+## Gemini yoki DeepSeek bilan AI test
+
+1. Darsni o‘qib, **O‘qilgan deb belgilash** tugmasini bosing. Belgilar `localStorage` da saqlanadi.
+2. **AI test** bo‘limida Gemini yoki DeepSeek’ni tanlab, shu xizmatning API kalitini kiriting.
+3. Barcha o‘qilgan darslar yoki ulardan bittasini va 1, 5 yoki 10 ta savolni tanlang.
+4. **Yangi test yaratish** tugmasi sozlamalarni saqlaydi va faqat tanlangan o‘qilgan darslarning materiallarini yuboradi.
+5. AI qaytargan savollarning dars ID’lari, variantlari, javobi va tushuntirishlari tekshiriladi. O‘qilmagan dars ID’si yoki noto‘g‘ri format qaytsa, test ochilmaydi.
+
+Kalitlar xizmatlar orasida alohida saqlanadi; **Saqlangan kalitni o‘chirish** tanlangan xizmat kalitini o‘chiradi. Eski OpenAI-mos sozlamalar saqlanib qoladi. Model nomini hisobingizda mavjud modelga almashtirishingiz mumkin. Kalitsiz mashq qilish ham ishlaydi.
+
+API formatlari: [Gemini generateContent](https://ai.google.dev/api/generate-content), [DeepSeek JSON Output](https://api-docs.deepseek.com/guides/json_mode/).

@@ -15,23 +15,43 @@ const defaultProgress = () => ({
   completed: {},                 // { lessonId: true } — foydalanuvchi "o'qilgan" deb belgilagan darslar
   answers: {},                   // { questionId: tanlanganVariantIndex }
   revealed: {},                  // { questionId: true } — tushuntirish ko'rsatilganmi
-  ai: { endpoint: 'https://api.openai.com/v1/chat/completions', model: 'gpt-4o-mini', key: '' }
+  ai: { provider: 'gemini', accounts: {} }
 });
+
+const AI_PROVIDERS = {
+  gemini: { name: 'Gemini', model: 'gemini-3.8-flash', keyPlaceholder: 'AIza...', keyUrl: 'https://aistudio.google.com/apikey' },
+  deepseek: { name: 'DeepSeek', model: 'deepseek-flash', keyPlaceholder: 'sk-...', keyUrl: 'https://platform.deepseek.com/api_keys' },
+  custom: { name: 'OpenAI-mos API', model: 'gpt-4o-mini', endpoint: 'https://api.openai.com/v1/chat/completions', keyPlaceholder: 'sk-...' }
+};
+
+function normalizeAISettings(saved = {}) {
+  if (!saved || typeof saved !== 'object') saved = {};
+  const accounts = {};
+  for (const [id, provider] of Object.entries(AI_PROVIDERS)) {
+    const old = saved.accounts?.[id] || (id === 'custom' && !saved.provider ? saved : {});
+    accounts[id] = {
+      model: typeof old.model === 'string' && old.model ? old.model : provider.model,
+      key: typeof old.key === 'string' ? old.key : '',
+      endpoint: typeof old.endpoint === 'string' ? old.endpoint : provider.endpoint || ''
+    };
+  }
+  const provider = Object.hasOwn(AI_PROVIDERS, saved.provider) ? saved.provider : (saved.key ? 'custom' : 'gemini');
+  return { provider, accounts };
+}
 
 function loadProgress() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return defaultProgress();
+    if (!raw) return { ...defaultProgress(), ai: normalizeAISettings() };
     const p = JSON.parse(raw);
-    const d = defaultProgress();
     return {
       completed: p.completed || {},
       answers: p.answers || {},
       revealed: p.revealed || {},
-      ai: { ...d.ai, ...(p.ai || {}) }
+      ai: normalizeAISettings(p.ai)
     };
   } catch (e) {
-    return defaultProgress();
+    return { ...defaultProgress(), ai: normalizeAISettings() };
   }
 }
 
@@ -40,8 +60,10 @@ const progress = loadProgress();
 function saveProgress() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+    return true;
   } catch (e) {
     // localStorage o'chirilgan yoki to'la bo'lsa, sayt ishlashda davom etadi.
+    return false;
   }
 }
 
@@ -239,7 +261,7 @@ function renderInterview(filterId) {
   let heading = 'Kodni o‘qi,<br>variantni tanla.';
   let lead = 'Har bir savolda kod beriladi. A/B/C/D dan birini tanla, keyin tushuntirish va qadam-baqadam tahlilni ko‘r.';
   if (filterId === 'ai') {
-    listQs = aiSession.questions;
+    listQs = aiSession.questions.filter(q => isDone(q.lessonId));
     heading = 'AI testi.<br>Faqat o‘qiganlaring.';
     lead = 'Bu savollar sen belgilagan darslardan tanlandi. Kam o‘zlashtirilgan darslardan ko‘proq savol keladi.';
   } else if (filterId) {
@@ -353,149 +375,193 @@ function buildAdaptiveQuiz(count) {
 function renderAI() {
   const done = doneLessons();
   const cfg = progress.ai;
-  const totalQs = questions.filter(q => done.some(l => l.id === q.lessonId)).length;
-
   if (!done.length) {
     content.innerHTML = `<span class="eyebrow">AI TEST</span><h1>Avval dars o‘qi.</h1>
-    <p class="lead">AI senga faqat <b>o‘qilgan deb belgilagan</b> darslaring bo‘yicha test beradi. Hozir hech bir dars belgilanmagan.</p>
-    <section class="card"><b>Nima qilish kerak?</b><ol><li>Biror darsni och.</li><li>O‘qib bo‘lgach “O‘qilgan deb belgilash” tugmasini bos.</li><li>Qaytib bu yerga kel — AI test ishga tushadi.</li></ol></section>
-    <div class="cta-row"><button class="cta primary" onclick="location.hash='roadmap'">🗺  Yo‘l xaritasi</button><button class="cta" onclick="location.hash='var-let-const'">Birinchi darsni och →</button></div>`;
+    <p class="lead">Test faqat <b>o‘qilgan deb belgilagan</b> darslaringdan yaratiladi. Belgilar shu brauzerda saqlanadi va qayta kirganda ham qoladi.</p>
+    <section class="card"><b>Nima qilish kerak?</b><ol><li>Darsni och va o‘qi.</li><li>“O‘qilgan deb belgilash” tugmasini bos.</li><li>AI testga qaytib, Gemini yoki DeepSeek kaliting bilan test yarat.</li></ol></section>
+    <button class="cta primary" onclick="location.hash='var-let-const'">Birinchi darsni och →</button>`;
     return;
   }
-
-  content.innerHTML = `<span class="eyebrow">AI TEST</span><h1>Senga mos test.</h1>
-  <p class="lead">Faqat belgilagan <b>${done.length} darsing</b> bo‘yicha savol beraman. Kam o‘zlashtirilgan darslarga ko‘proq e’tibor qarataman.</p>
-
+  content.innerHTML = `<span class="eyebrow">AI TEST</span><h1>O‘qiganlaringdan yangi test.</h1>
+  <p class="lead">Brauzerda <b>${done.length} ta o‘qilgan dars</b> saqlangan. AI faqat shu darslarning materiali asosida savollar yaratadi.</p>
   <section class="card">
-    <h2 style="margin-top:0">Adaptiv test</h2>
-    <p>O‘qilgan darslaring: <b>${done.length}</b> · Ularda jami <b>${totalQs}</b> ta savol bor · Javob xato bo‘lgan darslardan ko‘proq savol keladi.</p>
-    <div class="ai-controls">
-      <label for="ai-count">Savol soni</label>
-      <select id="ai-count"><option value="5">5 ta</option><option value="10" selected>10 ta</option><option value="15">15 ta</option><option value="20">20 ta</option></select>
-      <button class="cta primary" id="ai-start">🧠 Testni boshlash</button>
-    </div>
-    <div id="ai-done-list" class="ai-done-list"></div>
+    <h2 style="margin-top:0">Testga kiradigan darslar</h2>
+    <div class="ai-done-list">${done.map(l => `<span class="badge">✓ ${escapeHtml(l.title)}</span>`).join('')}</div>
   </section>
-
   <section class="card">
-    <h2 style="margin-top:0">AI bilan yangi savol yaratish</h2>
-    <p class="note">O‘z OpenAI-mos API kalitingni kiritasan. Kalit faqat shu brauzerda saqlanadi va faqat tanlagan endpoint ga yuboriladi. Kalit bo‘lmasa, yuqoridagi adaptiv test ishlayveradi.</p>
+    <h2 style="margin-top:0">AI bilan test yaratish</h2>
     <div class="ai-settings">
-      <label>Endpoint<input id="ai-endpoint" type="text" value="${escapeHtml(cfg.endpoint)}"></label>
-      <label>Model<input id="ai-model" type="text" value="${escapeHtml(cfg.model)}"></label>
-      <label>API kalit<input id="ai-key" type="password" value="${escapeHtml(cfg.key)}" placeholder="sk-..."></label>
+      <label>AI xizmati<select id="ai-provider">${Object.entries(AI_PROVIDERS).map(([id, p]) => `<option value="${id}" ${cfg.provider === id ? 'selected' : ''}>${p.name}</option>`).join('')}</select></label>
+      <label id="ai-endpoint-label" hidden>Endpoint<input id="ai-endpoint" type="url"></label>
+      <label>Model<input id="ai-model" type="text" autocomplete="off"></label>
+      <label>API kalit<input id="ai-key" type="password" autocomplete="off" spellcheck="false"></label>
+      <a id="ai-key-link" target="_blank" rel="noopener noreferrer">API kalit olish ↗</a>
     </div>
+    <p class="ai-privacy">Kalit shu brauzerda saqlanadi. Test yaratishda kalit va tanlangan dars materiali tanlagan AI xizmatiga yuboriladi.</p>
     <div class="ai-controls">
       <button class="cta" id="ai-save">Sozlamalarni saqlash</button>
-      <select id="ai-lesson">${done.map(l => `<option value="${l.id}">${escapeHtml(l.title)}</option>`).join('')}</select>
-      <button class="cta primary" id="ai-generate">✨ AI savol yarat</button>
+      <button class="cta" id="ai-clear-key">Saqlangan kalitni o‘chirish</button>
     </div>
-    <div id="ai-status" class="ai-status"></div>
+    <div class="ai-controls">
+      <label>Darslar<select id="ai-lesson"><option value="all">Barcha o‘qilgan darslar (${done.length})</option>${done.map(l => `<option value="${escapeHtml(l.id)}">${escapeHtml(l.title)}</option>`).join('')}</select></label>
+      <label>Savol soni<select id="ai-generate-count"><option value="1">1 ta</option><option value="5" selected>5 ta</option><option value="10">10 ta</option></select></label>
+      <button class="cta primary" id="ai-generate">✨ Yangi test yaratish</button>
+    </div>
+    <div id="ai-status" class="ai-status" role="status" aria-live="polite"></div>
+  </section>
+  <section class="card">
+    <h2 style="margin-top:0">Kalitsiz mashq qilish</h2>
+    <p>Saytdagi tayyor savollardan faqat o‘qigan darslaring bo‘yicha test tuziladi. Xato javob berilgan mavzularga ko‘proq e’tibor qaratiladi.</p>
+    <div class="ai-controls">
+      <label>Savol soni<select id="ai-count"><option value="5">5 ta</option><option value="10" selected>10 ta</option><option value="15">15 ta</option><option value="20">20 ta</option></select></label>
+      <button class="cta" id="ai-start">Tayyor savollardan test</button>
+    </div>
   </section>`;
 
-  // O'qilgan darslar ro'yxati
-  content.querySelector('#ai-done-list').innerHTML = done.map(l => {
-    const qs = questions.filter(q => q.lessonId === l.id);
-    const right = qs.filter(q => progress.answers[q.id] === q.answer).length;
-    return `<span class="badge ${right === qs.length && qs.length ? 'ok' : ''}">✓ ${escapeHtml(l.title)} <small>${right}/${qs.length}</small></span>`;
-  }).join('');
-
+  const providerSelect = content.querySelector('#ai-provider');
+  const modelInput = content.querySelector('#ai-model');
+  const keyInput = content.querySelector('#ai-key');
+  const endpointInput = content.querySelector('#ai-endpoint');
+  let selectedProvider = cfg.provider;
+  const storeInputs = () => {
+    cfg.accounts[selectedProvider] = { model: modelInput.value.trim(), key: keyInput.value.trim(), endpoint: endpointInput.value.trim() };
+    cfg.provider = selectedProvider;
+  };
+  const showProvider = () => {
+    const provider = AI_PROVIDERS[selectedProvider];
+    const account = cfg.accounts[selectedProvider];
+    modelInput.value = account.model;
+    keyInput.value = account.key;
+    keyInput.placeholder = provider.keyPlaceholder;
+    endpointInput.value = account.endpoint;
+    content.querySelector('#ai-endpoint-label').hidden = selectedProvider !== 'custom';
+    const link = content.querySelector('#ai-key-link');
+    link.hidden = !provider.keyUrl;
+    if (provider.keyUrl) link.href = provider.keyUrl;
+  };
+  showProvider();
+  providerSelect.onchange = () => {
+    storeInputs();
+    selectedProvider = providerSelect.value;
+    cfg.provider = selectedProvider;
+    showProvider();
+    saveProgress();
+    setAIStatus('', '');
+  };
+  content.querySelector('#ai-save').onclick = () => {
+    storeInputs();
+    setAIStatus(saveProgress() ? '✓ Sozlamalar shu brauzerda saqlandi.' : 'Brauzer saqlashga ruxsat bermadi. Sozlamalar hozircha faqat ochiq sahifada ishlaydi.', '');
+  };
+  content.querySelector('#ai-clear-key').onclick = () => {
+    keyInput.value = '';
+    storeInputs();
+    saveProgress();
+    setAIStatus('Kalit o‘chirildi.', 'ok');
+  };
   content.querySelector('#ai-start').onclick = () => {
-    const count = Number(content.querySelector('#ai-count').value);
-    aiSession = { questions: buildAdaptiveQuiz(count), fromLesson: null };
-    if (!aiSession.questions.length) return;
+    aiSession = { questions: buildAdaptiveQuiz(Number(content.querySelector('#ai-count').value)), fromLesson: null };
+    if (!aiSession.questions.length) return setAIStatus('Bu darslar uchun tayyor savol yo‘q. AI bilan yangi test yarating.', 'bad');
     go('interview/ai');
   };
-
-  content.querySelector('#ai-save').onclick = () => {
-    progress.ai.endpoint = content.querySelector('#ai-endpoint').value.trim();
-    progress.ai.model = content.querySelector('#ai-model').value.trim();
-    progress.ai.key = content.querySelector('#ai-key').value.trim();
-    saveProgress();
-    setAIStatus('✓ Sozlamalar saqlandi.', 'ok');
-  };
-
   content.querySelector('#ai-generate').onclick = async () => {
+    storeInputs();
+    saveProgress();
     const lessonId = content.querySelector('#ai-lesson').value;
-    const lesson = lessons.find(l => l.id === lessonId);
-    const btn = content.querySelector('#ai-generate');
-    btn.disabled = true;
-    setAIStatus('AI savol yaratilyapti...', '');
-    const result = await generateAIQuestion(lesson);
-    btn.disabled = false;
-    if (result.error) {
-      setAIStatus('✕ ' + result.error + '.<br>Avval sozlamalarni tekshir. Kalitsiz ishlash uchun yuqoridagi “Adaptiv test”ni ishlat.', 'bad');
-      return;
-    }
-    aiSession = { questions: [result.question], fromLesson: lesson.id };
-    setAIStatus('✓ Yangi savol tayyor. Testga o‘tilyapti...', 'ok');
-    setTimeout(() => go('interview/ai'), 500);
+    const selected = doneLessons().filter(l => lessonId === 'all' || l.id === lessonId);
+    const count = Number(content.querySelector('#ai-generate-count').value);
+    const button = content.querySelector('#ai-generate');
+    button.disabled = true;
+    button.textContent = 'Yaratilyapti…';
+    setAIStatus(`${AI_PROVIDERS[selectedProvider].name} ${selected.length} ta o‘qilgan dars asosida ${count} ta savol yaratyapti…`, '');
+    const result = await generateAIQuestions(selected, count);
+    if (!button.isConnected) return;
+    button.disabled = false;
+    button.textContent = '✨ Yangi test yaratish';
+    if (result.error) return setAIStatus(result.error, 'bad');
+    if (result.questions.some(q => !isDone(q.lessonId))) return setAIStatus('O‘qilgan darslar o‘zgardi. Testni qayta yarating.', 'bad');
+    aiSession = { questions: result.questions, fromLesson: lessonId };
+    go('interview/ai');
   };
 }
 
-function setAIStatus(html, kind) {
+function setAIStatus(message, kind) {
   const el = document.querySelector('#ai-status');
-  if (el) { el.className = 'ai-status ' + kind; el.innerHTML = html; }
+  if (el) { el.className = 'ai-status ' + kind; el.textContent = message; }
 }
 
-async function generateAIQuestion(lesson) {
-  const cfg = progress.ai;
-  if (!cfg.key) return { error: 'API kalit kiritilmagan' };
-  const material = [
-    lesson.explanation || '',
-    ...(lesson.sections || []).map(s => `${s.title}: ${s.text || ''} ${s.code || ''}`),
-    lesson.takeaway || ''
-  ].join('\n').slice(0, 5000);
+function validateAIQuiz(data, selected, count) {
+  const validText = value => typeof value === 'string' && value.trim().length > 0;
+  const allowed = new Map(selected.filter(l => isDone(l.id)).map(l => [l.id, l]));
+  if (!Array.isArray(data?.questions) || data.questions.length !== count) throw new Error('AI kerakli miqdorda savol qaytarmadi. Qayta urinib ko‘ring.');
+  const seen = new Set();
+  const sessionId = crypto.randomUUID();
+  return data.questions.map((q, i) => {
+    if (!q || !allowed.has(q.lessonId) || !validText(q.question) || typeof q.code !== 'string' ||
+        !Array.isArray(q.options) || q.options.length !== 4 || !q.options.every(validText) ||
+        new Set(q.options.map(o => o.trim())).size !== 4 || !Number.isInteger(q.answer) || q.answer < 0 || q.answer > 3 ||
+        !validText(q.explain) || !Array.isArray(q.walkthrough) || q.walkthrough.length < 2 || !q.walkthrough.every(validText)) {
+      throw new Error('AI javobi test talablariga mos kelmadi yoki o‘qilmagan darsdan savol keldi. Qayta urinib ko‘ring.');
+    }
+    const fingerprint = q.question.trim() + '\n' + q.code.trim();
+    if (seen.has(fingerprint)) throw new Error('AI takroriy savol qaytardi. Qayta urinib ko‘ring.');
+    seen.add(fingerprint);
+    return { ...q, id: `ai-${sessionId}-${i}`, topic: allowed.get(q.lessonId).title, level: 'AI' };
+  });
+}
 
-  const prompt = `Sen JavaScript intervyu tayyorlash uchun savol yaratuvchisan. Quyidagi dars materiali asosida BITTA A/B/C/D test savoli yarat.
-
-QOIDALAR:
-- Savol kodni tushunishga qaratilgan bo'lsin.
-- Faqat JSON qaytar, boshqa hech narsa yozma.
-- JSON shakli:
-{"question":"savol matni","code":"kerak bo'lsa kod","options":["A variant","B variant","C variant","D variant"],"answer":0,"explain":"to'g'ri javob nima uchun","walkthrough":["qadam 1","qadam 2"]}
-- answer — to'g'ri variant indeksi (0=A, 1=B, 2=C, 3=D).
-- options aynan 4 ta bo'lishi shart.
-- walkthrough kamida 2 ta qadam.
-
-DARS: ${lesson.title}
-
-MATERIAL:
-${material}`;
-
+async function generateAIQuestions(selected, count) {
+  const provider = progress.ai.provider;
+  const cfg = { ...progress.ai.accounts[provider] };
+  if (!cfg.key) return { error: 'Avval tanlagan AI xizmatingizning API kalitini kiriting.' };
+  if (!cfg.model) return { error: 'Model nomini kiriting.' };
+  if (!selected.length || selected.some(l => !isDone(l.id)) || ![1, 5, 10].includes(count)) return { error: 'Avval darsni o‘qilgan deb belgilang va savol sonini tanlang.' };
+  const materials = selected.map(l => ({
+    lessonId: l.id, title: l.title, weight: lessonWeight(l.id),
+    material: [l.question, l.explanation, l.code, l.result, l.takeaway,
+      ...(l.sections || []).map(s => `${s.title}\n${s.text || ''}\n${s.code || ''}\n${s.note || ''}`)
+    ].filter(Boolean).join('\n').slice(0, 8000)
+  }));
+  const prompt = `Sen JavaScript o‘qituvchisisan. Faqat quyidagi O‘QILGAN darslar materialidan ${count} ta yangi, bir-biridan farqli A/B/C/D test savoli yarat. Savol, variant, izoh va qadamlar o‘zbek tilida bo‘lsin.
+Faqat berilgan lessonId qiymatlaridan foydalan. O‘qilmagan mavzuni so‘rama. Imkon qadar darslarni qamrab ol; weight katta bo‘lgan mavzularga ko‘proq e’tibor ber. Har savolda bitta aniq to‘g‘ri javob bo‘lsin. Kod kerak bo‘lmasa code bo‘sh satr bo‘lsin. answer 0–3 indeksi; options aynan 4 ta turli matn; walkthrough kamida 2 qadam.
+Faqat shu ko‘rinishda JSON qaytar: {"questions":[{"lessonId":"dars-id","question":"Savol?","code":"console.log(1)","options":["1","2","3","4"],"answer":0,"explain":"Izoh","walkthrough":["Birinchi qadam","Ikkinchi qadam"]}]}.
+DARS MATERIALLARI:\n${JSON.stringify(materials)}`;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 90000);
   try {
-    const res = await fetch(cfg.endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + cfg.key },
-      body: JSON.stringify({ model: cfg.model, messages: [{ role: 'user', content: prompt }], temperature: 0.4 })
-    });
+    let url, headers = { 'Content-Type': 'application/json' }, body;
+    if (provider === 'gemini') {
+      url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(cfg.model)}:generateContent`;
+      headers['x-goog-api-key'] = cfg.key;
+      body = { contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { responseMimeType: 'application/json', maxOutputTokens: 16384 } };
+    } else {
+      url = provider === 'deepseek' ? 'https://api.deepseek.com/chat/completions' : cfg.endpoint;
+      const parsed = new URL(url);
+      if (parsed.protocol !== 'https:' || parsed.username || parsed.password) throw new Error('Endpoint https:// bilan boshlanishi kerak.');
+      headers.Authorization = 'Bearer ' + cfg.key;
+      body = { model: cfg.model, messages: [{ role: 'user', content: prompt }], response_format: { type: 'json_object' }, max_tokens: 16384 };
+      if (provider === 'deepseek') body.thinking = { type: 'disabled' };
+    }
+    const res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body), signal: controller.signal });
     if (!res.ok) {
-      const t = await res.text();
-      return { error: `API xato ${res.status}: ${t.slice(0, 160)}` };
+      const errors = { 400: 'So‘rov qabul qilinmadi. Model nomi va API kalitini tekshiring.', 401: 'API kaliti noto‘g‘ri yoki muddati tugagan.', 402: 'AI hisobingizda mablag‘ yetarli emas.', 403: 'Bu kalit bilan modeldan foydalanishga ruxsat yo‘q.', 404: 'Model yoki endpoint topilmadi. Model nomini tekshiring.', 429: 'AI limiti tugadi yoki so‘rovlar ko‘paydi. Birozdan keyin qayta urining.' };
+      throw new Error(errors[res.status] || `AI xizmati xatosi (${res.status}). Keyinroq qayta urining.`);
     }
     const data = await res.json();
-    const text = data.choices?.[0]?.message?.content || '';
-    const clean = text.replace(/```json/gi, '').replace(/```/g, '').trim();
-    const q = JSON.parse(clean);
-    if (!q.question || !Array.isArray(q.options) || q.options.length !== 4 || !Number.isInteger(q.answer) || q.answer < 0 || q.answer > 3) {
-      return { error: 'AI noto‘g‘ri formatda javob berdi' };
-    }
-    return {
-      question: {
-        id: 'ai-' + Date.now(),
-        lessonId: lesson.id,
-        topic: lesson.title,
-        level: 'AI',
-        question: q.question,
-        code: q.code || '',
-        options: q.options,
-        answer: q.answer,
-        explain: q.explain || 'AI tomonidan yaratilgan savol.',
-        walkthrough: Array.isArray(q.walkthrough) && q.walkthrough.length ? q.walkthrough : ['Dars materialini qayta o‘qi.', 'Kodni satr-ma-satr kuzat.']
-      }
-    };
+    const candidate = data.candidates?.[0];
+    const choice = data.choices?.[0];
+    if (candidate?.finishReason === 'MAX_TOKENS' || choice?.finish_reason === 'length') throw new Error('AI javobi tugallanmay qoldi. Kamroq savol tanlang.');
+    const text = provider === 'gemini'
+      ? (candidate?.content?.parts || []).filter(p => !p.thought).map(p => p.text || '').join('')
+      : choice?.message?.content;
+    if (typeof text !== 'string' || !text.trim()) throw new Error('AI bo‘sh javob qaytardi. Qayta urinib ko‘ring.');
+    const clean = text.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+    let quiz;
+    try { quiz = JSON.parse(clean); } catch { throw new Error('AI javobini o‘qib bo‘lmadi. Qayta urinib ko‘ring.'); }
+    return { questions: validateAIQuiz(quiz, selected, count) };
   } catch (e) {
-    return { error: e.message || 'Tarmoq xatosi' };
+    return { error: e.name === 'AbortError' ? 'AI javobi uzoq kutilmoqda. Qayta urinib ko‘ring yoki kamroq savol tanlang.' : e instanceof TypeError ? 'AI xizmatiga ulanib bo‘lmadi. Internet va xizmatga brauzerdan ulanish imkonini tekshiring.' : e.message };
+  } finally {
+    clearTimeout(timeout);
   }
 }
 
