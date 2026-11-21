@@ -55,7 +55,7 @@ nav button.done::before{content:'✓ ';font-weight:700}
   aside{position:static}
 }
 
-#top-nav{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;padding:12px 25px;background:#fff;border-bottom:1px solid #e0e5dc;min-width:0}
+#top-nav{grid-column:1/-1;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding:12px 25px;background:#fff;border-bottom:1px solid #e0e5dc;min-width:0}
 #top-nav button{width:auto;margin:0;padding:10px 14px;white-space:nowrap}
 #top-nav button:hover{background:#f2f6ee}
 @media(max-width:760px){
