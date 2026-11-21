@@ -7,17 +7,17 @@ Ochish: `index.html` faylini brauzerda oching. O‘rnatish talab qilinmaydi.
 ## Bo‘limlar
 
 - **Darslar** — tushuncha, kod misoli, natija, xulosa va mashq.
-- **Intervyu testlari** — 15 ta A/B/C/D savol; javobdan keyin tushuntirish va kodni qadam-baqadam tahlil qilish.
-- **Kod o‘qish laboratoriyasi** — kod satr-ma-satr izohlangan misollar.
-- **Yo‘l xaritasi** — 3 bosqich va o‘zlashtirish belgilari.
+- **Intervyu testlari** — 40 ta A/B/C/D savol; javobdan keyin tushuntirish va kodni qadam-baqadam tahlil qilish.
+- **Kod o‘qish laboratoriyasi** — 8 ta misol, kod satr-ma-satr izohlangan.
+- **Yo‘l xaritasi** — 6 bosqich va o‘zlashtirish belgilari.
 
 ## Fayllar
 
 - `index.html` — sahifa tuzilmasi.
 - `style.css` — moslashuvchan dizayn.
-- `lessons.js` — darslar bazasi.
-- `interview-questions.js` — intervyu savollari va tushuntirishlari.
-- `code-lab.js` — kod o‘qish misollari.
+- `lessons.js`, `more-lessons.js` — darslar bazasi (14 dars).
+- `interview-questions.js`, `more-questions.js` — 40 ta intervyu savoli va tushuntirishlari.
+- `code-lab.js`, `more-labs.js` — 8 ta kod o‘qish misoli.
 - `truthy-demo.js`, `scope-demo.js` — interaktiv demolar.
 - `app.js` — sahifalar, test mexanikasi va navigatsiya.
 

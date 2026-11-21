@@ -94,7 +94,10 @@ function renderRoadmap() {
   const groups = [
     { title: '1-bosqich: asoslar', ids: ['var-let-const', 'scope', 'hoisting-tdz'], desc: 'O‘zgaruvchi, scope va hoisting — intervyuning eng ko‘p so‘raladigan qismi.' },
     { title: '2-bosqich: turlar va taqqoslash', ids: ['typeof', 'coercion-equality', 'truthy-falsy'], desc: 'Type coercion, == vs ===, truthy/falsy tuzoqlari.' },
-    { title: '3-bosqich: obyektlar', ids: ['object-reference'], desc: 'Reference, nusxa olish va funksiyaga obyekt berish.' }
+    { title: '3-bosqich: obyektlar', ids: ['object-reference', 'destructuring-spread'], desc: 'Reference, nusxa olish, destructuring va spread.' },
+    { title: '4-bosqich: funksiyalar', ids: ['functions', 'this-keyword'], desc: 'Funksiya turlari, parametrlar va this bog\'lanishi.' },
+    { title: '5-bosqich: ma\'lumotlar va asinxronlik', ids: ['array-methods', 'promises-async', 'event-loop'], desc: 'Array metodlari, Promise va event loop tartibi.' },
+    { title: '6-bosqich: brauzer', ids: ['dom-basics'], desc: 'DOM elementlarini tanlash, matn va hodisalar.' }
   ];
   const html = groups.map(g => `<section class="card"><h2 style="margin-top:0">${g.title}</h2><p>${g.desc}</p><ol class="roadmap-list">${g.ids.map(id => {
     const l = lessons.find(x => x.id === id);
