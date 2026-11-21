@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 const { webcrypto } = require('node:crypto');
-const source = fs.readFileSync('app.js', 'utf8').replace(/render\(\);\s*$/, '');
+const source = fs.readFileSync('app.js', 'utf8').replace(/render\(\);\s*if \(location\.hash\) scrollContentToTop\(\);\s*$/, '');
 function setup(saved) {
   const storage = new Map(saved ? [['jsdaftar_progress_v1', JSON.stringify(saved)]] : []);
   const elements = new Map();

@@ -70,3 +70,28 @@ nav button.done::before{content:'✓ ';font-weight:700}
 .ai-controls select{max-width:100%}
 .ai-controls label{min-width:0;max-width:100%}
 .ai-controls button:disabled{opacity:.6;cursor:wait}
+
+.lesson-text{white-space:pre-line;overflow-wrap:anywhere}
+.lesson-progress{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:#65715e;margin-top:28px}
+.lesson-progress-track{display:block;width:100%;height:8px;margin:10px 0 20px;accent-color:#587c3c}
+.lesson-outline{border:1px solid #dce4d4;border-radius:12px;background:#fff;padding:14px 18px;font-size:14px}
+.lesson-outline summary{cursor:pointer;color:#314b20;font-weight:600}
+.lesson-outline ol{padding-left:22px;margin-bottom:0}
+.lesson-outline button{font:inherit;text-align:left;color:#55614e;background:none;border:0;cursor:pointer;padding:6px 4px}
+.lesson-outline button[aria-current="step"]{color:#314b20;font-weight:700;text-decoration:underline}
+.lesson-step{min-width:0;padding:8px 0}
+.lesson-step h2{font-size:24px;line-height:1.4}
+.lesson-step-controls{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;border-top:1px solid #dde3d6;padding-top:22px;margin-top:28px}
+.lesson-step-controls button:disabled{opacity:.45;cursor:default}
+.lesson-actions a.cta{text-decoration:none}
+.lesson-topic-nav{display:flex;justify-content:space-between;gap:20px;border-top:1px solid #dde3d6;margin-top:32px;padding-top:20px;font-size:13px}
+.lesson-topic-nav a{color:#314b20;max-width:48%;overflow-wrap:anywhere}
+.lesson-topic-nav a:last-child{text-align:right}
+@media(max-width:520px){.lesson-step-controls .cta{width:100%}.lesson-step h2{font-size:21px}}
+
+.stage-project{margin-top:22px;padding:16px 18px;background:#f4f7ef;border-radius:10px;font-size:14px}
+.stage-project b{color:#314b20}
+.stage-project p{margin:6px 0 0}
+.lesson-resources{margin-top:26px;font-size:14px}
+.lesson-resources a{color:#314b20}
+#lesson-list .nav-divider{letter-spacing:.7px;font-size:11px;line-height:1.5;margin-top:24px}

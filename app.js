@@ -4,6 +4,7 @@ const content = document.querySelector('#content');
 const search = document.querySelector('#search');
 const escapeHtml = (value = '') => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const lessons = window.lessons || [];
+const lessonStages = window.lessonStages || [{ title: 'Darslar', ids: lessons.map(l => l.id) }];
 const questions = window.interviewQuestions || [];
 const labs = window.codeLabs || [];
 
@@ -12,6 +13,7 @@ const labs = window.codeLabs || [];
 // ============================================================
 const STORAGE_KEY = 'jsdaftar_progress_v1';
 const defaultProgress = () => ({
+  lessonSteps: {},              // har bir mavzudagi oxirgi ochilgan qadam
   completed: {},                 // { lessonId: true } — foydalanuvchi "o'qilgan" deb belgilagan darslar
   answers: {},                   // { questionId: tanlanganVariantIndex }
   revealed: {},                  // { questionId: true } — tushuntirish ko'rsatilganmi
@@ -45,6 +47,7 @@ function loadProgress() {
     if (!raw) return { ...defaultProgress(), ai: normalizeAISettings() };
     const p = JSON.parse(raw);
     return {
+      lessonSteps: p.lessonSteps && typeof p.lessonSteps === 'object' ? p.lessonSteps : {},
       completed: p.completed || {},
       answers: p.answers || {},
       revealed: p.revealed || {},
@@ -124,16 +127,20 @@ function renderNav() {
     topNav.append(b);
   });
 
-  const divider = document.createElement('p');
-  divider.className = 'nav-divider';
-  divider.textContent = 'DARSLAR';
-  list.append(divider);
-
   const query = search.value.toLocaleLowerCase();
   const filtered = lessons.filter(l => `${l.title} ${l.question}`.toLocaleLowerCase().includes(query));
+  let previousStage;
   filtered.forEach(lesson => {
+    const stage = lessonStages.find(group => group.ids.includes(lesson.id));
+    if (stage !== previousStage) {
+      const heading = document.createElement('p');
+      heading.className = 'nav-divider';
+      heading.textContent = stage?.title || 'Darslar';
+      list.append(heading);
+      previousStage = stage;
+    }
     const button = document.createElement('button');
-    button.textContent = (isDone(lesson.id) ? '✓ ' : '') + lesson.title;
+    button.textContent = `${lessons.indexOf(lesson) + 1}. ${lesson.title}`;
     button.className = (r.view === 'lesson' && r.id === lesson.id ? 'active ' : '') + (isDone(lesson.id) ? 'done' : '');
     button.onclick = () => go(encodeURIComponent(lesson.id));
     list.append(button);
@@ -163,7 +170,8 @@ function renderHome() {
     <div><b>03 / AI test</b>Faqat tugallangan darslaring bo‘yicha test yech.</div>
   </div>
   <div class="cta-row">
-    <button class="cta primary" onclick="location.hash='roadmap'">🗺  Yo‘l xaritasi</button>
+    <button class="cta primary" onclick="location.hash='js-intro'">01 / O‘rganishni boshlash</button>
+    <button class="cta" onclick="location.hash='roadmap'">🗺  Yo‘l xaritasi</button>
     <button class="cta" onclick="location.hash='ai'">🧠  AI test</button>
     <button class="cta" onclick="location.hash='interview'">🎯  Barcha testlar</button>
     <button class="cta" onclick="location.hash='lab'">🔍  Kod laboratoriyasi</button>
@@ -183,25 +191,8 @@ function renderHome() {
 // 4. ROADMAP
 // ============================================================
 function renderRoadmap() {
-  const groups = [
-    { title: '1-bosqich: asoslar', ids: ['var-let-const', 'scope', 'hoisting-tdz'], desc: 'O‘zgaruvchi, scope va hoisting — intervyuning eng ko‘p so‘raladigan qismi.' },
-    { title: '2-bosqich: turlar va taqqoslash', ids: ['typeof', 'coercion-equality', 'truthy-falsy'], desc: 'Type coercion, == vs ===, truthy/falsy tuzoqlari.' },
-    { title: '3-bosqich: obyektlar', ids: ['object-reference', 'destructuring-spread'], desc: 'Reference, nusxa olish, destructuring va spread.' },
-    { title: '4-bosqich: funksiyalar', ids: ['functions', 'this-keyword'], desc: 'Funksiya turlari, parametrlar va this bog\'lanishi.' },
-    { title: '5-bosqich: ma\'lumotlar va asinxronlik', ids: ['array-methods', 'promises-async', 'event-loop'], desc: 'Array metodlari, Promise va event loop tartibi.' },
-    { title: '6-bosqich: brauzer', ids: ['dom-basics'], desc: 'DOM elementlarini tanlash, matn va hodisalar.' },
-    { title: '7-bosqich: son va stringlar', ids: ['numbers-math', 'strings', 'operators'], desc: 'Sonlar, NaN, string metodlari va operatorlar noldan.' },
-    { title: '8-bosqich: shart va tsikllar', ids: ['conditionals', 'loops'], desc: 'if/else, switch, for, while va tsikl tuzoqlari.' },
-    { title: '9-bosqich: ma\'lumot tuzilmalari', ids: ['objects-basics', 'arrays-basics', 'json-basics'], desc: 'Obyekt, massiv va JSON bilan ishlash asoslari.' },
-    { title: '10-bosqich: xato va modullar', ids: ['errors-try-catch', 'modules', 'closures'], desc: 'try/catch, import/export va closure.' },
-    { title: '11-bosqich: intermediate asoslari', ids: ['prototypes', 'classes', 'callbacks'], desc: 'Prototip, class va callback mexanizmi.' },
-    { title: '12-bosqich: ilg\'or mavzular', ids: ['iterators-generators', 'map-set', 'regex-basics', 'dates', 'fetch-api', 'events-advanced', 'storage', 'web-apis', 'proxy-reflect', 'common-pitfalls'], desc: 'Iterator, Map/Set, regex, Date, Fetch, event, storage va xatolar.' },
-    { title: '13-bosqich: chuqur JS', ids: ['recursion', 'debounce-throttle', 'currying', 'memoization', 'symbol-bigint', 'weakmap-weakset', 'object-descriptors'], desc: 'Rekursiya, debounce/throttle, currying, memoization, Symbol/BigInt va descriptorlar.' },
-    { title: '14-bosqich: zamonaviy naqshlar', ids: ['dynamic-import-async-iteration', 'promise-combinators'], desc: 'Dynamic import, async iteratsiya va Promise kombinatorlari.' },
-    { title: '15-bosqich: Node.js', ids: ['node-basics', 'node-fs-path', 'node-streams'], desc: 'CommonJS/ESM, fs/path va stream/event emitter.' },
-    { title: '16-bosqich: pattern va testing', ids: ['design-patterns', 'testing-basics'], desc: 'Factory, Singleton, Observer va unit test asoslari.' }
-  ];
-  const html = groups.map(g => `<section class="card"><h2 style="margin-top:0">${g.title}</h2><p>${g.desc}</p><ol class="roadmap-list">${g.ids.map(id => {
+  const groups = lessonStages;
+  const html = groups.map(g => `<section class="card"><h2 style="margin-top:0">${g.title}</h2><p>${g.desc}</p><ol class="roadmap-list" start="${lessons.findIndex(l => l.id === g.ids[0]) + 1}">${g.ids.map(id => {
     const l = lessons.find(x => x.id === id);
     if (!l) return '';
     const qs = questions.filter(q => q.lessonId === id);
@@ -209,48 +200,103 @@ function renderRoadmap() {
     const read = isDone(id);
     const badge = read && quizDone ? '✓ o‘qilgan + test' : read ? '✓ o‘qilgan' : `${qs.length} test`;
     return `<li class="${read ? 'done' : ''}"><a href="#${encodeURIComponent(id)}">${escapeHtml(l.title)}</a> <span class="badge ${read || quizDone ? 'ok' : ''}">${badge}</span></li>`;
-  }).join('')}</ol></section>`).join('');
+  }).join('')}</ol>${g.project ? `<div class="stage-project"><b>Mini-loyiha</b><p>${escapeHtml(g.project)}</p></div>` : ''}</section>`).join('');
   content.innerHTML = `<span class="eyebrow">O‘QUV YO‘LI</span><h1>Bosqichma-bosqich.</h1>
-  <p class="lead">Darsni o‘qib bo‘lgach belgila. Yashil belgi — o‘qilgan dars. Keyin AI test faqat shular bo‘yicha savol beradi.</p>${html}`;
+  <p class="lead">${lessons.length} mavzu, ${groups.length} bosqich: oddiydan murakkabga. Har bosqich oxirida mini-loyiha qiling. O‘qilgan belgilar asosida AI test yaratiladi.</p>${html}`;
 }
 
 // ============================================================
 // 5. LESSON — "O'qilgan deb belgilash" tugmasi
 // ============================================================
+function buildLessonSteps(lesson) {
+  const text = value => `<p class="lesson-text">${escapeHtml(value)}</p>`;
+  const code = value => `<pre><code>${escapeHtml(value)}</code></pre>`;
+  const steps = [{ title: 'Mavzu bilan tanishish', html: `<div class="card"><b>Bu mavzuda nimani o‘rganamiz?</b>${text(lesson.question)}</div>${text(lesson.explanation || '')}` }];
+  (lesson.sections || []).forEach(s => steps.push({
+    title: s.title,
+    html: `${s.text ? text(s.text) : ''}${s.code ? `<h3>Kodni o‘qing</h3>${code(s.code)}` : ''}${s.note ? `<div class="card"><b>Izoh va eslatma</b>${text(s.note)}</div>` : ''}`
+  }));
+  if (lesson.code) steps.push({ title: 'Kod misolini tahlil qilish', html: `${code(lesson.code)}${lesson.result ? `<h3>Natija</h3>${text(lesson.result)}` : ''}` });
+  else if (lesson.result) steps.push({ title: 'Natijani tushunish', html: text(lesson.result) });
+  if (lesson.comparison) steps.push({ title: 'var, let va const — taqqoslash', html: '<div class="table-wrap"><table><thead><tr><th>Xususiyat</th><th>var</th><th>let</th><th>const</th></tr></thead><tbody><tr><td>Scope</td><td>Function yoki global</td><td>Block</td><td>Block</td></tr><tr><td>Qayta qiymat berish</td><td>Ha</td><td>Ha</td><td>Yo‘q</td></tr><tr><td>Bir scope ichida qayta e’lon</td><td>var bilan mumkin*</td><td>Yo‘q</td><td>Yo‘q</td></tr><tr><td>Deklaratsiyadan oldin o‘qish</td><td>undefined</td><td>ReferenceError</td><td>ReferenceError</td></tr></tbody></table></div><p>* Shu scope ichidagi let yoki const nomini var bilan ham qayta e’lon qilib bo‘lmaydi. const obyektining ichki xususiyatlari o‘zgarishi mumkin; o‘zgaruvchining o‘ziga boshqa qiymat berib bo‘lmaydi.</p>' });
+  if (lesson.interactiveTruthy || lesson.interactiveScope) steps.push({ title: 'Amalda sinab ko‘ring', html: `${lesson.interactiveTruthy ? '<section id="truthy-demo" class="card"></section>' : ''}${lesson.interactiveScope ? '<section id="scope-demo" class="card"></section>' : ''}` });
+  steps.push({ title: 'Xulosa va mustaqil mashq', html: `${lesson.takeaway ? `<div class="card"><b>Esda saqlang</b>${text(lesson.takeaway)}</div>` : ''}<h3>Endi o‘zingiz sinab ko‘ring</h3>${text(lesson.exercise || 'Mavzudagi kodlardan birini o‘zgartiring. Ishga tushirishdan oldin natijani taxmin qiling, keyin tekshiring.')}<p class="hint">Avval natijani o‘zingiz taxmin qiling. Keyin kodni ishga tushirib, nima uchun shunday bo‘lganini tushuntirib bering.</p>` });
+  if (lesson.resources?.length) {
+    steps[steps.length - 1].html += `<div class="lesson-resources"><h3>Qo‘shimcha o‘qish</h3><ul>${lesson.resources.map(r => `<li><a href="${escapeHtml(r.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(r.title)} ↗</a></li>`).join('')}</ul></div>`;
+  }
+  return steps;
+}
+
 function renderLesson(lesson) {
-  const section = (title, text) => text ? `<section><h2>${title}</h2><p style="white-space:pre-line">${escapeHtml(text)}</p></section>` : '';
+  const steps = buildLessonSteps(lesson);
+  const savedStep = progress.lessonSteps[lesson.id];
+  const current = Number.isInteger(savedStep) ? Math.max(0, Math.min(savedStep, steps.length - 1)) : 0;
+  const last = current === steps.length - 1;
+  const index = lessons.findIndex(l => l.id === lesson.id);
+  const previous = lessons[index - 1];
+  const next = lessons[index + 1];
   const qs = questions.filter(q => q.lessonId === lesson.id);
   const read = isDone(lesson.id);
-  content.innerHTML = `<span class="eyebrow">JAVASCRIPT DARSI</span><h1>${escapeHtml(lesson.title)}</h1>
+  const stage = lessonStages.find(group => group.ids.includes(lesson.id));
+  content.innerHTML = `<span class="eyebrow">${index + 1} / ${lessons.length} MAVZU${stage ? ` · ${escapeHtml(stage.title)}` : ''}</span><h1>${escapeHtml(lesson.title)}</h1>
   <div class="read-bar ${read ? 'is-done' : ''}">
     <button id="mark-done" class="mark-btn">${read ? '✓ O‘qilgan' : '○ O‘qilgan deb belgilash'}</button>
-    <span>${read ? 'Bu dars AI testda ishtirok etadi.' : 'O‘qib bo‘lgach belgila — AI test shu dars bo‘yicha savol beradi.'}</span>
+    <span>${read ? 'Bu mavzu AI testda ishtirok etadi.' : 'Qadamlarni o‘rganing. O‘qilgan deb belgilasangiz, mavzu AI testga qo‘shiladi.'}</span>
   </div>
-  <div class="card"><b>Savol</b><p>${escapeHtml(lesson.question)}</p></div>
-  ${section('Sodda tushuntirish', lesson.explanation)}
-  ${lesson.interactiveTruthy ? '<section id="truthy-demo" class="card"></section>' : ''}
-  ${lesson.interactiveScope ? '<section id="scope-demo" class="card"></section>' : ''}
-  ${lesson.comparison ? '<div class="table-wrap"><table><thead><tr><th>Xususiyat</th><th>var</th><th>let</th><th>const</th></tr></thead><tbody><tr><td>Scope</td><td>Function*</td><td>Block</td><td>Block</td></tr><tr><td>Qayta qiymat</td><td>Ha</td><td>Ha</td><td>Yo‘q</td></tr><tr><td>Bir scope ichida qayta deklaratsiya</td><td>Ha, var bilan*</td><td>Yo‘q</td><td>Yo‘q</td></tr><tr><td>Hoisting</td><td>Ha</td><td>Ha (TDZ)</td><td>Ha (TDZ)</td></tr><tr><td>Deklaratsiyadan oldin o‘qish</td><td>undefined</td><td>ReferenceError</td><td>ReferenceError</td></tr></tbody></table></div>' : ''}
-  ${(lesson.sections || []).map(s => section(s.title, s.text) + (s.code ? `<pre><code>${escapeHtml(s.code)}</code></pre>` : '') + (s.note ? `<div class="card">${escapeHtml(s.note)}</div>` : '')).join('')}
-  ${lesson.code ? `<h2>Kod misoli</h2><pre><code>${escapeHtml(lesson.code)}</code></pre>` : ''}
-  ${section('Natija', lesson.result)}${section('Esda saqla', lesson.takeaway)}${section('Mustaqil mashq', lesson.exercise)}
-  <div class="lesson-actions">
-    <button id="mark-done-bottom" class="cta ${read ? '' : 'primary'}">${read ? '✓ O‘qilgan' : '✓ O‘qilgan deb belgilash'}</button>
-    ${qs.length ? `<button class="cta" onclick="location.hash='interview/${lesson.id}'">Bu dars bo‘yicha ${qs.length} test →</button>` : ''}
-    <button class="cta" onclick="location.hash='ai'">🧠 AI test</button>
-  </div>`;
-  const toggle = () => {
-    const y = window.scrollY;
+  <div class="lesson-progress"><span>Qadam ${current + 1} / ${steps.length}</span><span>Har safar bitta kichik bo‘lim</span></div>
+  <progress class="lesson-progress-track" value="${current + 1}" max="${steps.length}" aria-label="Mavzu qadamlari"></progress>
+  <details class="lesson-outline"><summary>Mavzu rejasi</summary><ol>${steps.map((s, i) => `<li><button type="button" data-lesson-step="${i}" ${i === current ? 'aria-current="step"' : ''}>${escapeHtml(s.title)}</button></li>`).join('')}</ol></details>
+  <section class="lesson-step" aria-labelledby="lesson-step-title"><h2 id="lesson-step-title" tabindex="-1">${escapeHtml(steps[current].title)}</h2>${steps[current].html}</section>
+  <div class="lesson-step-controls">
+    <button class="cta" id="lesson-step-back" ${current === 0 ? 'disabled' : ''}>← Oldingi qadam</button>
+    ${!last ? '<button class="cta primary" id="lesson-step-next">Keyingi qadam →</button>' : `<button class="cta primary" id="lesson-complete">${next ? 'O‘qilgan deb belgilash va keyingi mavzu →' : 'O‘qilgan deb belgilash va yakunlash ✓'}</button>`}
+  </div>
+  ${last ? `<div class="lesson-actions">${qs.length ? `<a class="cta" href="#interview/${encodeURIComponent(lesson.id)}">Shu mavzu bo‘yicha ${qs.length} ta test →</a>` : ''}<a class="cta" href="#ai">🧠 O‘qilgan mavzulardan AI test</a></div>` : ''}
+  <nav class="lesson-topic-nav" aria-label="Mavzular orasida o‘tish">
+    ${previous ? `<a href="#${encodeURIComponent(previous.id)}">← ${escapeHtml(previous.title)}</a>` : '<span>Birinchi mavzu</span>'}
+    ${next ? `<a href="#${encodeURIComponent(next.id)}">${escapeHtml(next.title)} →</a>` : '<span>Oxirgi mavzu</span>'}
+  </nav>`;
+  const setStep = value => {
+    progress.lessonSteps[lesson.id] = value;
+    saveProgress();
+    renderLesson(lesson);
+    scrollContentToTop();
+    content.querySelector('#lesson-step-title').focus({ preventScroll: true });
+  };
+  content.querySelectorAll('[data-lesson-step]').forEach(button => {
+    button.onclick = () => setStep(Number(button.dataset.lessonStep));
+  });
+  content.querySelector('#lesson-step-back').onclick = () => { if (current > 0) setStep(current - 1); };
+  const nextStep = content.querySelector('#lesson-step-next');
+  if (nextStep) nextStep.onclick = () => setStep(current + 1);
+  content.querySelector('#mark-done').onclick = () => {
     if (isDone(lesson.id)) delete progress.completed[lesson.id];
     else progress.completed[lesson.id] = true;
-    saveProgress();
+    const stored = saveProgress();
     render();
-    window.scrollTo(0, y);
+    if (!stored) showLessonStorageError();
   };
-  document.querySelector('#mark-done').onclick = toggle;
-  document.querySelector('#mark-done-bottom').onclick = toggle;
-  if (lesson.interactiveTruthy) mountTruthyDemo(document.querySelector('#truthy-demo'));
-  if (lesson.interactiveScope) mountScopeDemo(document.querySelector('#scope-demo'));
+  const complete = content.querySelector('#lesson-complete');
+  if (complete) complete.onclick = () => {
+    progress.completed[lesson.id] = true;
+    progress.lessonSteps[lesson.id] = current;
+    if (!saveProgress()) {
+      render();
+      showLessonStorageError();
+      return;
+    }
+    go(next ? encodeURIComponent(next.id) : 'roadmap');
+  };
+  if (content.querySelector('#truthy-demo')) mountTruthyDemo(content.querySelector('#truthy-demo'));
+  if (content.querySelector('#scope-demo')) mountScopeDemo(content.querySelector('#scope-demo'));
+}
+
+function showLessonStorageError() {
+  const message = document.createElement('p');
+  message.className = 'hint';
+  message.setAttribute('role', 'status');
+  message.textContent = 'Brauzer natijani saqlay olmadi. Belgi hozircha shu ochiq sahifada qoladi; brauzerda saqlashga ruxsat berilganini tekshiring.';
+  content.querySelector('.read-bar').after(message);
 }
 
 // ============================================================
@@ -379,7 +425,7 @@ function renderAI() {
     content.innerHTML = `<span class="eyebrow">AI TEST</span><h1>Avval dars o‘qi.</h1>
     <p class="lead">Test faqat <b>o‘qilgan deb belgilagan</b> darslaringdan yaratiladi. Belgilar shu brauzerda saqlanadi va qayta kirganda ham qoladi.</p>
     <section class="card"><b>Nima qilish kerak?</b><ol><li>Darsni och va o‘qi.</li><li>“O‘qilgan deb belgilash” tugmasini bos.</li><li>AI testga qaytib, Gemini yoki DeepSeek kaliting bilan test yarat.</li></ol></section>
-    <button class="cta primary" onclick="location.hash='var-let-const'">Birinchi darsni och →</button>`;
+    <button class="cta primary" onclick="location.hash='js-intro'">Birinchi darsni och →</button>`;
     return;
   }
   content.innerHTML = `<span class="eyebrow">AI TEST</span><h1>O‘qiganlaringdan yangi test.</h1>
@@ -650,5 +696,18 @@ function render() {
 }
 
 search.addEventListener('input', render);
-window.addEventListener('hashchange', render);
+function scrollContentToTop() {
+  const main = document.querySelector('main');
+  if (window.innerWidth > 760) main.scrollTo(0, 0);
+  else {
+    main.style.scrollMarginTop = `${topNav.offsetHeight + 12}px`;
+    main.scrollIntoView({ block: 'start' });
+  }
+}
+
+window.addEventListener('hashchange', () => {
+  render();
+  scrollContentToTop();
+});
 render();
+if (location.hash) scrollContentToTop();
