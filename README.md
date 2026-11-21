@@ -7,9 +7,9 @@ Ochish: `index.html` faylini brauzerda oching. O‘rnatish talab qilinmaydi.
 ## Bo‘limlar
 
 - **Darslar** — tushuncha, kod misoli, natija, xulosa va mashq.
-- **Intervyu testlari** — 40 ta A/B/C/D savol; javobdan keyin tushuntirish va kodni qadam-baqadam tahlil qilish.
-- **Kod o‘qish laboratoriyasi** — 8 ta misol, kod satr-ma-satr izohlangan.
-- **Yo‘l xaritasi** — 12 bosqich va o‘zlashtirish belgilari.
+- **Intervyu testlari** — 50 ta A/B/C/D savol; javobdan keyin tushuntirish va kodni qadam-baqadam tahlil qilish.
+- **Kod o‘qish laboratoriyasi** — 10 ta misol, kod satr-ma-satr izohlangan.
+- **Yo‘l xaritasi** — 14 bosqich va o‘zlashtirish belgilari.
 
 ## Fayllar
 
@@ -17,9 +17,10 @@ Ochish: `index.html` faylini brauzerda oching. O‘rnatish talab qilinmaydi.
 - `style.css` — moslashuvchan dizayn.
 - `lessons.js`, `more-lessons.js` — asosiy darslar (14 dars).
 - `core-lessons-a.js`, `core-lessons-b.js` — JS Core darslari (12 dars): sonlar, stringlar, operatorlar, shartlar, tsikllar, obyektlar, massivlar, JSON, xatolar, modullar, closure.
-- `intermediate-lessons-a.js`, `intermediate-lessons-b.js` — JS Intermediate darslari (13 dars): prototype, class, callback, iterator, Map/Set, regex, Date, Fetch, event, storage, Web API, Proxy va tuzoqlar. Jami 38 dars.
-- `interview-questions.js`, `more-questions.js` — 40 ta intervyu savoli va tushuntirishlari.
-- `code-lab.js`, `more-labs.js` — 8 ta kod o‘qish misoli.
+- `intermediate-lessons-a.js`, `intermediate-lessons-b.js` — JS Intermediate darslari: prototype, class, callback, iterator, Map/Set, regex, Date, Fetch, event, storage, Web API, Proxy va tuzoqlar.
+- `advanced-lessons.js` — chuqur mavzular (10 dars): rekursiya, debounce/throttle, currying, memoization, Symbol/BigInt, WeakMap, descriptorlar, dynamic import, Promise kombinatorlari. Jami 47 dars.
+- `interview-questions.js`, `more-questions.js`, `advanced-questions.js` — 50 ta intervyu savoli va tushuntirishlari.
+- `code-lab.js`, `more-labs.js`, `advanced-labs.js` — 10 ta kod o‘qish misoli.
 - `truthy-demo.js`, `scope-demo.js` — interaktiv demolar.
 - `app.js` — sahifalar, test mexanikasi va navigatsiya.
 

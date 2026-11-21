@@ -103,7 +103,9 @@ function renderRoadmap() {
     { title: '9-bosqich: ma\'lumot tuzilmalari', ids: ['objects-basics', 'arrays-basics', 'json-basics'], desc: 'Obyekt, massiv va JSON bilan ishlash asoslari.' },
     { title: '10-bosqich: xato va modullar', ids: ['errors-try-catch', 'modules', 'closures'], desc: 'try/catch, import/export va closure.' },
     { title: '11-bosqich: intermediate asoslari', ids: ['prototypes', 'classes', 'callbacks'], desc: 'Prototip, class va callback mexanizmi.' },
-    { title: '12-bosqich: ilg\'or mavzular', ids: ['iterators-generators', 'map-set', 'regex-basics', 'dates', 'fetch-api', 'events-advanced', 'storage', 'web-apis', 'proxy-reflect', 'common-pitfalls'], desc: 'Iterator, Map/Set, regex, Date, Fetch, event, storage va xatolar.' }
+    { title: '12-bosqich: ilg\'or mavzular', ids: ['iterators-generators', 'map-set', 'regex-basics', 'dates', 'fetch-api', 'events-advanced', 'storage', 'web-apis', 'proxy-reflect', 'common-pitfalls'], desc: 'Iterator, Map/Set, regex, Date, Fetch, event, storage va xatolar.' },
+    { title: '13-bosqich: chuqur JS', ids: ['recursion', 'debounce-throttle', 'currying', 'memoization', 'symbol-bigint', 'weakmap-weakset', 'object-descriptors'], desc: 'Rekursiya, debounce/throttle, currying, memoization, Symbol/BigInt va descriptorlar.' },
+    { title: '14-bosqich: zamonaviy naqshlar', ids: ['dynamic-import-async-iteration', 'promise-combinators'], desc: 'Dynamic import, async iteratsiya va Promise kombinatorlari.' }
   ];
   const html = groups.map(g => `<section class="card"><h2 style="margin-top:0">${g.title}</h2><p>${g.desc}</p><ol class="roadmap-list">${g.ids.map(id => {
     const l = lessons.find(x => x.id === id);
