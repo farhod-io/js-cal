@@ -6,10 +6,21 @@ Ochish: `index.html` faylini brauzerda oching. O‘rnatish talab qilinmaydi.
 
 ## Bo‘limlar
 
-- **Darslar** — 52 dars: tushuncha, kod misoli, natija, xulosa va mashq. Hamma narsa 0 dan tushuntirilgan.
+- **Darslar** — 52 dars: tushuncha, kod misoli, natija, xulosa va mashq. Hamma narsa 0 dan tushuntirilgan. Har darsda **"O‘qilgan deb belgilash"** tugmasi bor.
+- **🧠 AI test** — faqat o‘qilgan deb belgilagan darslaring bo‘yicha savol beradi. Xato javob bergan darslardan ko‘proq savol keladi (adaptiv). Shuningdek o‘z OpenAI-mos API kaliting bilan yangi savol yaratish mumkin.
 - **Intervyu testlari** — 56 ta A/B/C/D savol; javobdan keyin tushuntirish va kodni qadam-baqadam tahlil qilish.
 - **Kod o‘qish laboratoriyasi** — 10 ta misol, kod satr-ma-satr izohlangan.
 - **Yo‘l xaritasi** — 16 bosqich va o‘zlashtirish belgilari.
+
+## Saqlanish (localStorage)
+
+Barcha natijalar brauzerning `localStorage` idasida `jsdaftar_progress_v1` kaliti ostida saqlanadi:
+
+- **O‘qilgan darslar** — darsni belgilaganda yashil belgi paydo bo‘ladi va sahifa qayta yuklanganda ham saqlanadi.
+- **Test javoblari** — har bir savolga berilgan javob va ko‘rsatilgan tushuntirish.
+- **AI sozlamalari** — endpoint, model va API kalit (faqat shu brauzerda; faqat tanlangan endpoint ga yuboriladi).
+
+AI kalit kiritilmasa ham adaptiv test ishlayveradi — u saytning o‘z 56 savolidan, faqat o‘qigan darslaring bo‘yicha tanlaydi.
 
 Darslar qamrovi: o‘zgaruvchilar, scope, hoisting, turlar, funksiyalar, `this`, array metodlari, Promise/async, event loop, DOM, sonlar, stringlar, obyektlar, JSON, xatolar, modullar, closure, prototype, class, callback, iterator, Map/Set, regex, Date, Fetch, eventlar, storage, Web API, Proxy, rekursiya, debounce/throttle, currying, memoization, Symbol/BigInt, WeakMap, descriptorlar, dynamic import, Promise kombinatorlari, Node.js, design patternlar va testing.
 
@@ -21,7 +32,7 @@ Tuzilma ataylab oddiy: barcha o‘quv ma’lumotlari bitta faylda, interfeys bit
 - `style.css` — moslashuvchan dizayn.
 - `data.js` — **barcha ma’lumotlar bitta faylda**: 52 dars, 56 test, 10 kod labi. Darslar 0 dan oxirigacha tartib bilan joylashgan.
 - `scope-demo.js`, `truthy-demo.js` — interaktiv demolar.
-- `app.js` — sahifalar, test mexanikasi, yo‘l xaritasi va navigatsiya.
+- `app.js` — sahifalar, test mexanikasi, yo‘l xaritasi, localStorage progressi, adaptiv va AI test, navigatsiya.
 
 ## Ma’lumot qo‘shish
 

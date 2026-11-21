@@ -16,3 +16,34 @@
 .roadmap-list{padding-left:20px}.roadmap-list li{margin:10px 0}.roadmap-list a{color:#314b20;font-weight:600}.badge{margin-left:6px}
 .hint{font-size:13px;color:#6d7a62;background:#f4f7ef;padding:10px 14px;border-radius:8px}.lab-code{border:1px solid #dce4d4;border-radius:12px;overflow:hidden;margin:18px 0}.lab-line{display:grid;grid-template-columns:minmax(220px,42%) 1fr;border-bottom:1px solid #e6ebdf}.lab-line:last-child{border-bottom:0}.lab-line code{background:#232c24;color:#e4f0db;padding:12px 14px;display:block;white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px}.lab-line span{padding:12px 14px;font-size:13px;color:#4d5946;background:#fafbf8;overflow-wrap:anywhere}.takeaway{background:#eaf0e4;border-radius:10px;padding:14px 16px;font-size:14px}
 @media(max-width:760px){body{grid-template-columns:1fr}aside{position:static;height:auto;padding:20px}.brand{margin-bottom:18px}main{padding:20px 18px 60px}article{padding-top:28px}.lab-line{grid-template-columns:1fr}}
+
+/* O'qilgan dars belgisi va progress */
+nav button.done{color:#2f6b28}
+nav button.done::before{content:'✓ ';font-weight:700}
+.read-bar{display:flex;flex-wrap:wrap;align-items:center;gap:14px;background:#f4f7ef;border:1px solid #dce4d4;border-radius:12px;padding:14px 18px;margin:22px 0;font-size:13px;color:#5f6b57}
+.read-bar.is-done{background:#e9f6e5;border-color:#bfe0b6}
+.mark-btn{font:inherit;font-size:14px;font-weight:650;padding:11px 18px;border:1px solid #314b20;background:#314b20;color:#fff;border-radius:9px;cursor:pointer}
+.mark-btn:hover{filter:brightness(1.08)}
+.is-done .mark-btn{background:#fff;color:#2f6b28;border-color:#8aa56b}
+.lesson-actions{display:flex;flex-wrap:wrap;gap:10px;margin:34px 0 10px}
+.progress-row{display:flex;align-items:center;gap:14px;margin:18px 0}
+.progress-track{flex:1;height:10px;background:#e2e9da;border-radius:20px;overflow:hidden}
+.progress-fill{height:100%;background:#587c3c;border-radius:20px;transition:width .3s}
+.progress-row b{font-size:18px;color:#314b20}
+.roadmap-list li.done>a{color:#2f6b28}
+
+/* AI test */
+.ai-controls{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px;margin:20px 0 8px}
+.ai-controls label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:#65715e}
+.ai-controls select,.ai-settings input{font:inherit;font-size:13px;padding:10px 12px;border:1px solid #dce2d6;border-radius:9px;background:#fafbf8;color:#232925}
+.ai-settings{display:grid;gap:12px;margin-top:16px}
+.ai-settings label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:#65715e}
+.ai-settings input{width:100%}
+.ai-done-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.ai-done-list .badge{margin:0;font-size:12px}
+.ai-done-list small{opacity:.7}
+.ai-status{margin-top:14px;font-size:13px;min-height:20px}
+.ai-status.ok{color:#2f6b28}
+.ai-status.bad{color:#a43a31}
+.ai-status:not(.ok):not(.bad){color:#7a8670}
+@media(max-width:760px){.ai-settings input{font-size:16px}}
