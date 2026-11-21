@@ -1,4 +1,5 @@
 const list = document.querySelector('#lesson-list');
+const topNav = document.querySelector('#top-nav');
 const content = document.querySelector('#content');
 const search = document.querySelector('#search');
 const escapeHtml = (value = '') => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -80,11 +81,12 @@ function renderNav() {
   const sidebarScrollTop = sidebar.scrollTop;
   const r = route();
   list.replaceChildren();
+  topNav.replaceChildren();
   const home = document.createElement('button');
   home.textContent = '⌂  Boshlanish';
   home.className = r.view === 'lesson' && !r.id ? 'active' : '';
   home.onclick = () => go('');
-  list.append(home);
+  topNav.append(home);
 
   const modes = [
     ['#roadmap', '🗺  Yo‘l xaritasi', r.view === 'roadmap'],
@@ -97,12 +99,12 @@ function renderNav() {
     b.textContent = label;
     b.className = active ? 'active' : '';
     b.onclick = () => go(hash.slice(1));
-    list.append(b);
+    topNav.append(b);
   });
 
   const divider = document.createElement('p');
   divider.className = 'nav-divider';
-  divider.textContent = 'DARSLLAR';
+  divider.textContent = 'DARSLAR';
   list.append(divider);
 
   const query = search.value.toLocaleLowerCase();

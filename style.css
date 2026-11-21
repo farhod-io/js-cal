@@ -50,7 +50,15 @@ nav button.done::before{content:'✓ ';font-weight:700}
 /* Keep desktop navigation and lesson content in separate scroll containers. */
 @media(min-width:761px){
   html,body{height:100%;overflow:hidden}
-  body{height:100vh;height:100dvh;min-height:0;grid-template-columns:290px minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
+  body{height:100vh;height:100dvh;min-height:0;grid-template-columns:290px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
   aside,main{min-width:0;min-height:0;height:100%;overflow-y:auto;overscroll-behavior-y:contain}
   aside{position:static}
+}
+
+#top-nav{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;padding:12px 25px;background:#fff;border-bottom:1px solid #e0e5dc;min-width:0}
+#top-nav button{width:auto;margin:0;padding:10px 14px;white-space:nowrap}
+#top-nav button:hover{background:#f2f6ee}
+@media(max-width:760px){
+  #top-nav{position:sticky;top:0;z-index:10;padding:10px 14px;gap:4px}
+  #top-nav button{padding:8px 10px;font-size:13px}
 }
