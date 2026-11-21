@@ -7,9 +7,9 @@ Ochish: `index.html` faylini brauzerda oching. O‘rnatish talab qilinmaydi.
 ## Bo‘limlar
 
 - **Darslar** — tushuncha, kod misoli, natija, xulosa va mashq.
-- **Intervyu testlari** — 50 ta A/B/C/D savol; javobdan keyin tushuntirish va kodni qadam-baqadam tahlil qilish.
+- **Intervyu testlari** — 56 ta A/B/C/D savol; javobdan keyin tushuntirish va kodni qadam-baqadam tahlil qilish.
 - **Kod o‘qish laboratoriyasi** — 10 ta misol, kod satr-ma-satr izohlangan.
-- **Yo‘l xaritasi** — 14 bosqich va o‘zlashtirish belgilari.
+- **Yo‘l xaritasi** — 16 bosqich va o‘zlashtirish belgilari.
 
 ## Fayllar
 
@@ -18,8 +18,9 @@ Ochish: `index.html` faylini brauzerda oching. O‘rnatish talab qilinmaydi.
 - `lessons.js`, `more-lessons.js` — asosiy darslar (14 dars).
 - `core-lessons-a.js`, `core-lessons-b.js` — JS Core darslari (12 dars): sonlar, stringlar, operatorlar, shartlar, tsikllar, obyektlar, massivlar, JSON, xatolar, modullar, closure.
 - `intermediate-lessons-a.js`, `intermediate-lessons-b.js` — JS Intermediate darslari: prototype, class, callback, iterator, Map/Set, regex, Date, Fetch, event, storage, Web API, Proxy va tuzoqlar.
-- `advanced-lessons.js` — chuqur mavzular (10 dars): rekursiya, debounce/throttle, currying, memoization, Symbol/BigInt, WeakMap, descriptorlar, dynamic import, Promise kombinatorlari. Jami 47 dars.
-- `interview-questions.js`, `more-questions.js`, `advanced-questions.js` — 50 ta intervyu savoli va tushuntirishlari.
+- `advanced-lessons.js` — chuqur mavzular: rekursiya, debounce/throttle, currying, memoization, Symbol/BigInt, WeakMap, descriptorlar, dynamic import, Promise kombinatorlari.
+- `pro-lessons.js` — Node.js va professional mavzular (5 dars): CommonJS/ESM, fs/path, stream, design patternlar va testing. Jami 52 dars.
+- `interview-questions.js`, `more-questions.js`, `advanced-questions.js`, `pro-questions.js` — 56 ta intervyu savoli va tushuntirishlari.
 - `code-lab.js`, `more-labs.js`, `advanced-labs.js` — 10 ta kod o‘qish misoli.
 - `truthy-demo.js`, `scope-demo.js` — interaktiv demolar.
 - `app.js` — sahifalar, test mexanikasi va navigatsiya.
