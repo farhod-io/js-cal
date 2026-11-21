@@ -6,23 +6,29 @@ Ochish: `index.html` faylini brauzerda oching. O‘rnatish talab qilinmaydi.
 
 ## Bo‘limlar
 
-- **Darslar** — tushuncha, kod misoli, natija, xulosa va mashq.
+- **Darslar** — 52 dars: tushuncha, kod misoli, natija, xulosa va mashq. Hamma narsa 0 dan tushuntirilgan.
 - **Intervyu testlari** — 56 ta A/B/C/D savol; javobdan keyin tushuntirish va kodni qadam-baqadam tahlil qilish.
 - **Kod o‘qish laboratoriyasi** — 10 ta misol, kod satr-ma-satr izohlangan.
 - **Yo‘l xaritasi** — 16 bosqich va o‘zlashtirish belgilari.
 
+Darslar qamrovi: o‘zgaruvchilar, scope, hoisting, turlar, funksiyalar, `this`, array metodlari, Promise/async, event loop, DOM, sonlar, stringlar, obyektlar, JSON, xatolar, modullar, closure, prototype, class, callback, iterator, Map/Set, regex, Date, Fetch, eventlar, storage, Web API, Proxy, rekursiya, debounce/throttle, currying, memoization, Symbol/BigInt, WeakMap, descriptorlar, dynamic import, Promise kombinatorlari, Node.js, design patternlar va testing.
+
 ## Fayllar
+
+Tuzilma ataylab oddiy: barcha o‘quv ma’lumotlari bitta faylda, interfeys bitta faylda.
 
 - `index.html` — sahifa tuzilmasi.
 - `style.css` — moslashuvchan dizayn.
-- `lessons.js`, `more-lessons.js` — asosiy darslar (14 dars).
-- `core-lessons-a.js`, `core-lessons-b.js` — JS Core darslari (12 dars): sonlar, stringlar, operatorlar, shartlar, tsikllar, obyektlar, massivlar, JSON, xatolar, modullar, closure.
-- `intermediate-lessons-a.js`, `intermediate-lessons-b.js` — JS Intermediate darslari: prototype, class, callback, iterator, Map/Set, regex, Date, Fetch, event, storage, Web API, Proxy va tuzoqlar.
-- `advanced-lessons.js` — chuqur mavzular: rekursiya, debounce/throttle, currying, memoization, Symbol/BigInt, WeakMap, descriptorlar, dynamic import, Promise kombinatorlari.
-- `pro-lessons.js` — Node.js va professional mavzular (5 dars): CommonJS/ESM, fs/path, stream, design patternlar va testing. Jami 52 dars.
-- `interview-questions.js`, `more-questions.js`, `advanced-questions.js`, `pro-questions.js` — 56 ta intervyu savoli va tushuntirishlari.
-- `code-lab.js`, `more-labs.js`, `advanced-labs.js` — 10 ta kod o‘qish misoli.
-- `truthy-demo.js`, `scope-demo.js` — interaktiv demolar.
-- `app.js` — sahifalar, test mexanikasi va navigatsiya.
+- `data.js` — **barcha ma’lumotlar bitta faylda**: 52 dars, 56 test, 10 kod labi. Darslar 0 dan oxirigacha tartib bilan joylashgan.
+- `scope-demo.js`, `truthy-demo.js` — interaktiv demolar.
+- `app.js` — sahifalar, test mexanikasi, yo‘l xaritasi va navigatsiya.
 
-Yangi savol qo‘shish uchun `interview-questions.js` ga, yangi kod misoli uchun `code-lab.js` ga element qo‘shing — interfeys ularni avtomatik ko‘rsatadi.
+## Ma’lumot qo‘shish
+
+`data.js` faylida uchta massiv bor:
+
+- `window.lessons` — darslar. Yangi dars qo‘shganda uning `id` sini `app.js` dagi yo‘l xaritasi (`groups`) ro‘yxatiga ham qo‘shing.
+- `window.interviewQuestions` — testlar. `lessonId` darsning `id` siga mos bo‘lishi shart.
+- `window.codeLabs` — kod o‘qish misollari.
+
+Har bir massiv element qo‘shganda interfeys ularni avtomatik ko‘rsatadi.
