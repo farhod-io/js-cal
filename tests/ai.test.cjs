@@ -77,7 +77,7 @@ test('rejects unread lesson IDs, bad fields, duplicates and wrong count', () => 
 });
 test('API failures, malformed JSON, empty and truncated responses are actionable', async () => {
   const { ctx, api } = setup(); configure(api, 'deepseek');
-  for (const status of [401,402,403,404,429,503]) {
+  for (const status of [401,402,403,404,429]) {
     ctx.fetch = async () => ({ ok: false, status });
     assert.ok((await api.generateAIQuestions(api.doneLessons(), 1)).error);
   }
@@ -88,7 +88,7 @@ test('API failures, malformed JSON, empty and truncated responses are actionable
   ctx.fetch = async () => ({ ok: true, json: async () => ({ choices: [{ finish_reason: 'length' }] }) });
   assert.match((await api.generateAIQuestions(api.doneLessons(), 1)).error, /tugallanmay/);
   ctx.fetch = async () => { const e = Error(); e.name = 'AbortError'; throw e; };
-  assert.match((await api.generateAIQuestions(api.doneLessons(), 1)).error, /uzoq/);
+  assert.match((await api.generateAIQuestions(api.doneLessons(), 1)).error, /90 soniyada/);
 });
 test('provider keys remain separate and status messages render as text', () => {
   const { api, elements } = setup();
@@ -100,4 +100,52 @@ test('provider keys remain separate and status messages render as text', () => {
   api.setAIStatus('<img src=x onerror=alert(1)>', 'bad');
   assert.equal(elements.get('#ai-status').textContent, '<img src=x onerror=alert(1)>');
   assert.equal(elements.get('#ai-status').innerHTML, undefined);
+});
+
+test('cancels a pending request and preserves the actual API error without exposing the key', async () => {
+  const { ctx, api } = setup(); configure(api, 'gemini');
+  const controller = new AbortController();
+  ctx.fetch = async (_url, { signal }) => new Promise((_resolve, reject) => {
+    signal.addEventListener('abort', () => { const e = Error(); e.name = 'AbortError'; reject(e); }, { once: true });
+  });
+  const pending = api.generateAIQuestions(api.doneLessons(), 1, { signal: controller.signal });
+  controller.abort();
+  assert.match((await pending).error, /bekor qilindi/);
+  ctx.fetch = async () => ({ ok: false, status: 400, json: async () => ({ error: { message: 'API key test-key invalid' } }) });
+  const result = await api.generateAIQuestions(api.doneLessons(), 1);
+  assert.ok(result.error.includes('API key [kalit] invalid'));
+  assert.ok(!result.error.includes('test-key'));
+});
+
+test('retries 503 twice then opens the returned quiz', async () => {
+  const { ctx, api } = setup(); configure(api, 'gemini');
+  ctx.setTimeout = (fn, ms) => setTimeout(fn, ms < 6000 ? 0 : ms);
+  let requests = 0; const attempts = [];
+  ctx.fetch = async () => ++requests < 3
+    ? { ok: false, status: 503 }
+    : { ok: true, status: 200, json: async () => ({ candidates: [{ content: { parts: [{ text: JSON.stringify({ questions: [question()] }) }] } }] }) };
+  const result = await api.generateAIQuestions(api.doneLessons(), 1, { onRetry: n => attempts.push(n) });
+  assert.equal(requests, 3);
+  assert.deepEqual(attempts, [2,3]);
+  assert.equal(result.questions.length, 1);
+});
+test('bounds retries and never retries invalid credentials or quota errors', async () => {
+  const { ctx, api } = setup(); configure(api, 'gemini');
+  ctx.setTimeout = (fn, ms) => setTimeout(fn, ms < 6000 ? 0 : ms);
+  for (const status of [503,401,403,429]) {
+    let requests = 0;
+    ctx.fetch = async () => { requests++; return { ok: false, status }; };
+    const result = await api.generateAIQuestions(api.doneLessons(), 1);
+    assert.equal(requests, status === 503 ? 3 : 1);
+    assert.ok(result.error);
+    if (status === 503) assert.match(result.error, /3 marta/);
+  }
+});
+test('cancelling during retry backoff prevents another request', async () => {
+  const { ctx, api } = setup(); configure(api, 'gemini');
+  const controller = new AbortController(); let requests = 0;
+  ctx.fetch = async () => { requests++; return { ok: false, status: 503 }; };
+  const result = await api.generateAIQuestions(api.doneLessons(), 1, { signal: controller.signal, onRetry: () => controller.abort() });
+  assert.equal(requests, 1);
+  assert.match(result.error, /bekor qilindi/);
 });

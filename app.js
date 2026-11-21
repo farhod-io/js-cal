@@ -406,6 +406,7 @@ function renderAI() {
       <label>Darslar<select id="ai-lesson"><option value="all">Barcha o‘qilgan darslar (${done.length})</option>${done.map(l => `<option value="${escapeHtml(l.id)}">${escapeHtml(l.title)}</option>`).join('')}</select></label>
       <label>Savol soni<select id="ai-generate-count"><option value="1">1 ta</option><option value="5" selected>5 ta</option><option value="10">10 ta</option></select></label>
       <button class="cta primary" id="ai-generate">✨ Yangi test yaratish</button>
+      <button class="cta" id="ai-cancel" hidden>Bekor qilish</button>
     </div>
     <div id="ai-status" class="ai-status" role="status" aria-live="polite"></div>
   </section>
@@ -470,17 +471,42 @@ function renderAI() {
     const selected = doneLessons().filter(l => lessonId === 'all' || l.id === lessonId);
     const count = Number(content.querySelector('#ai-generate-count').value);
     const button = content.querySelector('#ai-generate');
+    const cancel = content.querySelector('#ai-cancel');
+    const controller = new AbortController();
+    const started = Date.now();
+    const providerName = AI_PROVIDERS[selectedProvider].name;
+    let retryMessage = '';
+    const status = content.querySelector('#ai-status');
+    status.className = 'ai-status';
+    const updateWaiting = () => {
+      if (!button.isConnected) { controller.abort(); return; }
+      const seconds = Math.floor((Date.now() - started) / 1000);
+      status.textContent = `${retryMessage || providerName + ' javobi kutilmoqda'}: ${seconds} soniya. ${selected.length} ta darsdan ${count} ta savol so‘raldi. 90 soniyada javob kelmasa so‘rov to‘xtatiladi.`;
+    };
     button.disabled = true;
     button.textContent = 'Yaratilyapti…';
-    setAIStatus(`${AI_PROVIDERS[selectedProvider].name} ${selected.length} ta o‘qilgan dars asosida ${count} ta savol yaratyapti…`, '');
-    const result = await generateAIQuestions(selected, count);
-    if (!button.isConnected) return;
-    button.disabled = false;
-    button.textContent = '✨ Yangi test yaratish';
-    if (result.error) return setAIStatus(result.error, 'bad');
-    if (result.questions.some(q => !isDone(q.lessonId))) return setAIStatus('O‘qilgan darslar o‘zgardi. Testni qayta yarating.', 'bad');
-    aiSession = { questions: result.questions, fromLesson: lessonId };
-    go('interview/ai');
+    cancel.hidden = false;
+    cancel.onclick = () => controller.abort();
+    updateWaiting();
+    const timer = setInterval(updateWaiting, 1000);
+    try {
+      const result = await generateAIQuestions(selected, count, { signal: controller.signal, onRetry: (attempt) => {
+        retryMessage = `${providerName} vaqtincha band. Qayta urinish ${attempt}/3`;
+        updateWaiting();
+      } });
+      if (!button.isConnected) return;
+      if (result.error) return setAIStatus(result.error, 'bad');
+      if (result.questions.some(q => !isDone(q.lessonId))) return setAIStatus('O‘qilgan darslar o‘zgardi. Testni qayta yarating.', 'bad');
+      aiSession = { questions: result.questions, fromLesson: lessonId };
+      go('interview/ai');
+    } catch {
+      if (button.isConnected) setAIStatus('Testni ochishda xato yuz berdi. Qayta urinib ko‘ring.', 'bad');
+    } finally {
+      clearInterval(timer);
+      button.disabled = false;
+      button.textContent = '✨ Yangi test yaratish';
+      cancel.hidden = true;
+    }
   };
 }
 
@@ -509,7 +535,41 @@ function validateAIQuiz(data, selected, count) {
   });
 }
 
-async function generateAIQuestions(selected, count) {
+function waitForAIRetry(ms, signal) {
+  return new Promise((resolve, reject) => {
+    const abort = () => {
+      clearTimeout(timer);
+      signal.removeEventListener('abort', abort);
+      const error = new Error('Request aborted');
+      error.name = 'AbortError';
+      reject(error);
+    };
+    const timer = setTimeout(() => {
+      signal.removeEventListener('abort', abort);
+      resolve();
+    }, ms);
+    signal.addEventListener('abort', abort, { once: true });
+    if (signal.aborted) abort();
+  });
+}
+
+async function fetchAIWithRetry(url, init, onRetry = () => {}) {
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    if (init.signal.aborted) {
+      const error = new Error('Request aborted');
+      error.name = 'AbortError';
+      throw error;
+    }
+    const response = await fetch(url, init);
+    if (![500, 502, 503, 504].includes(response.status) || attempt === 3) return response;
+    onRetry(attempt + 1);
+    const retryAfter = Number(response.headers?.get('Retry-After'));
+    const delay = Math.max(2000 * 2 ** (attempt - 1) + Math.random() * 250, Number.isFinite(retryAfter) ? Math.min(retryAfter * 1000, 30000) : 0);
+    await waitForAIRetry(delay, init.signal);
+  }
+}
+
+async function generateAIQuestions(selected, count, { signal, onRetry } = {}) {
   const provider = progress.ai.provider;
   const cfg = { ...progress.ai.accounts[provider] };
   if (!cfg.key) return { error: 'Avval tanlagan AI xizmatingizning API kalitini kiriting.' };
@@ -526,7 +586,10 @@ Faqat berilgan lessonId qiymatlaridan foydalan. O‘qilmagan mavzuni so‘rama. 
 Faqat shu ko‘rinishda JSON qaytar: {"questions":[{"lessonId":"dars-id","question":"Savol?","code":"console.log(1)","options":["1","2","3","4"],"answer":0,"explain":"Izoh","walkthrough":["Birinchi qadam","Ikkinchi qadam"]}]}.
 DARS MATERIALLARI:\n${JSON.stringify(materials)}`;
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 90000);
+  const abort = () => controller.abort();
+  if (signal?.aborted) abort();
+  signal?.addEventListener('abort', abort, { once: true });
+  const timeout = setTimeout(abort, 90000);
   try {
     let url, headers = { 'Content-Type': 'application/json' }, body;
     if (provider === 'gemini') {
@@ -541,10 +604,15 @@ DARS MATERIALLARI:\n${JSON.stringify(materials)}`;
       body = { model: cfg.model, messages: [{ role: 'user', content: prompt }], response_format: { type: 'json_object' }, max_tokens: 16384 };
       if (provider === 'deepseek') body.thinking = { type: 'disabled' };
     }
-    const res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body), signal: controller.signal });
+    const res = await fetchAIWithRetry(url, { method: 'POST', headers, body: JSON.stringify(body), signal: controller.signal }, onRetry);
     if (!res.ok) {
-      const errors = { 400: 'So‘rov qabul qilinmadi. Model nomi va API kalitini tekshiring.', 401: 'API kaliti noto‘g‘ri yoki muddati tugagan.', 402: 'AI hisobingizda mablag‘ yetarli emas.', 403: 'Bu kalit bilan modeldan foydalanishga ruxsat yo‘q.', 404: 'Model yoki endpoint topilmadi. Model nomini tekshiring.', 429: 'AI limiti tugadi yoki so‘rovlar ko‘paydi. Birozdan keyin qayta urining.' };
-      throw new Error(errors[res.status] || `AI xizmati xatosi (${res.status}). Keyinroq qayta urining.`);
+      const errors = { 400: 'So‘rov qabul qilinmadi. Model nomi va API kalitini tekshiring.', 401: 'API kaliti noto‘g‘ri yoki muddati tugagan.', 402: 'AI hisobingizda mablag‘ yetarli emas.', 403: 'Bu kalit bilan modeldan foydalanishga ruxsat yo‘q.', 404: 'Model yoki endpoint topilmadi. Model nomini tekshiring.', 429: 'AI limiti tugadi yoki so‘rovlar ko‘paydi. Birozdan keyin qayta urining.', 503: 'AI xizmati hozir band (503). 3 marta urinishdan keyin ham javob olinmadi. Keyinroq qayta urining yoki DeepSeek xizmatini tanlang.' };
+      let detail = '';
+      try {
+        const data = await res.json();
+        if (typeof data.error?.message === 'string') detail = data.error.message.split(cfg.key).join('[kalit]').slice(0, 240);
+      } catch { /* The service may return an empty or non-JSON error. */ }
+      throw new Error((errors[res.status] || `AI xizmati xatosi (${res.status}). Keyinroq qayta urining.`) + (detail ? ` Xizmat javobi: ${detail}` : ''));
     }
     const data = await res.json();
     const candidate = data.candidates?.[0];
@@ -559,9 +627,10 @@ DARS MATERIALLARI:\n${JSON.stringify(materials)}`;
     try { quiz = JSON.parse(clean); } catch { throw new Error('AI javobini o‘qib bo‘lmadi. Qayta urinib ko‘ring.'); }
     return { questions: validateAIQuiz(quiz, selected, count) };
   } catch (e) {
-    return { error: e.name === 'AbortError' ? 'AI javobi uzoq kutilmoqda. Qayta urinib ko‘ring yoki kamroq savol tanlang.' : e instanceof TypeError ? 'AI xizmatiga ulanib bo‘lmadi. Internet va xizmatga brauzerdan ulanish imkonini tekshiring.' : e.message };
+    return { error: e.name === 'AbortError' ? (signal?.aborted ? 'So‘rov bekor qilindi. Qaytadan test yaratishingiz mumkin.' : '90 soniyada AI javobi kelmadi, so‘rov to‘xtatildi. 1 ta savol bilan qayta urinib ko‘ring yoki boshqa model tanlang.') : e instanceof TypeError ? 'AI xizmatiga ulanib bo‘lmadi. Internet va xizmatga brauzerdan ulanish imkonini tekshiring.' : e.message };
   } finally {
     clearTimeout(timeout);
+    signal?.removeEventListener('abort', abort);
   }
 }
 
