@@ -97,7 +97,13 @@ function renderRoadmap() {
     { title: '3-bosqich: obyektlar', ids: ['object-reference', 'destructuring-spread'], desc: 'Reference, nusxa olish, destructuring va spread.' },
     { title: '4-bosqich: funksiyalar', ids: ['functions', 'this-keyword'], desc: 'Funksiya turlari, parametrlar va this bog\'lanishi.' },
     { title: '5-bosqich: ma\'lumotlar va asinxronlik', ids: ['array-methods', 'promises-async', 'event-loop'], desc: 'Array metodlari, Promise va event loop tartibi.' },
-    { title: '6-bosqich: brauzer', ids: ['dom-basics'], desc: 'DOM elementlarini tanlash, matn va hodisalar.' }
+    { title: '6-bosqich: brauzer', ids: ['dom-basics'], desc: 'DOM elementlarini tanlash, matn va hodisalar.' },
+    { title: '7-bosqich: son va stringlar', ids: ['numbers-math', 'strings', 'operators'], desc: 'Sonlar, NaN, string metodlari va operatorlar noldan.' },
+    { title: '8-bosqich: shart va tsikllar', ids: ['conditionals', 'loops'], desc: 'if/else, switch, for, while va tsikl tuzoqlari.' },
+    { title: '9-bosqich: ma\'lumot tuzilmalari', ids: ['objects-basics', 'arrays-basics', 'json-basics'], desc: 'Obyekt, massiv va JSON bilan ishlash asoslari.' },
+    { title: '10-bosqich: xato va modullar', ids: ['errors-try-catch', 'modules', 'closures'], desc: 'try/catch, import/export va closure.' },
+    { title: '11-bosqich: intermediate asoslari', ids: ['prototypes', 'classes', 'callbacks'], desc: 'Prototip, class va callback mexanizmi.' },
+    { title: '12-bosqich: ilg\'or mavzular', ids: ['iterators-generators', 'map-set', 'regex-basics', 'dates', 'fetch-api', 'events-advanced', 'storage', 'web-apis', 'proxy-reflect', 'common-pitfalls'], desc: 'Iterator, Map/Set, regex, Date, Fetch, event, storage va xatolar.' }
   ];
   const html = groups.map(g => `<section class="card"><h2 style="margin-top:0">${g.title}</h2><p>${g.desc}</p><ol class="roadmap-list">${g.ids.map(id => {
     const l = lessons.find(x => x.id === id);
