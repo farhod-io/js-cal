@@ -24,6 +24,13 @@ AI kalit kiritilmasa ham adaptiv test ishlayveradi — u saytning o‘z 66 savol
 
 Darslar qamrovi: o‘zgaruvchilar, scope, hoisting, turlar, funksiyalar, `this`, array metodlari, Promise/async, event loop, DOM, sonlar, stringlar, obyektlar, JSON, xatolar, modullar, closure, prototype, class, callback, iterator, Map/Set, regex, Date, Fetch, eventlar, storage, Web API, Proxy, rekursiya, debounce/throttle, currying, memoization, Symbol/BigInt, WeakMap, descriptorlar, dynamic import, Promise kombinatorlari, Node.js, design patternlar va testing.
 
+## Progressive Web App (PWA) va oflayn ishlash
+
+Sayt to‘liq **Progressive Web App (PWA)** standartiga moslashtirilgan:
+- **Oflayn ishlash** — Service Worker (`sw.js`) barcha darslar, interfeys, testlar va laboratoriyalarni keshda saqlaydi. Internet bo‘lmaganda ham sayt to‘liq ishlaydi.
+- **Ilova sifatida o‘rnatish** — Brauzerda (Chrome, Edge, Safari, Android va iOS) "Ilovani o‘rnatish" yoki "Bosh ekranga qo‘shish" tugmasi orqali mustaqil dastur ko‘rinishida o‘rnatish mumkin.
+- **Manifest va ikonalar** — `manifest.webmanifest` va moslashuvchan (maskable) yuqori sifatli ikonalar bilan ta’minlangan.
+
 ## Fayllar
 
 Tuzilma ataylab oddiy: barcha o‘quv ma’lumotlari bitta faylda, interfeys bitta faylda.
@@ -33,6 +40,9 @@ Tuzilma ataylab oddiy: barcha o‘quv ma’lumotlari bitta faylda, interfeys bit
 - `data.js` — **barcha ma’lumotlar bitta faylda**: 62 dars, 66 test, 10 kod labi. Darslar 0 dan oxirigacha tartib bilan joylashgan.
 - `scope-demo.js`, `truthy-demo.js` — interaktiv demolar.
 - `app.js` — sahifalar, test mexanikasi, yo‘l xaritasi, localStorage progressi, adaptiv va AI test, navigatsiya.
+- `manifest.webmanifest` — PWA ilova konfiguratsiyasi va o‘rnatish parametrlari.
+- `sw.js` — Service Worker oflayn kesh strategiyasi.
+- `icons/` — PWA va brauzer ikonkalari (SVG, PNG, maskable va Apple touch).
 
 ## Ma’lumot qo‘shish
 

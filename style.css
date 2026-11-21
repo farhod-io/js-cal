@@ -95,3 +95,6 @@ nav button.done::before{content:'✓ ';font-weight:700}
 .lesson-resources{margin-top:26px;font-size:14px}
 .lesson-resources a{color:#314b20}
 #lesson-list .nav-divider{letter-spacing:.7px;font-size:11px;line-height:1.5;margin-top:24px}
+.pwa-install-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px 14px;margin:6px 0 16px;font:inherit;font-size:13px;font-weight:600;color:#314b20;background:#eaf0e4;border:1px solid #bbc9b0;border-radius:9px;cursor:pointer;transition:background .2s,border-color .2s}
+.pwa-install-btn:hover{background:#dce7d4;border-color:#8aa56b}
+.pwa-install-btn[hidden]{display:none!important}

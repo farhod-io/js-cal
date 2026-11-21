@@ -1,3 +1,71 @@
 <!doctype html>
-<html lang="uz"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>JS daftar — Intervyuga tayyorgarlik</title><link rel="stylesheet" href="style.css"><script src="data.js" defer></script><script src="scope-demo.js" defer></script><script src="truthy-demo.js" defer></script><script src="app.js" defer></script></head>
-<body><nav id="top-nav" aria-label="Asosiy bo‘limlar"></nav><aside><a class="brand" href="index.html"><b>JS</b> daftar<span>Intervyuga tayyorgarlik</span></a><label for="search">Darsni qidirish</label><input id="search" type="search" placeholder="Masalan: o‘zgaruvchilar"><nav id="lesson-list" aria-label="Darslar"></nav><p class="note">Savol ber. Tushun. Sinab ko‘r.</p></aside><main><header><span>JAVASCRIPT / O‘QUV DAFTARI</span><span id="count"></span></header><article id="content"></article></main></body></html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>JS daftar — Intervyuga tayyorgarlik</title>
+  <meta name="description" content="JavaScript intervyusiga 0 dan tayyorlaydigan o‘quv platformasi">
+  <meta name="theme-color" content="#314b20">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="JS daftar">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="alternate icon" href="favicon.ico">
+  <link rel="stylesheet" href="style.css">
+  <script src="data.js" defer></script>
+  <script src="scope-demo.js" defer></script>
+  <script src="truthy-demo.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <nav id="top-nav" aria-label="Asosiy bo‘limlar"></nav>
+  <aside>
+    <a class="brand" href="index.html"><b>JS</b> daftar<span>Intervyuga tayyorgarlik</span></a>
+    <button id="pwa-install" class="pwa-install-btn" type="button" hidden>📱 Ilovani o‘rnatish</button>
+    <label for="search">Darsni qidirish</label>
+    <input id="search" type="search" placeholder="Masalan: o‘zgaruvchilar">
+    <nav id="lesson-list" aria-label="Darslar"></nav>
+    <p class="note">Savol ber. Tushun. Sinab ko‘r.</p>
+  </aside>
+  <main>
+    <header>
+      <span>JAVASCRIPT / O‘QUV DAFTARI</span>
+      <span id="count"></span>
+    </header>
+    <article id="content"></article>
+  </main>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => {
+          console.warn('Service worker registration failed:', err);
+        });
+      });
+    }
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const btn = document.getElementById('pwa-install');
+      if (btn) {
+        btn.hidden = false;
+        btn.addEventListener('click', async () => {
+          btn.hidden = true;
+          if (deferredPrompt) {
+            deferredPrompt.prompt();
+            await deferredPrompt.userChoice;
+            deferredPrompt = null;
+          }
+        });
+      }
+    });
+    window.addEventListener('appinstalled', () => {
+      const btn = document.getElementById('pwa-install');
+      if (btn) btn.hidden = true;
+    });
+  </script>
+</body>
+</html>
