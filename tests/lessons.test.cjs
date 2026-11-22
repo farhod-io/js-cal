@@ -50,11 +50,12 @@ test('curriculum preserves the original 62 topics and adds an eight-topic core r
     'iterators-generators,symbol-bigint,weakmap-weakset,proxy-reflect,currying,memoization,memory-management',
     'node-basics,node-fs-path,node-streams,node-http',
     'design-patterns,testing-basics,lint-format',
-    'expressions-statements,execution-context-stack,lexical-environment,evaluation-order,functions-as-values,strict-mode-asi,object-to-primitive,debugger-code-reading'
+    'expressions-statements,execution-context-stack,lexical-environment,evaluation-order,functions-as-values,strict-mode-asi,object-to-primitive,debugger-code-reading',
+    'core-event-loop-deep,core-hoisting-tdz-deep,core-scope-closure-loops,core-this-arrow-deep,core-type-coercion-deep,core-pass-by-ref-deep'
   ];
-  assert.equal(stages.length, 11);
-  assert.equal(ctx.window.lessons.length, 70);
-  assert.equal(new Set(ctx.window.lessons.map(l => l.id)).size, 70);
+  assert.equal(stages.length, 12);
+  assert.equal(ctx.window.lessons.length, 76);
+  assert.equal(new Set(ctx.window.lessons.map(l => l.id)).size, 76);
   stages.forEach((stage, i) => {
     assert.equal(stage.ids.join(','), expected[i]);
     assert.ok(stage.project);

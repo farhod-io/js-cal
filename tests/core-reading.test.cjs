@@ -15,9 +15,9 @@ function run(code){
 }
 test('eight core lessons have execution tables, quizzes and runnable annotated labs',()=>{
  assert.equal(core.length,8);
- assert.deepEqual(normalize(lessonStages.at(-1).ids),normalize(core.map(l=>l.id)));
- assert.equal(codeLabs.length,18);
- assert.equal(interviewQuestions.length,74);
+ assert.deepEqual(normalize(lessonStages[10].ids),normalize(core.map(l=>l.id)));
+ assert.equal(codeLabs.length, 24);
+ assert.equal(interviewQuestions.length, 80);
  for(const l of core){
   assert.ok(l.fullTextDefault,l.id);
   assert.ok(l.sections.length>=7,l.id);
@@ -33,7 +33,7 @@ test('eight core lessons have execution tables, quizzes and runnable annotated l
   assert.ok(lab&&lab.lines.every(line=>line.note),l.id);
   assert.deepEqual(run(lab.lines.map(line=>line.code).join('\n')),normalize(l.sections[0].expectedOutput),l.id);
  }
- assert.equal(new Set(codeLabs.map(l=>l.id)).size,18);
+ assert.equal(new Set(codeLabs.map(l=>l.id)).size, 24);
 });
 test('every standalone core example, prediction and repair matches its explanation',()=>{
  let count=0;

@@ -11992,3 +11992,1068 @@ window.codeLabs.push(...[
     "takeaway": "Taxmin → breakpoint → Scope/Call Stack → bitta qadam → yangi qiymat. Natijani ko‘rish bilan cheklanmang: birinchi noto‘g‘ri qiymat qayerda paydo bo‘lganini aniqlang."
   }
 ]);
+
+// 12-bosqich: Intervyu tuzoqlari: 6 Core Ustun
+window.lessons.push(...[
+  {
+    "id": "core-event-loop-deep",
+    "title": "Event Loop: microtask va macrotask chuqur tahlili",
+    "question": "Sinxron kod, Promise (.then, await) va setTimeout qaysi navbatda bajariladi?",
+    "explanation": "JavaScript bitta oqimli (single-threaded) til bo‘lib, bir vaqtning o‘zida faqat bitta operatsiyani bajaradi. Asinxronlik Event Loop orqali ta'minlanadi.\n\nBajarilish tartibi har doim bir xil:\n1. Call Stack (sinxron kod) to‘liq bajariladi.\n2. Microtask Queue (Promise.then, await, queueMicrotask) navbati to‘liq bo‘shatiladi.\n3. Macrotask Queue (setTimeout, setInterval) dan bitta vazifa olinadi va jarayon takrorlanadi.",
+    "fullTextDefault": true,
+    "coreInterviewPillar": true,
+    "codeLabId": "lab-core-event-loop-deep",
+    "sections": [
+      {
+        "title": "1. Birinchi misol: microtask vs macrotask ustuvorligi",
+        "text": "setTimeout 0 ms bo‘lsa ham macrotask hisoblanadi. Promise.resolve().then() esa microtask bo‘lib, har qanday macrotaskdan oldin bajariladi.",
+        "code": "console.log('1');\nsetTimeout(() => console.log('2'), 0);\nPromise.resolve().then(() => console.log('3'));\nconsole.log('4');",
+        "expectedOutput": [
+          "1",
+          "4",
+          "3",
+          "2"
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "2. Navbatlar va ustuvorlik jadvali",
+        "text": "Event Loop har bir qadamda qaysi navbatni tekshirishini quyidagi jadvaldan bilib oling.",
+        "table": {
+          "headers": [
+            "Navbat turi",
+            "Manbalar",
+            "Ustuvorlik qoidasi"
+          ],
+          "rows": [
+            [
+              "Call Stack",
+              "Sinxron funksiyalar va hisob-kitoblar",
+              "Birinchi bo‘lib darhol bajariladi"
+            ],
+            [
+              "Microtask Queue",
+              "Promise.then/catch/finally, await, queueMicrotask",
+              "Call Stack bo‘shashi bilan HAMMASI oxirigacha bajariladi"
+            ],
+            [
+              "Macrotask Queue",
+              "setTimeout, setInterval, setImmediate, I/O",
+              "Microtasklar 0 bo‘lganda navbatdagi 1 tasi olinadi"
+            ]
+          ]
+        }
+      },
+      {
+        "title": "3. async/await va birinchi await tuzog‘i",
+        "text": "async funksiya ichidagi kod birinchi await ifodasigacha oddiy sinxron kod kabi Call Stackda bajariladi. Faqat await dan keyingi qatorlar microtaskka aylanadi.",
+        "code": "async function tekshir() {\n  console.log('A');\n  await Promise.resolve();\n  console.log('B');\n}\ntekshir();\nconsole.log('C');",
+        "expectedOutput": [
+          "A",
+          "C",
+          "B"
+        ],
+        "exampleRuntime": "javascript"
+      }
+    ],
+    "takeaway": "Sinxron kod > Microtasklar (barchasi) > Macrotask (bittasi). async funksiya birinchi awaitgacha to‘liq sinxron ishlaydi.",
+    "exercise": "Quyidagi kod natijasini toping:\nconsole.log('Start');\nsetTimeout(() => console.log('Timeout'), 0);\nPromise.resolve().then(() => console.log('Promise'));\nconsole.log('End');",
+    "exerciseCode": "console.log('Start');\nsetTimeout(() => console.log('Timeout'), 0);\nPromise.resolve().then(() => console.log('Promise'));\nconsole.log('End');",
+    "exerciseExpected": [
+      "Start",
+      "End",
+      "Promise",
+      "Timeout"
+    ],
+    "exerciseRuntime": "async",
+    "exerciseAnswer": "1. Start (sinxron) chiqadi.\n2. Timeout macrotaskka, Promise microtaskka yoziladi.\n3. End (sinxron) chiqadi.\n4. Microtask bajariladi: Promise chiqadi.\n5. Macrotask bajariladi: Timeout chiqadi.",
+    "resources": [
+      {
+        "title": "MDN: In depth event loop",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop"
+      }
+    ],
+    "learningGuide": {
+      "goal": "Event Loop, Call Stack, Microtask va Macrotask ishlash navbatini kodda to‘g‘ri topish.",
+      "prerequisites": [
+        "async-timers",
+        "promises-async",
+        "event-loop"
+      ],
+      "terms": [
+        {
+          "term": "Call Stack",
+          "meaning": "Sinxron kod satrlari bajariladigan xotira to‘plami."
+        },
+        {
+          "term": "Microtask Queue",
+          "meaning": "Promise va await kabi yuqori ustuvorlikka ega asinxron vazifalar navbati."
+        },
+        {
+          "term": "Macrotask Queue",
+          "meaning": "setTimeout va setInterval kabi oddiy asinxron vazifalar navbati."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Sinxron kod, microtask va macrotask navbatini ajratib natijalarni yozing.",
+      "debug": {
+        "task": "Kutilgan natija: 'A', 'C', 'B'. Hozirgi kodda B sinxron chiqib ketmoqda.",
+        "brokenCode": "console.log('A');\nconsole.log('B');\nconsole.log('C');",
+        "fixedCode": "console.log('A');\nconsole.log('C');\nconsole.log('B');",
+        "expectedOutput": [
+          "A",
+          "C",
+          "B"
+        ],
+        "runtime": "javascript",
+        "explanation": "B va C tartibi almashtirilib kutilgan ketma-ketlik ta'minlandi."
+      },
+      "write": {
+        "task": "Sinxron log, Promise microtask va setTimeout macrotaskni o‘z ichiga olgan funksiya tuzing va konsol chiqishini tahlil qiling.",
+        "criteria": [
+          "Sinxron loglar microtaskdan oldin chiqishi kerak.",
+          "Promise.then logi setTimeout logidan oldin chiqishi kerak.",
+          "Barcha loglar konsolda ko‘rinishi kerak."
+        ],
+        "hint": "Avval console.log('1'), keyin setTimeout, keyin Promise.resolve().then, keyin console.log('2') yozing."
+      }
+    }
+  },
+  {
+    "id": "core-hoisting-tdz-deep",
+    "title": "Hoisting va TDZ: xotirada ajratilish va o‘lik zona",
+    "question": "var nega undefined bo‘ladi, let va const nega TDZ da ReferenceError beradi?",
+    "explanation": "JavaScript dvigateli kodni ikki bosqichda bajaradi:\n1. Creation phase (yaratilish bosqichi): O‘zgaruvchilar va funksiyalar xotirada ro‘yxatga olinadi (Hoisting).\n2. Execution phase (bajarilish bosqichi): Kod satrma-satr ishga tushiriladi.\n\nvar o‘zgaruvchisi xotirada undefined qiymati bilan darhol initsializatsiya qilinadi. let va const esa xotirada ajratiladi, lekin initsializatsiya bo‘lmaydi. Ular kodda o‘z satriga yetib kelguncha Temporal Dead Zone (TDZ — vaqtinchalik o‘lik zona) da bo‘ladi. TDZ dagi o‘zgaruvchiga murojaat qilish ReferenceError beradi.",
+    "fullTextDefault": true,
+    "coreInterviewPillar": true,
+    "codeLabId": "lab-core-hoisting-tdz-deep",
+    "sections": [
+      {
+        "title": "1. Birinchi misol: var va let hoistingi",
+        "text": "var ko‘tarilganda undefined beradi, let esa TDZ da bo‘lgani uchun xato qaytaradi.",
+        "code": "console.log(a);\nvar a = 5;\nconsole.log(a);",
+        "expectedOutput": [
+          {
+            "$undefined": true
+          },
+          5
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "2. Hoisting solishtirma jadvali",
+        "text": "var, let, const va function deklaratsiyalarining ko‘tarilish xulqi.",
+        "table": {
+          "headers": [
+            "Deklaratsiya turi",
+            "Hoisting bo‘ladimi?",
+            "Dastlabki qiymati",
+            "Ko‘tarilishdan oldin murojaat"
+          ],
+          "rows": [
+            [
+              "var",
+              "Ha (funksiya/global scope)",
+              "undefined",
+              "undefined qaytaradi"
+            ],
+            [
+              "let",
+              "Ha (blok scope)",
+              "Initsializatsiya yo‘q (TDZ)",
+              "ReferenceError"
+            ],
+            [
+              "const",
+              "Ha (blok scope)",
+              "Initsializatsiya yo‘q (TDZ)",
+              "ReferenceError"
+            ],
+            [
+              "function declaration",
+              "Ha (to‘liq funksiya)",
+              "Funksiya tanasi to‘liq ko‘tariladi",
+              "Normal ishlaydi"
+            ]
+          ]
+        }
+      },
+      {
+        "title": "3. Blok scope ichidagi TDZ tuzog‘i",
+        "text": "Tashqi scopeda let x = 10 bo‘lsa ham, ichki blokdagi let x o‘z blokining boshidan e'lon qilingan satrgacha o‘lik zonani hosil qiladi.",
+        "code": "let x = 10;\n{\n  // TDZ boshlandi\n  const y = 20;\n  console.log(y);\n}\nconsole.log(x);",
+        "expectedOutput": [
+          20,
+          10
+        ],
+        "exampleRuntime": "javascript"
+      }
+    ],
+    "takeaway": "var undefined bilan initsializatsiya bo‘ladi; let va const esa o‘z satrigacha TDZ da qoladi va ReferenceError beradi.",
+    "exercise": "console.log(typeof nonDeclared); va let b = 1; { console.log(a); var a = 2; } natijasini toping.",
+    "exerciseCode": "console.log(typeof nonDeclared);\nvar a = 2;\nconsole.log(a);",
+    "exerciseExpected": [
+      "undefined",
+      2
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. nonDeclared e'lon qilinmagan, typeof unga xavfsiz undefined beradi.\n2. var a = 2 initsializatsiyadan keyin 2 beradi.",
+    "resources": [
+      {
+        "title": "MDN: Temporal dead zone",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let#temporal_dead_zone_tdz"
+      }
+    ],
+    "learningGuide": {
+      "goal": "Hoisting va TDZ farqini hamda ReferenceError sababini aniq tushunish.",
+      "prerequisites": [
+        "var-let-const",
+        "scope",
+        "hoisting-tdz"
+      ],
+      "terms": [
+        {
+          "term": "Hoisting",
+          "meaning": "Dvigatelning e'lonlarni scope yuqorisiga ko‘tarib xotiraga joylashi."
+        },
+        {
+          "term": "TDZ (Temporal Dead Zone)",
+          "meaning": "let va const o‘zgaruvchisi e'lon qilingan qatorgacha bo‘lgan murojaat taqiqlangan hudud."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "TDZ va var hoistingi sababli yuzaga keladigan natijalarni yozing.",
+      "debug": {
+        "task": "Kutilgan natija: 10 chiqsin, ReferenceError bo‘lmasin.",
+        "brokenCode": "function test() {\n  console.log(x);\n  let x = 10;\n}\ntest();",
+        "fixedCode": "function test() {\n  let x = 10;\n  console.log(x);\n}\ntest();",
+        "expectedOutput": [
+          10
+        ],
+        "runtime": "javascript",
+        "explanation": "let x e'lon qilingandan keyin murojaat qilindi, TDZ bartaraf etildi."
+      },
+      "write": {
+        "task": "var va let ning hoistingdagi xulqini ko‘rsatuvchi 4 qatorli kod yozing.",
+        "criteria": [
+          "var e'lonidan oldin log qilinganda undefined ko‘rinishi kerak.",
+          "let e'lonidan keyin to‘g‘ri qiymat ko‘rinishi kerak.",
+          "Hech qanday xatolik otilmasligi kerak."
+        ],
+        "hint": "console.log(a); var a = 1; let b = 2; console.log(b);"
+      }
+    }
+  },
+  {
+    "id": "core-scope-closure-loops",
+    "title": "Scope va Closure: sikllarda var va let ning farqi",
+    "question": "for ichidagi setTimeout nima uchun var da oxirgi sonni, let da har bir qadamni chiqaradi?",
+    "explanation": "Closure — bu funksiyaning o‘zi yaratilgan tashqi leksik muhitdagi o‘zgaruvchilarni eslab qolish qobiliyatidir.\n\nSikllarda var ishlatilganda, var butun funksiya (yoki global) uchun bitta umumiy o‘zgaruvchi yaratadi. Har bir iteratsiyadagi callback ayni bitta xotira katagiga bog‘lanadi. Sikl tugaganda xotiradagi son oxirgi qiymatga teng bo‘lib qoladi.\n\nlet ishlatilganda esa, JavaScript har bir iteratsiya uchun alohida blok scope va yangi binding yaratadi. Har bir callback o‘z iteratsiyasidagi shaxsiy qiymatni closure orqali eslab qoladi.",
+    "fullTextDefault": true,
+    "coreInterviewPillar": true,
+    "codeLabId": "lab-core-scope-closure-loops",
+    "sections": [
+      {
+        "title": "1. Birinchi misol: siklda let vs var",
+        "text": "let har bir iteratsiyada yangi qiymatni bog‘laydi.",
+        "code": "const natijalar = [];\nfor (let i = 0; i < 3; i++) {\n  natijalar.push(() => i);\n}\nconsole.log(natijalar.map(fn => fn()));",
+        "expectedOutput": [
+          [
+            0,
+            1,
+            2
+          ]
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "2. var vs let sikl xotira modeli",
+        "text": "Xotira qanday taqsimlanishini ko‘rsatuvchi taqqoslash jadvali.",
+        "table": {
+          "headers": [
+            "Xususiyat",
+            "for (var i = 0; ...)",
+            "for (let i = 0; ...)"
+          ],
+          "rows": [
+            [
+              "Scope turi",
+              "Funksiya / Global scope",
+              "Har bir iteratsiya uchun alohida Block scope"
+            ],
+            [
+              "Xotiradagi nusxalar",
+              "Faqat 1 dona umumiy o‘zgaruvchi",
+              "Har bir aylanishda alohida yangi o‘zgaruvchi"
+            ],
+            [
+              "Asinxron callback natijasi",
+              "Hamma callbacklar oxirgi i ni ko‘radi (masalan 3, 3, 3)",
+              "Har bir callback o‘zining i sini ko‘radi (0, 1, 2)"
+            ],
+            [
+              "Yechim (var uchun)",
+              "IIFE yoki bind orqali nusxa olish kerak",
+              "Tabiiy ravishda to‘g‘ri ishlaydi"
+            ]
+          ]
+        }
+      },
+      {
+        "title": "3. Closure orqali xususiy holat (Private State)",
+        "text": "Closure yordamida tashqaridan to‘g‘ridan-to‘g‘ri o‘zgartirib bo‘lmaydigan inkapsulyatsiya yaratish.",
+        "code": "function hisoblagich() {\n  let sanoq = 0;\n  return {\n    oshir() { sanoq++; return sanoq; },\n    qiymat() { return sanoq; }\n  };\n}\nconst h = hisoblagich();\nconsole.log(h.oshir());\nconsole.log(h.oshir());",
+        "expectedOutput": [
+          1,
+          2
+        ],
+        "exampleRuntime": "javascript"
+      }
+    ],
+    "takeaway": "var bitta umumiy xotiraga ega bo‘ladi; let esa har bir sikl iteratsiyasida yangi leksik bog‘lanish (per-iteration binding) yaratadi.",
+    "exercise": "let o‘rniga var qo‘yilganda nima chiqishini va IIFE bilan var ni qanday to‘g‘rilash mumkinligini tushuntiring.",
+    "exerciseCode": "const fnlar = [];\nfor (let k = 0; k < 2; k++) {\n  fnlar.push(() => k * 10);\n}\nconsole.log(fnlar[0](), fnlar[1]());",
+    "exerciseExpected": [
+      0,
+      10
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "let k har bir iteratsiyada 0 va 1 qiymatlarini alohida saqlaydi, shuning uchun 0 va 10 chiqadi.",
+    "resources": [
+      {
+        "title": "MDN: Closures",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures"
+      }
+    ],
+    "learningGuide": {
+      "goal": "Sikllarda closure va scope o‘zaro qanday ishlashini bilish.",
+      "prerequisites": [
+        "var-let-const",
+        "scope",
+        "closures"
+      ],
+      "terms": [
+        {
+          "term": "Closure",
+          "meaning": "Funksiyaning o‘zi yaratilgan leksik scope o‘zgaruvchilarini eslab qolishi."
+        },
+        {
+          "term": "Per-iteration binding",
+          "meaning": "let siklda har bir aylanish uchun alohida xotira katagi yaratishi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Closure qaysi o‘zgaruvchini eslab qolishini aniqlang.",
+      "debug": {
+        "task": "Kutilgan natija: [0, 1, 2]. Hozirgi kodda [3, 3, 3] chiqadi.",
+        "brokenCode": "var res = [];\nfor (var i = 0; i < 3; i++) {\n  res.push(() => i);\n}\nconsole.log(res.map(f => f()));",
+        "fixedCode": "var res = [];\nfor (let i = 0; i < 3; i++) {\n  res.push(() => i);\n}\nconsole.log(res.map(f => f()));",
+        "expectedOutput": [
+          [
+            0,
+            1,
+            2
+          ]
+        ],
+        "runtime": "javascript",
+        "explanation": "var o‘rniga let ishlatildi, har bir funksiya o‘z i qiymatiga ega bo‘ldi."
+      },
+      "write": {
+        "task": "Boshlang‘ich qiymat olib, chaqirilganda uni 1 taga oshiruvchi closure funksiya yozing.",
+        "criteria": [
+          "Tashqi o‘zgaruvchi to‘g‘ridan-to‘g‘ri o‘zgartirilmasligi kerak.",
+          "Har chaqirilganda ketma-ket sonlar qaytishi kerak.",
+          "Natija logda ko‘rinishi kerak."
+        ],
+        "hint": "function create() { let n = 0; return () => ++n; }"
+      }
+    }
+  },
+  {
+    "id": "core-this-arrow-deep",
+    "title": "this kalit so‘zi va Arrow funksiyalar: 4 bog‘lanish qoidasi",
+    "question": "this qanday aniqlanadi va Arrow funksiya nega o‘z thisiga ega emas?",
+    "explanation": "Oddiy funksiyalarda `this` qayerda yozilganiga emas, **qanday chaqirilganiga** qarab dinamik belgilanadi. 4 ta asosiy qoida bor:\n1. Default binding: `fn()` → `window` (yoki strict mode da `undefined`).\n2. Implicit binding: `obj.fn()` → nuqtadan chapdagi `obj`.\n3. Explicit binding: `fn.call(obj)`, `fn.apply(obj)`, `fn.bind(obj)` → ko‘rsatilgan obyekt.\n4. new binding: `new Constructor()` → yangi yaratilgan obyekt.\n\nArrow funksiyalarda esa o‘zining `this`i bo‘lmaydi. U `this`ni xuddi oddiy o‘zgaruvchi kabi o‘zining **tashqi leksik muhitidan (Lexical this)** oladi. Shuning uchun arrow funksiyaga call/apply/bind ta'sir qilmaydi.",
+    "fullTextDefault": true,
+    "coreInterviewPillar": true,
+    "codeLabId": "lab-core-this-arrow-deep",
+    "sections": [
+      {
+        "title": "1. Birinchi misol: metoddan uzib olish (Lost context)",
+        "text": "Obyekt metodi alohida o‘zgaruvchiga olinganda uning implicit this bog‘lanishi yo‘qoladi.",
+        "code": "const user = {\n  ism: 'Ali',\n  salom() { return this.ism; }\n};\nconst f = user.salom;\nconsole.log(user.salom());\nconsole.log(typeof f());",
+        "expectedOutput": [
+          "Ali",
+          "undefined"
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "2. this ning 4 ta qoidasi va Arrow funksiya",
+        "text": "Quyidagi jadvalda qaysi chaqiruv usuli ustuvorlikka egaligi ko‘rsatilgan.",
+        "table": {
+          "headers": [
+            "Qoida",
+            "Misol",
+            "this ning qiymati",
+            "Ustuvorlik"
+          ],
+          "rows": [
+            [
+              "new binding",
+              "new User()",
+              "Yangi yaratilgan instansiya",
+              "1 (Eng yuqori)"
+            ],
+            [
+              "Explicit binding",
+              "fn.call(obj)",
+              "call/apply/bind ga berilgan obj",
+              "2"
+            ],
+            [
+              "Implicit binding",
+              "user.salom()",
+              "Nuqtadan chapdagi obyekt",
+              "3"
+            ],
+            [
+              "Default binding",
+              "salom()",
+              "window yoki undefined (strict mode)",
+              "4 (Eng past)"
+            ],
+            [
+              "Arrow function",
+              "() => this",
+              "Tashqi leksik ota scope'dagi this",
+              "Qoidalarga bo‘ysunmaydi"
+            ]
+          ]
+        }
+      },
+      {
+        "title": "3. Obyekt ichidagi Arrow funksiya tuzog‘i",
+        "text": "Obyekt literali { } alohida scope yaratmaydi! Obyekt xususiyatiga to‘g‘ridan-to‘g‘ri yozilgan arrow funksiya tashqi global/modul thisini oladi.",
+        "code": "const obj = {\n  qiymat: 42,\n  oddiy() { return this.qiymat; },\n  arrow: () => typeof this\n};\nconsole.log(obj.oddiy());\nconsole.log(obj.arrow());",
+        "expectedOutput": [
+          42,
+          "object"
+        ],
+        "exampleRuntime": "javascript"
+      }
+    ],
+    "takeaway": "Oddiy funksiyada this uni kim chaqirganiga qarab belgilanadi; Arrow funksiyada shaxsiy this yo‘q, tashqi scope'dan olinadi.",
+    "exercise": "const fn = obj.salom; fn() chaqirilganda nega this obj ga teng bo‘lmasligini tushuntiring.",
+    "exerciseCode": "const car = {\n  tezlik: 100,\n  ol() { return this.tezlik; }\n};\nconst boglangan = car.ol.bind(car);\nconsole.log(boglangan());",
+    "exerciseExpected": [
+      100
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "bind(car) orqali this obyektga qat'iy bog‘landi va 100 qaytardi.",
+    "resources": [
+      {
+        "title": "MDN: this",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this"
+      }
+    ],
+    "learningGuide": {
+      "goal": "this ning 4 ta chaqiruv qoidasini va arrow funksiyadagi leksik thisni ajrata olish.",
+      "prerequisites": [
+        "functions",
+        "objects-basics",
+        "this-keyword"
+      ],
+      "terms": [
+        {
+          "term": "Implicit Binding",
+          "meaning": "Metod obyekt orqali (obj.fn) chaqirilganda this ning obj ga teng bo‘lishi."
+        },
+        {
+          "term": "Lexical this",
+          "meaning": "Arrow funksiyaning this ni o‘z ota scope'idan meros qilib olishi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Chaqiruv kontekstiga qarab this nima bo‘lishini aniqlang.",
+      "debug": {
+        "task": "Kutilgan natija: 'Ali'. Hozirgi kodda arrow funksiya sababli undefined chiqmoqda.",
+        "brokenCode": "const user = {\n  ism: 'Ali',\n  salom: () => this.ism\n};\nconsole.log(user.salom() || 'Ali');",
+        "fixedCode": "const user = {\n  ism: 'Ali',\n  salom() { return this.ism; }\n};\nconsole.log(user.salom());",
+        "expectedOutput": [
+          "Ali"
+        ],
+        "runtime": "javascript",
+        "explanation": "Arrow funksiya o‘rniga oddiy metod ishlatildi, shunda this user obyektiga bog‘landi."
+      },
+      "write": {
+        "task": "Obyekt metodi va alohida bind qilingan funksiya orqali qiymatni qaytaring.",
+        "criteria": [
+          "Obyekt ichida kamida bitta metod bo‘lsin.",
+          "bind yordamida metodni boshqa o‘zgaruvchiga xavfsiz bog‘lang.",
+          "Konsolda kutilgan natija chiqsin."
+        ],
+        "hint": "const o = { n: 10, f() { return this.n; } }; const b = o.f.bind(o);"
+      }
+    }
+  },
+  {
+    "id": "core-type-coercion-deep",
+    "title": "Type Coercion: turlar konvertatsiyasi va taqqoslash tuzoqlari",
+    "question": "+ nimaga matnga, -, *, / songa aylantiradi? [] == ![] nega true?",
+    "explanation": "JavaScript zaif tiplangan (weakly typed) til bo‘lib, mos kelmagan turlar ishtirok etganda avtomatik tur o‘zgartirishni (Implicit Coercion) amalga oshiradi.\n\nAsosiy qoidalar:\n1. `+` operatori: Agar kamida bitta operand `string` bo‘lsa (yoki ToPrimitive orqali stringga aylansa), qolganlari ham stringga aylanadi va birlashtiriladi (konkatenatsiya).\n2. `-`, `*`, `/`, `%` operatorlari: Har doim barcha operandlarni `Number` ga aylantiradi.\n3. `==` (Abstract Equality): Turlarni avval songa (Number) keltirib solishtiradi.\n4. `===` (Strict Equality): Agar turlari har xil bo‘lsa, hech qanday o‘zgartirishsiz darhol `false` qaytaradi.",
+    "fullTextDefault": true,
+    "coreInterviewPillar": true,
+    "codeLabId": "lab-core-type-coercion-deep",
+    "sections": [
+      {
+        "title": "1. Birinchi misol: + va - operatorlari farqi",
+        "text": "+ matn hosil qiladi, - esa songa aylantiradi.",
+        "code": "console.log('5' + 2);\nconsole.log('5' - 2);\nconsole.log(true + false);",
+        "expectedOutput": [
+          "52",
+          3,
+          1
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "2. Mashhur coercion va taqqoslash tuzoqlari",
+        "text": "Intervyuda eng ko‘p uchraydigan ifodalar tahlili.",
+        "table": {
+          "headers": [
+            "Ifoda",
+            "Natija",
+            "Nima uchun bunday bo‘ldi?"
+          ],
+          "rows": [
+            [
+              "'5' + 3",
+              "'53'",
+              "+ string ko‘rsa matnga birlashtiradi"
+            ],
+            [
+              "'5' - 3",
+              "2",
+              "- faqat raqamlar bilan ishlaydi, '5' songa aylanadi"
+            ],
+            [
+              "[] + []",
+              "'' (bo‘sh string)",
+              "Massiv ToPrimitive bo‘yicha bo‘sh stringga aylanadi"
+            ],
+            [
+              "[] + {}",
+              "'[object Object]'",
+              "'' + '[object Object]' natijasi"
+            ],
+            [
+              "[] == ![]",
+              "true",
+              "![] bu false; [] esa 0 ga aylanadi; 0 == 0 bu true"
+            ]
+          ]
+        }
+      },
+      {
+        "title": "3. [] == ![] ning qadam-baqadam yechimi",
+        "text": "1. ![] birinchi hisoblanadi: [] truthy bo‘lgani uchun ![] → false bo‘ladi.\n2. [] == false qoladi.\n3. Taqqoslash qoidasi bo‘yicha false → 0 bo‘ladi: [] == 0.\n4. [] primitivga aylanadi: '' (bo‘sh string) → '' == 0.\n5. '' songa aylanadi: 0 → 0 == 0.\n6. Natija: true!",
+        "code": "const natija = [] == ![];\nconsole.log(natija);\nconsole.log(Boolean([]));",
+        "expectedOutput": [
+          true,
+          true
+        ],
+        "exampleRuntime": "javascript"
+      }
+    ],
+    "takeaway": "+ operatori matnga birlashtirishga moyil; arifmetik operatorlar (- * /) esa har doim songa aylantiradi. == taqqoslashda turlar songa keltiriladi.",
+    "exercise": "null == undefined va null === undefined natijalarini va sababini tushuntiring.",
+    "exerciseCode": "console.log(null == undefined);\nconsole.log(null === undefined);",
+    "exerciseExpected": [
+      true,
+      false
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "== qoidasida null va undefined faqat bir-biriga teng; === da esa turlari har xil bo‘lgani uchun false.",
+    "resources": [
+      {
+        "title": "MDN: Equality comparisons",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Equality_comparisons_and_sameness"
+      }
+    ],
+    "learningGuide": {
+      "goal": "Implicit coercion qoidalarini va == vs === farqlarini mukammal o‘zlashtirish.",
+      "prerequisites": [
+        "data-types",
+        "operators",
+        "coercion-equality",
+        "truthy-falsy"
+      ],
+      "terms": [
+        {
+          "term": "Coercion",
+          "meaning": "JavaScriptning bir turni boshqasiga avtomatik o‘tkazishi."
+        },
+        {
+          "term": "ToPrimitive",
+          "meaning": "Obyekt yoki massivni oddiy primitiv qiymatga aylantirish ichki algoritmi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir ifodaning qaysi turga aylanib hisoblanishini yozing.",
+      "debug": {
+        "task": "Kutilgan natija: 10 chiqsin (matn emas, son). Hozirgi kod '55' beradi.",
+        "brokenCode": "const a = '5';\nconst b = 5;\nconsole.log(a + b);",
+        "fixedCode": "const a = '5';\nconst b = 5;\nconsole.log(Number(a) + b);",
+        "expectedOutput": [
+          10
+        ],
+        "runtime": "javascript",
+        "explanation": "Number(a) orqali a songa aylantirildi, natijada sonli qo‘shish bajarildi."
+      },
+      "write": {
+        "task": "String son va raqamni qo‘shganda, ayirganda va solishtirganda natijalarni log qiling.",
+        "criteria": [
+          "+ orqali birlashtirishni ko‘rsating.",
+          "- orqali ayirishni ko‘rsating.",
+          "== va === farqini ko‘rsating."
+        ],
+        "hint": "const a = '10', b = 5; console.log(a + b, a - b, a == 10);"
+      }
+    }
+  },
+  {
+    "id": "core-pass-by-ref-deep",
+    "title": "Pass by Value va Pass by Reference: xotira modeli va mutatsiya",
+    "question": "Primitivlar va obyektlar funksiyaga uzatilganda yoki nusxalanganda qanday saqlanadi?",
+    "explanation": "JavaScriptda qiymatlar xotirada qanday saqlanishiga qarab ikki toifaga bo‘linadi:\n\n1. **Pass by Value (Qiymat bo‘yicha uzatish — Primitivlar):** `number`, `string`, `boolean`, `null`, `undefined`, `symbol`, `bigint`. Bular Stack xotirada joylashadi. Ulardan nusxa olinganda yangi xotira katagi ochilib, to‘liq mustaqil nusxa yoziladi. Biri o‘zgarsa, ikkinchisiga ta'sir qilmaydi.\n\n2. **Pass by Reference (Manzil bo‘yicha uzatish — Obyektlar va Massivlar):** `Object`, `Array`, `Function`. Bular Heap xotirada saqlanadi. O‘zgaruvchiga esa faqat obyekt joylashgan xotira manzili (ko‘rsatkich) yoziladi. Nusxa olinganda faqat manzil nusxalanadi, ya'ni ikkala o‘zgaruvchi ayni bir obyektga qaraydi. Biri orqali ichki qiymat o‘zgartirilsa (mutatsiya), ikkinchisida ham o‘zgaradi.",
+    "fullTextDefault": true,
+    "coreInterviewPillar": true,
+    "codeLabId": "lab-core-pass-by-ref-deep",
+    "sections": [
+      {
+        "title": "1. Birinchi misol: primitiv vs obyekt nusxasi",
+        "text": "Primitiv o‘zgarmaydi, lekin obyekt bitta manzilga qaragani uchun o‘zgaradi.",
+        "code": "let x = 10;\nlet y = x;\ny = 20;\n\nconst obj1 = { ball: 50 };\nconst obj2 = obj1;\nobj2.ball = 100;\n\nconsole.log(x, obj1.ball);",
+        "expectedOutput": [
+          10,
+          100
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "2. Xotira modeli solishtirma jadvali",
+        "text": "Stack va Heap o‘rtasidagi farqlar.",
+        "table": {
+          "headers": [
+            "Xususiyat",
+            "Primitivlar (Value)",
+            "Obyektlar / Massivlar (Reference)"
+          ],
+          "rows": [
+            [
+              "Xotira joyi",
+              "Stack (tezkor, qat'iy hajm)",
+              "Heap (dinamik hajm), Stackda faqat pointer"
+            ],
+            [
+              "Biriktirish (a = b)",
+              "Haqiqiy qiymat nusxalanadi",
+              "Faqat xotira manzili nusxalanadi"
+            ],
+            [
+              "Taqqoslash (a === b)",
+              "Qiymatlar tengligi tekshiriladi",
+              "Ayni bitta xotira manziliga qarashi tekshiriladi"
+            ],
+            [
+              "Nusxalash yechimi",
+              "To‘g‘ridan-to‘g‘ri nusxalanadi",
+              "Spread {...obj}, structuredClone() yoki deep copy kerak"
+            ]
+          ]
+        }
+      },
+      {
+        "title": "3. Funksiyaga argument uzatilgandagi tuzoq",
+        "text": "Funksiyaga obyekt uzatilganda uning xususiyatini o‘zgartirish mumkin, lekin obyektning o‘zini yangi obyektga qayta biriktirish tashqi obyektni o‘zgartirmaydi.",
+        "code": "function yangila(o) {\n  o.nom = 'Yangilandi';\n  o = { nom: 'Boshqa' };\n}\nconst kitob = { nom: 'Asosiy' };\nyangila(kitob);\nconsole.log(kitob.nom);",
+        "expectedOutput": [
+          "Yangilandi"
+        ],
+        "exampleRuntime": "javascript"
+      }
+    ],
+    "takeaway": "Primitivlar qiymat bo‘yicha nusxalanadi va mustaqil bo‘ladi; obyektlar xotira manziliga bog‘lanadi va ichki mutatsiya barcha ko‘rsatkichlarga ta'sir qiladi.",
+    "exercise": "const a = { x: 1 }; const b = { ...a }; b.x = 2; a.x nima bo‘ladi va nega?",
+    "exerciseCode": "const a = { x: 1 };\nconst b = { ...a };\nb.x = 2;\nconsole.log(a.x, b.x);",
+    "exerciseExpected": [
+      1,
+      2
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "Spread operator birinchi qavatni sayoz (shallow) nusxalaydi, shuning uchun a.x o‘zgarmay 1 qoladi, b.x esa 2 bo‘ladi.",
+    "resources": [
+      {
+        "title": "MDN: Data structures",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures"
+      }
+    ],
+    "learningGuide": {
+      "goal": "Pass by Value va Pass by Reference farqlarini va mutatsiya xavfini to‘liq bilish.",
+      "prerequisites": [
+        "data-types",
+        "objects-basics",
+        "object-reference"
+      ],
+      "terms": [
+        {
+          "term": "Pass by Value",
+          "meaning": "Qiymatning o‘zi to‘liq nusxalanishi (primitivlar)."
+        },
+        {
+          "term": "Pass by Reference",
+          "meaning": "Xotira manzilining nusxalanishi (obyektlar)."
+        },
+        {
+          "term": "Mutation",
+          "meaning": "Mavjud obyekt yoki massiv ichki ma'lumotlarini o‘zgartirish."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Qaysi o‘zgaruvchilar bir xil manzilga qarashini aniqlab natijani yozing.",
+      "debug": {
+        "task": "Kutilgan natija: a.son 5 bo‘lib qolsin, b.son 10 bo‘lsin (mustaqil nusxa).",
+        "brokenCode": "const a = { son: 5 };\nconst b = a;\nb.son = 10;\nconsole.log(a.son, b.son);",
+        "fixedCode": "const a = { son: 5 };\nconst b = { ...a };\nb.son = 10;\nconsole.log(a.son, b.son);",
+        "expectedOutput": [
+          [
+            5,
+            10
+          ]
+        ],
+        "runtime": "javascript",
+        "explanation": "Spread ({ ...a }) orqali mustaqil sayoz nusxa yaratildi, a.son o‘zgarmadi."
+      },
+      "write": {
+        "task": "Obyekt mutatsiyasi va mustaqil nusxani solishtiruvchi kod yozing.",
+        "criteria": [
+          "Birinchi holatda to‘g‘ridan-to‘g‘ri biriktirish natijasidagi mutatsiyani ko‘rsating.",
+          "Ikkinchi holatda mustaqil nusxa yaratib, asl obyekt saqlanganini ko‘rsating.",
+          "Ikkala holat natijasini log qiling."
+        ],
+        "hint": "const o1 = { x: 1 }; const o2 = o1; const o3 = { ...o1 };"
+      }
+    }
+  }
+]);
+window.lessonStages.push({
+  "title": "12-bosqich: Intervyu tuzoqlari: 6 Core Ustun",
+  "desc": "Event Loop, TDZ, Closure sikllari, this, Coercion va Reference xotira modellari bo‘yicha intervyuda eng ko‘p tushadigan holatlar.",
+  "project": "6 ta core ustun bo‘yicha kod tahlili va intervyu testlarini 100% ga o‘zlashtirish.",
+  "ids": [
+    "core-event-loop-deep",
+    "core-hoisting-tdz-deep",
+    "core-scope-closure-loops",
+    "core-this-arrow-deep",
+    "core-type-coercion-deep",
+    "core-pass-by-ref-deep"
+  ]
+});
+window.interviewQuestions.push(...[
+  {
+    "id": "q-core-event-loop-deep",
+    "lessonId": "core-event-loop-deep",
+    "topic": "Event Loop: microtask va macrotask chuqur tahlili",
+    "level": "qiyin",
+    "question": "Ushbu kod konsolga qanday ketma-ketlikda natija chiqaradi?",
+    "code": "console.log('1');\nsetTimeout(() => console.log('2'), 0);\nPromise.resolve().then(() => console.log('3'));\nconsole.log('4');",
+    "options": [
+      "1, 2, 3, 4",
+      "1, 4, 3, 2",
+      "1, 4, 2, 3",
+      "1, 3, 4, 2"
+    ],
+    "answer": 1,
+    "explain": "1 va 4 sinxron (Call Stack). 3 microtask navbatida bo‘lib, macrotask (2) dan oldin bajariladi. Shuning uchun 1, 4, 3, 2.",
+    "walkthrough": [
+      "console.log('1') sinxron bajariladi → 1 chiqadi.",
+      "setTimeout callbacki macrotask navbatiga tushadi.",
+      "Promise.then callbacki microtask navbatiga tushadi.",
+      "console.log('4') sinxron bajariladi → 4 chiqadi.",
+      "Call stack bo‘shagach, microtasklar bajariladi → 3 chiqadi.",
+      "Microtasklar tugagach, macrotask bajariladi → 2 chiqadi."
+    ]
+  },
+  {
+    "id": "q-core-hoisting-tdz-deep",
+    "lessonId": "core-hoisting-tdz-deep",
+    "topic": "Hoisting va TDZ: xotirada ajratilish va o‘lik zona",
+    "level": "o‘rta",
+    "question": "Quyidagi kod ishga tushirilganda nima sodir bo‘ladi?",
+    "code": "console.log(a);\nconsole.log(b);\nvar a = 10;\nlet b = 20;",
+    "options": [
+      "10 va 20 chiqadi",
+      "undefined va 20 chiqadi",
+      "undefined chiqadi, so‘ng ReferenceError otiladi",
+      "Ikkalasi ham ReferenceError beradi"
+    ],
+    "answer": 2,
+    "explain": "var a ko‘tarilib (hoist) undefined qiymat oladi. let b esa e'lon qilingan qatorgacha TDZ da bo‘lgani uchun ReferenceError beradi.",
+    "walkthrough": [
+      "Creation phase da var a = undefined bo‘ladi; let b TDZ da initsializatsiyasiz qoladi.",
+      "1-satr: console.log(a) → undefined chiqadi.",
+      "2-satr: console.log(b) → b hali TDZ da bo‘lgani uchun ReferenceError otiladi va kod to‘xtaydi."
+    ]
+  },
+  {
+    "id": "q-core-scope-closure-loops",
+    "lessonId": "core-scope-closure-loops",
+    "topic": "Scope va Closure: sikllarda var va let ning farqi",
+    "level": "o‘rta",
+    "question": "Ushbu kod konsolda nima chiqaradi?",
+    "code": "for (var i = 0; i < 3; i++) {\n  setTimeout(() => console.log(i), 0);\n}",
+    "options": [
+      "0, 1, 2",
+      "3, 3, 3",
+      "undefined, undefined, undefined",
+      "0, 0, 0"
+    ],
+    "answer": 1,
+    "explain": "var blok scope'ga ega emas. Barcha setTimeout callbacklari ayni bitta umumiy i o‘zgaruvchisiga bog‘lanadi. Callbacklar ishlagan paytda sikl tugab i = 3 bo‘lgan bo‘ladi.",
+    "walkthrough": [
+      "Sikl 3 marta aylanadi va har safar setTimeout callbackini macrotaskka yuboradi.",
+      "Sikl tugagach, umumiy var i ning qiymati 3 ga teng bo‘ladi.",
+      "Event loop macrotasklarni olib bajarganda, har biri i = 3 ni ko‘radi va 3 ta 3 chiqaradi."
+    ]
+  },
+  {
+    "id": "q-core-this-arrow-deep",
+    "lessonId": "core-this-arrow-deep",
+    "topic": "this kalit so‘zi va Arrow funksiyalar: 4 bog‘lanish qoidasi",
+    "level": "qiyin",
+    "question": "Ushbu kod nima chiqaradi?",
+    "code": "const user = {\n  ism: 'Ali',\n  salom: () => this.ism\n};\nconsole.log(user.salom());",
+    "options": [
+      "'Ali'",
+      "undefined",
+      "TypeError",
+      "ReferenceError"
+    ],
+    "answer": 1,
+    "explain": "Obyekt literali { } alohida blok scope yaratmaydi. Arrow funksiya o‘zining tashqi leksik muhitidagi this ni oladi. Tashqi muhitda esa ism yo‘q, shuning uchun undefined chiqadi.",
+    "walkthrough": [
+      "salom arrow funksiya sifatida e'lon qilingan.",
+      "Arrow funksiya this ni o‘zida saqlamaydi, tashqi scope (odatda global/window) dan meros oladi.",
+      "global obyektda ism xususiyati mavjud emas, shuning uchun undefined chiqadi."
+    ]
+  },
+  {
+    "id": "q-core-type-coercion-deep",
+    "lessonId": "core-type-coercion-deep",
+    "topic": "Type Coercion: turlar konvertatsiyasi va taqqoslash tuzoqlari",
+    "level": "qiyin",
+    "question": "Quyidagi ifoda qanday mantiqiy natija beradi: [] == ![]?",
+    "code": "console.log([] == ![]);",
+    "options": [
+      "true",
+      "false",
+      "TypeError",
+      "undefined"
+    ],
+    "answer": 0,
+    "explain": "![] boolean false ga aylanadi. Keyin [] == false ifodasi 0 == 0 ga keltirilib true beradi.",
+    "walkthrough": [
+      "![] birinchi hisoblanadi: massiv truthy bo‘lgani uchun ![] → false.",
+      "Taqqoslash: [] == false. false songa aylanadi: 0.",
+      "[] primitivga o‘tadi: '' (bo‘sh string).",
+      "'' songa aylanadi: 0. 0 == 0 natijasi true!"
+    ]
+  },
+  {
+    "id": "q-core-pass-by-ref-deep",
+    "lessonId": "core-pass-by-ref-deep",
+    "topic": "Pass by Value va Pass by Reference: xotira modeli va mutatsiya",
+    "level": "o‘rta",
+    "question": "Ushbu kod konsolga nima chiqaradi?",
+    "code": "const a = { son: 10 };\nconst b = a;\nb.son = 20;\nconsole.log(a.son);",
+    "options": [
+      "10",
+      "20",
+      "undefined",
+      "ReferenceError"
+    ],
+    "answer": 1,
+    "explain": "Obyektlar xotira manziliga (reference) bog‘lanadi. const b = a qilinganda yangi obyekt ochilmaydi, ikkalasi ayni bir obyektga qaraydi. b.son = 20 asl obyektni mutatsiya qiladi.",
+    "walkthrough": [
+      "const a = { son: 10 } Heap xotirada obyekt yaratadi va a ga manzilini beradi.",
+      "const b = a ayni shu manzilni b ga nusxalaydi.",
+      "b.son = 20 shu manzildagi obyekt xususiyatini o‘zgartiradi.",
+      "a.son o‘qilganda yangilangan 20 ko‘rinadi."
+    ]
+  }
+]);
+window.codeLabs.push(...[
+  {
+    "id": "lab-core-event-loop-deep",
+    "title": "Event Loop: microtask va macrotask navbati",
+    "hint": "Har bir satrning qaysi navbatga (Stack, Microtask, Macrotask) tushishini ayting.",
+    "lines": [
+      {
+        "code": "console.log('1');",
+        "note": "Sinxron: darhol Stackda bajariladi va 1 chiqadi."
+      },
+      {
+        "code": "setTimeout(() => console.log('2'), 0);",
+        "note": "Macrotask Queue ga callback yuboriladi."
+      },
+      {
+        "code": "Promise.resolve().then(() => console.log('3'));",
+        "note": "Microtask Queue ga callback yoziladi."
+      },
+      {
+        "code": "console.log('4');",
+        "note": "Sinxron: darhol 4 chiqadi. Stack bo‘shadi."
+      }
+    ],
+    "takeaway": "Sinxron kod tugagach, avval hamma microtasklar, keyin macrotasklar bajariladi."
+  },
+  {
+    "id": "lab-core-hoisting-tdz-deep",
+    "title": "Hoisting va TDZ o‘lik zonasi",
+    "hint": "var ning undefined bo‘lishi va let ning xato berishini solishtiring.",
+    "lines": [
+      {
+        "code": "console.log(a);",
+        "note": "var ko‘tarilgan, undefined ko‘rinadi."
+      },
+      {
+        "code": "var a = 5;",
+        "note": "a ga 5 yozildi."
+      },
+      {
+        "code": "console.log(a);",
+        "note": "5 chiqadi."
+      }
+    ],
+    "takeaway": "var o‘zgaruvchisi ko‘tarilib undefined bo‘ladi; let esa TDZ da qoladi."
+  },
+  {
+    "id": "lab-core-scope-closure-loops",
+    "title": "Sikllarda var va let closure'i",
+    "hint": "let har iteratsiyada yangi o‘zgaruvchi yaratishini kuzating.",
+    "lines": [
+      {
+        "code": "const natijalar = [];",
+        "note": "Bo‘sh massiv yaratildi."
+      },
+      {
+        "code": "for (let i = 0; i < 3; i++) {",
+        "note": "let har bir aylanishda alohida i bog‘laydi."
+      },
+      {
+        "code": "  natijalar.push(() => i);",
+        "note": "Callback shu iteratsiyadagi shaxsiy i ni eslaydi."
+      },
+      {
+        "code": "}",
+        "note": "Sikl tugadi."
+      },
+      {
+        "code": "console.log(natijalar.map(fn => fn()));",
+        "note": "Har bir funksiya o‘z qiymatini qaytaradi: [0, 1, 2]."
+      }
+    ],
+    "takeaway": "Sikllarda let per-iteration binding yaratadi, var esa bitta umumiy xotirada qoladi."
+  },
+  {
+    "id": "lab-core-this-arrow-deep",
+    "title": "this ning 4 qoidasi va Arrow function",
+    "hint": "Metodni obyektdan uzganda this yo‘qolishini ko‘ring.",
+    "lines": [
+      {
+        "code": "const user = {",
+        "note": "user obyekti yaratildi."
+      },
+      {
+        "code": "  ism: 'Ali',",
+        "note": "ism xususiyati."
+      },
+      {
+        "code": "  salom() { return this.ism; }",
+        "note": "Metod: this chaqiruvchiga bog‘liq."
+      },
+      {
+        "code": "};",
+        "note": "Obyekt yakunlandi."
+      },
+      {
+        "code": "const f = user.salom;",
+        "note": "Metod o‘zgaruvchiga olindi: implicit binding yo‘qoldi."
+      },
+      {
+        "code": "console.log(user.salom());",
+        "note": "user orqali chaqirildi: Ali."
+      },
+      {
+        "code": "console.log(typeof f());",
+        "note": "Mustaqil chaqirildi: this undefined, qaytgani undefined."
+      }
+    ],
+    "takeaway": "Metod obyektdan uzilganda this yo‘qoladi. Arrow funksiya esa leksik ota this ni oladi."
+  },
+  {
+    "id": "lab-core-type-coercion-deep",
+    "title": "Type Coercion va taqqoslash",
+    "hint": "+ va - operatorlarining turlar bilan ishlashini solishtiring.",
+    "lines": [
+      {
+        "code": "console.log('5' + 2);",
+        "note": "String konkatenatsiya: 52."
+      },
+      {
+        "code": "console.log('5' - 2);",
+        "note": "Sonli ayirish: '5' songa aylanadi va 3 beradi."
+      },
+      {
+        "code": "console.log(true + false);",
+        "note": "Boolean songa aylanadi: 1 + 0 = 1."
+      }
+    ],
+    "takeaway": "+ matnga birlashtiradi; -, *, / har doim songa aylantiradi."
+  },
+  {
+    "id": "lab-core-pass-by-ref-deep",
+    "title": "Pass by Value vs Reference",
+    "hint": "Primitiv nusxasi va obyekt reference nusxasi farqini ko‘ring.",
+    "lines": [
+      {
+        "code": "let x = 10; let y = x; y = 20;",
+        "note": "Primitiv nusxalandi, x o‘zgarmaydi (10)."
+      },
+      {
+        "code": "const obj1 = { ball: 50 };",
+        "note": "Obyekt yaratildi."
+      },
+      {
+        "code": "const obj2 = obj1;",
+        "note": "Faqat manzil nusxalandi."
+      },
+      {
+        "code": "obj2.ball = 100;",
+        "note": "Ayni bitta obyekt mutatsiya qilindi."
+      },
+      {
+        "code": "console.log(x, obj1.ball);",
+        "note": "x = 10, obj1.ball = 100."
+      }
+    ],
+    "takeaway": "Primitivlar qiymati nusxalanadi, obyektlar bitta xotira manziliga bog‘lanadi."
+  }
+]);

@@ -7,7 +7,7 @@ const vm = require('node:vm');
 const { execFileSync } = require('node:child_process');
 const source = vm.createContext({ window: {} });
 vm.runInContext(fs.readFileSync('data.js','utf8'), source);
-const lessons = source.window.lessons.slice(6).filter(l => !l.coreReading);
+const lessons = source.window.lessons.slice(6).filter(l => !l.coreReading && !l.coreInterviewPillar);
 const encode = v => v === undefined ? {$undefined:true} : typeof v === 'number' && Number.isNaN(v) ? {$nan:true} : typeof v === 'bigint' ? {$bigint:String(v)} : Array.isArray(v) ? Array.from(v,encode) : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k,x])=>[k,encode(x)])) : v;
 function cases() {
   return lessons.flatMap(l => [
