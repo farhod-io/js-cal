@@ -641,50 +641,87 @@ window.lessons = [
   {
     "id": "numbers-math",
     "title": "Sonlar va Math: noldan",
-    "question": "JavaScript sonlari qanday saqlanadi? NaN, Infinity, parseInt va Math nima?",
-    "explanation": "JavaScript’da barcha sonlar bitta tur: number. Butun son va kasr son o‘rtasida farq yo‘q. Sonlar 64-bit formatda saqlanadi, shuning uchun katta sonlar va kasrlar bilan ehtiyot bo‘lish kerak. Kod o‘qiyotganda avval “bu sonmi yoki stringmi?” degan savolni ber.",
+    "question": "Sonni qanday yozamiz va hisoblaymiz? Math nima qiladi? Matnni songa aylantirish, yaxlitlash va tasodifiy son olish qanday ishlaydi?",
+    "explanation": "Bu darsda oddiy sonlardan boshlaymiz. Avval 20, 3.5 va -5 qanday qiymat ekanini ko‘ramiz. Keyin qo‘shish, ayirish, bo‘lish va ko‘paytirishni sinaymiz. Shundan so‘ng JavaScript’ning tayyor hisoblash yordamchisi — Math bilan ishlaymiz. Har bir kod bo‘lagini alohida konsolda bajaring va natijani avval o‘zingiz taxmin qiling.",
     "sections": [
       {
-        "title": "1. Son yaratish va turi",
-        "text": "Son yozish uchun ixtiyoriy raqam, nuqta yoki eksponent ishlatiladi. typeof har qanday son uchun \"number\" qaytaradi. 5 va 5.0 bir xil son.",
-        "code": "let a = 10;\nlet b = 3.14;\nlet c = 1e3;      // 1000\nconsole.log(typeof a); // \"number\"\nconsole.log(typeof b); // \"number\"\nconsole.log(a === 10.0); // true",
-        "note": "1e3 — ilmiy yozuv: 1 × 10³. Katta va kichik sonlarni qisqa yozish uchun ishlatiladi."
+        "title": "1. Son nima va qanday yoziladi?",
+        "text": "Number — son turi. Butun son, kasr va manfiy sonni qo‘shtirnoqsiz yozamiz. Kasr uchun vergul emas, nuqta ishlatiladi. let yosh = 20 deganda yosh nomida 20 sonini saqlaymiz. console.log qiymatni, typeof esa turini ko‘rsatadi.",
+        "code": "let yosh = 20;\nlet narx = 3.5;\nlet harorat = -5;\n\nconsole.log(yosh);        // 20\nconsole.log(narx);        // 3.5\nconsole.log(harorat);     // -5\nconsole.log(typeof yosh); // \"number\"\nconsole.log(typeof narx); // \"number\"",
+        "note": "20 va 20.0 bir xil son. JavaScript’da oddiy butun va kasr sonlar number turida; juda katta butun sonlar uchun bigint degan alohida tur ham bor. Uni keyin alohida o‘rganamiz."
       },
       {
-        "title": "2. Hisoblash va operatorlar",
-        "text": "+, -, *, /, % (qoldiq), ** (daraja) mavjud. % bo‘linishdan qolgan qoldiqni beradi: juft/tok tekshirishda ishlatiladi. ** — daraja, masalan 2 ** 3 = 8.",
-        "code": "console.log(7 + 3);  // 10\nconsole.log(7 / 2);  // 3.5\nconsole.log(7 % 2);  // 1 (qoldiq)\nconsole.log(2 ** 3); // 8\nconsole.log(10 % 2 === 0); // true (juft)"
+        "title": "2. Qo‘shish, ayirish, ko‘paytirish va bo‘lish",
+        "text": "+ qo‘shadi, - ayiradi, * ko‘paytiradi, / bo‘ladi. Kompyuterda ko‘paytirish uchun × emas, * belgisi yoziladi. Natijani o‘zgaruvchiga saqlab ham ishlatish mumkin.",
+        "code": "console.log(7 + 3); // 10\nconsole.log(7 - 3); // 4\nconsole.log(7 * 3); // 21\nconsole.log(7 / 2); // 3.5\n\nconst dona = 3;\nconst narx = 5000;\nconst jami = dona * narx;\nconsole.log(jami); // 15000",
+        "note": "7 / 2 natijasi 3 emas, 3.5: JavaScript kasr qismini avtomatik tashlab yubormaydi."
       },
       {
-        "title": "3. NaN — son emas",
-        "text": "NaN (Not a Number) — hisoblash natijasi son bo‘lmaganda chiqadi. G‘alati joyi: typeof NaN ham \"number\" qaytaradi. NaN hech narsaga teng emas, hatto o‘ziga ham. Tekshirish uchun Number.isNaN ishlatiladi.",
-        "code": "console.log(typeof NaN); // \"number\"\nconsole.log(NaN === NaN); // false\nconsole.log(Number.isNaN(NaN)); // true\nconsole.log(\"abc\" * 2); // NaN\nconsole.log(0 / 0); // NaN",
-        "note": "Eski global isNaN() qiymatni avval son ga o‘zgartiradi, shuning uchun isNaN(\"abc\") true beradi. Number.isNaN esa faqat haqiqiy NaN ni topadi."
+        "title": "3. Qaysi amal avval bajariladi?",
+        "text": "Ko‘paytirish va bo‘lish qo‘shish va ayirishdan oldin bajariladi. Qavs ichidagi ifoda esa avval hisoblanadi. Kodni o‘qiyotganda birinchi bajariladigan qismni toping.",
+        "code": "console.log(2 + 3 * 4);   // 14\nconsole.log((2 + 3) * 4); // 20",
+        "note": "Birinchi qatorda: 3 * 4 = 12, keyin 2 + 12 = 14.\nIkkinchi qatorda: 2 + 3 = 5, keyin 5 * 4 = 20."
       },
       {
-        "title": "4. Infinity va nol bilan bo‘linish",
-        "text": "Son chegarasidan oshsa Infinity yoki -Infinity chiqadi. 1/0 = Infinity, -1/0 = -Infinity. Bu xato emas, maxsus qiymat.",
-        "code": "console.log(1 / 0);  // Infinity\nconsole.log(-1 / 0); // -Infinity\nconsole.log(Infinity - Infinity); // NaN\nconsole.log(Number.isFinite(1 / 0)); // false"
+        "title": "4. Qoldiq va daraja",
+        "text": "% bo‘lishdan qolgan qoldiqni beradi. Masalan, 7 ni 2 ga bo‘lsak, 1 ortib qoladi. ** darajaga oshiradi: 2 ** 3 degani 2 * 2 * 2.",
+        "code": "console.log(7 % 2);  // 1\nconsole.log(8 % 2);  // 0\nconsole.log(2 ** 3); // 8\n\nconsole.log(8 % 2 === 0); // true — 8 juft",
+        "note": "% foizni hisoblash belgisi emas. 200 ning 10 foizi: 200 * 10 / 100 = 20. Musbat butun sonning 2 ga bo‘linish qoldig‘i 0 bo‘lsa, u juft."
       },
       {
-        "title": "5. Stringni songa o‘zgartirish",
-        "text": "Number() butun qiymatni o‘zgartiradi: bo‘sh string 0, \"abc\" esa NaN bo‘ladi. parseInt satr boshidagi sonlarni oladi, oxiridagi matnni e’tiborga olmaydi. parseFloat kasrni saqlaydi.",
-        "code": "console.log(Number(\"42\"));   // 42\nconsole.log(Number(\"\"));      // 0\nconsole.log(Number(\"abc\"));   // NaN\nconsole.log(parseInt(\"42px\")); // 42\nconsole.log(parseFloat(\"3.14 son\")); // 3.14",
-        "note": "parseInt(\"08\") ba’zi muhitlarda 8, ba’zida 0 bo‘lishi mumkin — shuning uchun ikkinchi argument sifatida asosni berish yaxshi: parseInt(\"08\", 10)."
+        "title": "5. \"20\" bilan 20 ning farqi",
+        "text": "20 — son. \"20\" — matn. + matn bilan ishlaganda birlashtirishi mumkin. Matndagi son bilan hisoblash uchun avval Number orqali songa aylantiring.",
+        "code": "const yosh = \"20\";\nconsole.log(yosh + 1); // \"201\"\n\nconst son = Number(yosh);\nconsole.log(son + 1);      // 21\nconsole.log(typeof son);   // \"number\"\nconsole.log(Number(\"\"));    // 0\nconsole.log(Number(\"abc\")); // NaN",
+        "note": "Number(\"abc\") yaroqli son chiqara olmaydi, shuning uchun NaN beradi. Bo‘sh string esa 0 ga aylanadi: formadan kelgan bo‘sh maydonni son deb qabul qilishdan oldin alohida tekshiring."
       },
       {
-        "title": "6. Aniqlik muammosi",
-        "text": "0.1 + 0.2 = 0.3 bo‘lmaydi. Bu JavaScript kamchiligi emas, balki ikkilik sanoq tizimining xususiyati. Pul hisoblarida butun birliklarda (masalan, sent) ishlash yoki kichik xatolikni hisobga olish kerak.",
-        "code": "console.log(0.1 + 0.2); // 0.30000000000000004\nconsole.log((0.1 + 0.2).toFixed(2)); // \"0.30\"\nconsole.log(Number((0.1 + 0.2).toFixed(2))); // 0.3"
+        "title": "6. parseInt va parseFloat nima qiladi?",
+        "text": "Number butun matnni son sifatida o‘qishga harakat qiladi. parseInt matn boshidagi butun son qismini, parseFloat esa kasr qismini ham o‘qiydi. Ular son bo‘la olmaydigan belgiga yetganda to‘xtaydi.",
+        "code": "console.log(Number(\"42px\"));          // NaN\nconsole.log(parseInt(\"42px\", 10));    // 42\nconsole.log(parseInt(\"3.14\", 10));    // 3\nconsole.log(parseFloat(\"3.14 son\"));  // 3.14\nconsole.log(parseInt(\"08\", 10));      // 8\nconsole.log(parseInt(\"abc12\", 10));   // NaN",
+        "note": "parseInt dagi 10 — o‘nlik sanoq asosini bildiradi. Zamonaviy JavaScript’da parseInt(\"08\") ham 8 beradi. parseInt yaxlitlash vositasi emas: u matnni o‘qish uchun ishlatiladi."
       },
       {
-        "title": "7. Math obyekti",
-        "text": "Math — sonlar bilan ishlash uchun tayyor metodlar to‘plami: Math.round (yaxlitlash), Math.floor (pastga), Math.ceil (yuqoriga), Math.max/min, Math.random (0 dan 1 gacha tasodifiy son).",
-        "code": "console.log(Math.round(3.6)); // 4\nconsole.log(Math.floor(3.9)); // 3\nconsole.log(Math.ceil(3.1));  // 4\nconsole.log(Math.max(1, 5, 2)); // 5\nconsole.log(Math.random()); // 0 va 1 orasida\n\n// 1 dan 10 gacha tasodifiy butun son:\nconsole.log(Math.floor(Math.random() * 10) + 1);"
+        "title": "7. Math — tayyor hisoblash yordamchisi",
+        "text": "Math — JavaScript’da tayyor berilgan obyekt. Uning ichida hisoblash metodlari bor. Metod — obyekt orqali chaqiriladigan funksiya. Math.max(2, 9, 4) deganda eng katta sonni topish metodiga uchta son beramiz.",
+        "code": "console.log(Math.max(2, 9, 4)); // 9 — eng kattasi\nconsole.log(Math.min(2, 9, 4)); // 2 — eng kichigi\nconsole.log(Math.abs(-5));      // 5 — modul\nconsole.log(Math.sqrt(16));     // 4 — kvadrat ildiz\nconsole.log(Math.PI);           // 3.141592653589793",
+        "note": "Math ni o‘rnatish yoki new Math() qilish kerak emas. Math.max — metodning nomi, qavs ichidagilar — unga berilayotgan qiymatlar."
+      },
+      {
+        "title": "8. Kasrni butun songa aylantirish",
+        "text": "Math.round eng yaqin butun songa yaxlitlaydi. Math.floor pastki butun songa, Math.ceil yuqorigi butun songa olib boradi. Math.trunc esa kasr qismini olib tashlaydi. Manfiy sonlarda “pastga” kichikroq songa qarab yurishni bildiradi.",
+        "code": "console.log(Math.round(3.6)); // 4\nconsole.log(Math.floor(3.6)); // 3\nconsole.log(Math.ceil(3.6));  // 4\nconsole.log(Math.trunc(3.6)); // 3\n\nconsole.log(Math.floor(-3.6)); // -4\nconsole.log(Math.ceil(-3.6));  // -3\nconsole.log(Math.trunc(-3.6)); // -3",
+        "note": "floor bilan trunc bir xil emas. -4 soni -3.6 dan kichik, shuning uchun floor(-3.6) → -4. trunc(-3.6) esa kasrni olib tashlab -3 beradi."
+      },
+      {
+        "title": "9. Tasodifiy son: Math.random",
+        "text": "Math.random() har chaqirilganda 0 ga teng yoki undan katta, lekin 1 dan kichik son beradi. Natija oldindan aniq emas. 1 dan 10 gacha butun son olish uchun uchta ish qilamiz: 10 ga ko‘paytiramiz, floor qilamiz, 1 qo‘shamiz.",
+        "code": "const tasodifiy = Math.random();\nconsole.log(tasodifiy); // 0 <= natija < 1\n\nconst son = Math.floor(Math.random() * 10) + 1;\nconsole.log(son); // 1 dan 10 gacha butun son",
+        "note": "1. random * 10 → 0 dan 10 gacha, 10 ning o‘zi kirmaydi.\n2. Math.floor → 0, 1, 2, ... 9.\n3. + 1 → 1, 2, 3, ... 10.\nKoddagi izoh tasodifiy aniq javobni emas, mumkin bo‘lgan oraliqni bildiradi."
+      },
+      {
+        "title": "10. toFixed: kasrdan keyin nechta raqam?",
+        "text": "toFixed(2) sonni kasrdan keyin ikkita raqam bilan ko‘rsatadigan matn qaytaradi. Masalan, 3.5 qiymati \"3.50\" ko‘rinishiga keladi. Bu ko‘rsatish uchun qulay, ammo natija number emas.",
+        "code": "const narx = 3.5;\nconst matn = narx.toFixed(2);\n\nconsole.log(matn);        // \"3.50\"\nconsole.log(typeof matn); // \"string\"\nconsole.log(matn + 1);    // \"3.501\"\nconsole.log(Number(matn) + 1); // 4.5",
+        "note": "toFixed asl narx o‘zgaruvchisini o‘zgartirmaydi. Stringga aylangan natija bilan hisoblashdan oldin uni kerak bo‘lsa Number bilan qayta aylantiramiz."
+      },
+      {
+        "title": "11. NaN va Infinity",
+        "text": "NaN yaroqli sonli natija olinmaganini bildiruvchi maxsus number qiymatidir. Infinity esa cheksizlikni bildiruvchi maxsus qiymat. Masalan, number turidagi 1 ni 0 ga bo‘lish Infinity beradi; 0 / 0 esa NaN.",
+        "code": "console.log(Number(\"abc\")); // NaN\nconsole.log(0 / 0);         // NaN\nconsole.log(typeof NaN);    // \"number\"\nconsole.log(NaN === NaN);   // false\nconsole.log(Number.isNaN(NaN)); // true\n\nconsole.log(1 / 0);          // Infinity\nconsole.log(-1 / 0);         // -Infinity\nconsole.log(Number.isFinite(20));       // true\nconsole.log(Number.isFinite(Infinity)); // false\nconsole.log(Number.isFinite(NaN));      // false",
+        "note": "NaN ni qiymat === NaN bilan topib bo‘lmaydi. Number.isNaN ishlating. Number.isFinite qiymat number ekanini va NaN yoki cheksizlik emasligini tekshiradi; matnni avtomatik songa aylantirmaydi."
+      },
+      {
+        "title": "12. Kasrlar va katta sonlarning aniqligi",
+        "text": "Number sonlarni ikkilik formatda saqlaydi. Ba’zi o‘nlik kasrlar shu formatda aniq ifodalanmaydi. Shuning uchun 0.1 + 0.2 natijasi kutilganidan juda oz farq qiladi. Juda katta butun sonlar ham aniqlikni yo‘qotishi mumkin.",
+        "code": "console.log(0.1 + 0.2);         // 0.30000000000000004\nconsole.log(0.1 + 0.2 === 0.3); // false\nconsole.log((0.1 + 0.2).toFixed(2)); // \"0.30\"\n\nconsole.log(Number.MAX_SAFE_INTEGER); // 9007199254740991\nconsole.log(Number.isSafeInteger(100)); // true",
+        "note": "toFixed ko‘rinishni formatlaydi, barcha hisoblashlarni avtomatik aniq qilib qo‘ymaydi. Sonni 64-bit number shaklida saqlashning chegaralari bor. Katta butun sonlar uchun BigInt keyingi mavzularda ko‘riladi."
       }
     ],
-    "takeaway": "Barcha sonlar bitta \"number\" turida.\nNaN son turiga kiradi, lekin hech narsaga teng emas — Number.isNaN bilan tekshir.\n1/0 xato emas: Infinity.\nparseInt satr boshidagi sonni oladi, Number butun satrni o‘zgartiradi.\n0.1 + 0.2 aniq 0.3 emas — pul hisoblarida ehtiyot bo‘l.\nMath yaxlitlash, maksimum va tasodifiy son metodlarini beradi.",
-    "exercise": "Kodni o‘qimasdan javob ber:\n1) typeof NaN nima?\n2) NaN === NaN natijasi?\n3) parseInt(\"12abc\") + 1 nima?\n4) 1 / 0 natijasi xatomi?\n5) 0.1 + 0.2 === 0.3 ni nega ishlatmaslik kerak?"
+    "takeaway": "Son qo‘shtirnoqsiz yoziladi; \"20\" esa matn.\n+, -, *, / — asosiy hisoblashlar; % — qoldiq, ** — daraja.\nNumber matnni songa aylantiradi.\nMath.max/min — katta/kichik son; Math.abs — modul.\nround — eng yaqin, floor — pastga, ceil — yuqoriga, trunc — kasrni olib tashlash.\nMath.random natijasida 0 qatnashishi mumkin, 1 esa qatnashmaydi.\ntoFixed natijasi string. NaN ni Number.isNaN bilan tekshiring.",
+    "exercise": "Har bir qatordagi natijani avval o‘zingiz yozing. Matn bilan sonni farqlang, so‘ng yaxlitlash qoidalarini qo‘llang. Keyin javobni ochib tekshiring.",
+    "fullTextDefault": true,
+    "exerciseCode": "console.log(7 + 3);                     // 1: ?\nconsole.log(7 / 2);                     // 2: ?\nconsole.log(7 % 2);                     // 3: ?\nconsole.log(2 ** 3);                    // 4: ?\nconsole.log(\"20\" + 1);                  // 5: ?\nconsole.log(Number(\"20\") + 1);          // 6: ?\nconsole.log(Math.round(3.6));           // 7: ?\nconsole.log(Math.floor(-3.6));          // 8: ?\nconsole.log(Math.ceil(3.1));            // 9: ?\nconsole.log((0.1 + 0.2).toFixed(2));     // 10: ?\nconsole.log(Number.isNaN(Number(\"abc\"))); // 11: ?\nconsole.log(1 / 0);                     // 12: ?",
+    "exerciseAnswer": "1. 10 — qo‘shish.\n2. 3.5 — bo‘lish kasrni saqlaydi.\n3. 1 — bo‘lishdan qolgan qoldiq.\n4. 8 — 2 * 2 * 2.\n5. \"201\" — matn va 1 birlashtiriladi.\n6. 21 — avval \"20\" songa aylanadi, keyin 1 qo‘shiladi.\n7. 4 — 3.6 ga eng yaqin butun son.\n8. -4 — -3.6 dan pastdagi butun son.\n9. 4 — 3.1 dan yuqoridagi butun son.\n10. \"0.30\" — toFixed ikki kasr xonali string qaytaradi.\n11. true — Number(\"abc\") NaN bo‘ladi.\n12. Infinity — number qiymatini nolga bo‘lishdagi maxsus natija."
   },
   {
     "id": "strings",

@@ -4,15 +4,17 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 function setup() {
   const events = new Map(), entries = new Map();
+  const source = fs.readFileSync('sw.js','utf8');
+  const currentCache = source.match(/const CACHE_NAME = '([^']+)'/)[1];
   const normalize = value => typeof value === 'string' ? new URL(value, 'https://example.com/js-cal/').href : value.url;
   const cache = { match: async req => entries.get(normalize(req))?.clone(), put: async (req, res) => entries.set(normalize(req), res), addAll: async () => {} };
   const deleted = [];
   const ctx = vm.createContext({
     self: { location: { origin: 'https://example.com' }, addEventListener: (name, fn) => events.set(name, fn), clients: { claim: async () => {} }, skipWaiting: async () => {} },
-    caches: { open: async () => cache, match: cache.match, keys: async () => ['js-daftar-cache-v4','js-daftar-cache-v5','another-app-cache'], delete: async key => deleted.push(key) },
+    caches: { open: async () => cache, match: cache.match, keys: async () => ['js-daftar-cache-old',currentCache,'another-app-cache'], delete: async key => deleted.push(key) },
     URL, Response, fetch: async () => new Response('new lesson')
   });
-  vm.runInContext(fs.readFileSync('sw.js','utf8'), ctx);
+  vm.runInContext(source, ctx);
   const request = (file, mode = 'cors') => ({ url: 'https://example.com/js-cal/'+file, method: 'GET', mode });
   const dispatch = async req => {
     let response;
@@ -46,5 +48,5 @@ test('service worker update deletes only this app old caches', async () => {
   let pending;
   events.get('activate')({ waitUntil: promise => { pending = promise; } });
   await pending;
-  assert.deepEqual(deleted, ['js-daftar-cache-v4']);
+  assert.deepEqual(deleted, ['js-daftar-cache-old']);
 });
