@@ -104,3 +104,7 @@ nav button.done::before{content:'✓ ';font-weight:700}
 .lesson-diagram pre{white-space:pre;font-family:ui-monospace,monospace}
 .exercise-answer{padding:16px 18px;background:#eaf0e4;border-radius:12px;margin:22px 0}
 .exercise-answer summary{cursor:pointer;font-weight:600;color:#314b20}
+
+.lesson-view-controls{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0}
+.lesson-full-section + .lesson-full-section{border-top:1px solid #dde3d6;margin-top:28px;padding-top:12px}
+.app-update-notice{position:fixed;bottom:20px;right:20px;z-index:100;display:flex;align-items:center;gap:16px;max-width:calc(100vw - 40px);padding:16px;background:#fff;border:1px solid #bbc9b0;border-radius:12px;box-shadow:0 8px 30px #23292522}

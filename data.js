@@ -3629,6 +3629,7 @@ window.lessons.push(...[
   },
   {
     "id": "data-types",
+    "fullTextDefault": true,
     "title": "Ma’lumot turlari: primitive va reference",
     "question": "Qiymat nima? Matn, son va rost/yolg‘on qanday saqlanadi? Nega ba’zi nusxalar bir-biriga ta’sir qiladi?",
     "explanation": "Bu darsni noldan boshlaymiz. Avval qiymat va o‘zgaruvchi nima ekanini ko‘ramiz. Keyin matn, son, rost/yolg‘on hamda qiymat yo‘qligini o‘rganamiz. Shundan so‘ng primitive va reference so‘zlarini sodda misollar bilan tushunamiz. Har qadamdagi kodni alohida brauzer konsolida sinab ko‘ring: avval nima chiqishini taxmin qiling, keyin natijani tekshiring.",

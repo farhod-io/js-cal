@@ -1,4 +1,4 @@
-const CACHE_NAME = 'js-daftar-cache-v2';
+const CACHE_NAME = 'js-daftar-cache-v3';
 
 const STATIC_ASSETS = [
   './',
@@ -31,7 +31,7 @@ self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys => {
       return Promise.all(
-        keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
+        keys.filter(key => key.startsWith('js-daftar-cache-') && key !== CACHE_NAME).map(key => caches.delete(key))
       );
     }).then(() => self.clients.claim())
   );
@@ -50,20 +50,26 @@ self.addEventListener('fetch', event => {
   }
 
   // Sahifa navigatsiyasi: Network-first, oflaynda keshdan index.html
-  if (req.mode === 'navigate') {
+  if (req.mode === 'navigate' || ['app.js', 'data.js', 'style.css'].includes(url.pathname.split('/').pop())) {
     event.respondWith(
-      fetch(req)
-        .then(res => {
+      fetch(req, { cache: 'no-cache' })
+        .then(async res => {
           if (res && res.status === 200) {
             const clone = res.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put(req, clone));
+            const cache = await caches.open(CACHE_NAME);
+            await cache.put(req, clone);
           }
           return res;
         })
-        .catch(() => {
-          return caches.match(req).then(cached => {
-            return cached || caches.match('./index.html') || caches.match('./');
-          });
+        .catch(async () => {
+          const cache = await caches.open(CACHE_NAME);
+          const cached = await cache.match(req);
+          if (cached) return cached;
+          if (req.mode === 'navigate') {
+            const page = await cache.match('./index.html') || await cache.match('./');
+            if (page) return page;
+          }
+          return new Response('Oflayn nusxa topilmadi. Internetga ulaning va qayta oching.', { status: 503 });
         })
     );
     return;

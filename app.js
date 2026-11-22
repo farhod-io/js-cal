@@ -227,11 +227,14 @@ function buildLessonSteps(lesson) {
   return steps;
 }
 
+const lessonViewModes = new Map();
+
 function renderLesson(lesson) {
   const steps = buildLessonSteps(lesson);
   const savedStep = progress.lessonSteps[lesson.id];
   const current = Number.isInteger(savedStep) ? Math.max(0, Math.min(savedStep, steps.length - 1)) : 0;
-  const last = current === steps.length - 1;
+  const fullText = lessonViewModes.get(lesson.id) ?? !!lesson.fullTextDefault;
+  const last = fullText || current === steps.length - 1;
   const index = lessons.findIndex(l => l.id === lesson.id);
   const previous = lessons[index - 1];
   const next = lessons[index + 1];
@@ -243,12 +246,13 @@ function renderLesson(lesson) {
     <button id="mark-done" class="mark-btn">${read ? '✓ O‘qilgan' : '○ O‘qilgan deb belgilash'}</button>
     <span>${read ? 'Bu mavzu AI testda ishtirok etadi.' : 'Qadamlarni o‘rganing. O‘qilgan deb belgilasangiz, mavzu AI testga qo‘shiladi.'}</span>
   </div>
-  <div class="lesson-progress"><span>Qadam ${current + 1} / ${steps.length}</span><span>Har safar bitta kichik bo‘lim</span></div>
-  <progress class="lesson-progress-track" value="${current + 1}" max="${steps.length}" aria-label="Mavzu qadamlari"></progress>
+  <div class="lesson-view-controls"><button class="cta" id="lesson-view-toggle">${fullText ? 'Qadam-baqadam o‘rganish' : 'To‘liq tushuntirishni ko‘rish'}</button>${!fullText && current > 0 ? '<button class="cta" id="lesson-restart">Boshidan o‘rganish</button>' : ''}</div>
+  <div class="lesson-progress"><span>${fullText ? 'To‘liq dars' : `Qadam ${current + 1} / ${steps.length}`}</span><span>${fullText ? `${steps.length} ta bo‘lim: boshlanishidan mashqqacha` : 'Har safar bitta kichik bo‘lim'}</span></div>
+  <progress class="lesson-progress-track" value="${fullText ? steps.length : current + 1}" max="${steps.length}" aria-label="Mavzu qadamlari"></progress>
   <details class="lesson-outline"><summary>Mavzu rejasi</summary><ol>${steps.map((s, i) => `<li><button type="button" data-lesson-step="${i}" ${i === current ? 'aria-current="step"' : ''}>${escapeHtml(s.title)}</button></li>`).join('')}</ol></details>
-  <section class="lesson-step" aria-labelledby="lesson-step-title"><h2 id="lesson-step-title" tabindex="-1">${escapeHtml(steps[current].title)}</h2>${steps[current].html}</section>
+  ${fullText ? steps.map((step, i) => `<section class="lesson-step lesson-full-section" aria-labelledby="lesson-full-${i}"><h2 id="lesson-full-${i}" tabindex="-1">${escapeHtml(step.title)}</h2>${step.html}</section>`).join('') : `<section class="lesson-step" aria-labelledby="lesson-step-title"><h2 id="lesson-step-title" tabindex="-1">${escapeHtml(steps[current].title)}</h2>${steps[current].html}</section>`}
   <div class="lesson-step-controls">
-    <button class="cta" id="lesson-step-back" ${current === 0 ? 'disabled' : ''}>← Oldingi qadam</button>
+    ${!fullText ? `<button class="cta" id="lesson-step-back" ${current === 0 ? 'disabled' : ''}>← Oldingi qadam</button>` : ''}
     ${!last ? '<button class="cta primary" id="lesson-step-next">Keyingi qadam →</button>' : `<button class="cta primary" id="lesson-complete">${next ? 'O‘qilgan deb belgilash va keyingi mavzu →' : 'O‘qilgan deb belgilash va yakunlash ✓'}</button>`}
   </div>
   ${last ? `<div class="lesson-actions">${qs.length ? `<a class="cta" href="#interview/${encodeURIComponent(lesson.id)}">Shu mavzu bo‘yicha ${qs.length} ta test →</a>` : ''}<a class="cta" href="#ai">🧠 O‘qilgan mavzulardan AI test</a></div>` : ''}
@@ -257,6 +261,7 @@ function renderLesson(lesson) {
     ${next ? `<a href="#${encodeURIComponent(next.id)}">${escapeHtml(next.title)} →</a>` : '<span>Oxirgi mavzu</span>'}
   </nav>`;
   const setStep = value => {
+    lessonViewModes.set(lesson.id, false);
     progress.lessonSteps[lesson.id] = value;
     saveProgress();
     renderLesson(lesson);
@@ -266,7 +271,15 @@ function renderLesson(lesson) {
   content.querySelectorAll('[data-lesson-step]').forEach(button => {
     button.onclick = () => setStep(Number(button.dataset.lessonStep));
   });
-  content.querySelector('#lesson-step-back').onclick = () => { if (current > 0) setStep(current - 1); };
+  const backStep = content.querySelector('#lesson-step-back');
+  if (backStep) backStep.onclick = () => { if (current > 0) setStep(current - 1); };
+  content.querySelector('#lesson-view-toggle').onclick = () => {
+    lessonViewModes.set(lesson.id, !fullText);
+    renderLesson(lesson);
+    scrollContentToTop();
+  };
+  const restart = content.querySelector('#lesson-restart');
+  if (restart) restart.onclick = () => setStep(0);
   const nextStep = content.querySelector('#lesson-step-next');
   if (nextStep) nextStep.onclick = () => setStep(current + 1);
   content.querySelector('#mark-done').onclick = () => {
@@ -279,7 +292,7 @@ function renderLesson(lesson) {
   const complete = content.querySelector('#lesson-complete');
   if (complete) complete.onclick = () => {
     progress.completed[lesson.id] = true;
-    progress.lessonSteps[lesson.id] = current;
+    progress.lessonSteps[lesson.id] = steps.length - 1;
     if (!saveProgress()) {
       render();
       showLessonStorageError();
