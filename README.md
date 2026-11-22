@@ -92,3 +92,9 @@ Qolgan 56 mavzuda boshlang‘ich izoh, satrma-satr tahlilli mustaqil misol, asos
 Misolning muhiti matnda ko‘rsatiladi: brauzer DOM, Node.js, ES modul yoki terminal. Modul namunalari nomi ko‘rsatilgan alohida fayllarga yoziladi. DOM misollarini Node.js konsolida bajarish mo‘ljallanmagan. Terminal buyruqlarining natijasi loyiha holatiga bog‘liq; mashq javoblari ularning vazifasini tushuntiradi.
 
 Darslardagi yangi mustaqil JavaScript/Node misollarining kutilgan natijalari `expectedOutput`, yakuniy mashqlarniki `exerciseExpected` bilan tekshiriladi. Bu tekshiruv ma’lumotlari foydalanuvchi interfeysida ko‘rsatilmaydi. Tekshirish: `node --test tests/*.test.cjs`.
+
+## Har bir darsdagi o‘rganish yo‘li
+
+62 mavzuning barchasida aniq maqsad, faqat oldingi darslarga havolali tayyorgarlik va oddiy tildagi atamalar lug‘ati bor. Keyinroq o‘tiladigan tushuncha zarur joylarda qisqa kirish misoli beriladi: tsikllardan oldin massiv, map/filter dan oldin callback va return, async iteratsiyadan oldin generator. DOM uchun HTML tayyorgarligi tanlash misollaridan oldin keladi.
+
+Yakuniy mashqlar uch bosqichli: natijani taxmin qilish, xato kodni tuzatish va mezonlari berilgan mustaqil loyiha. Javoblar va yordam dastlab yopiq. Tuzatish mashqlari va tayyorgarlik misollarining natijalari ham avtomatik tekshiriladi.

@@ -208,10 +208,44 @@ function renderRoadmap() {
 // ============================================================
 // 5. LESSON — "O'qilgan deb belgilash" tugmasi
 // ============================================================
+function renderLearningGuide(lesson) {
+  const guide = lesson.learningGuide;
+  if (!guide) return '';
+  const prerequisites = guide.prerequisites.map(id => lessons.find(item => item.id === id)).filter(Boolean);
+  return `<div class="card learning-guide">
+    <h3>Dars oxirida nima qila olasiz?</h3><p>${escapeHtml(guide.goal)}</p>
+    ${prerequisites.length ? `<p class="learning-prerequisites"><b>Avval bilib oling:</b> ${prerequisites.map(item => `<a href="#${encodeURIComponent(item.id)}">${escapeHtml(item.title)}</a>`).join(' · ')}</p>` : ''}
+    <h3>Yangi atamalar — oddiy tilda</h3>
+    <dl class="lesson-terms">${guide.terms.map(item => `<div><dt>${escapeHtml(item.term)}</dt><dd>${escapeHtml(item.meaning)}</dd></div>`).join('')}</dl>
+    ${guide.warmup ? `<div class="learning-warmup"><h3>${escapeHtml(guide.warmup.title)}</h3><p class="lesson-text">${escapeHtml(guide.warmup.text)}</p><pre><code>${escapeHtml(guide.warmup.code)}</code></pre><p class="lesson-text">${escapeHtml(guide.warmup.explanation)}</p></div>` : ''}
+  </div>`;
+}
+
+function renderLessonPractice(lesson) {
+  const paragraph = value => `<p class="lesson-text">${escapeHtml(value)}</p>`;
+  const code = value => `<pre><code>${escapeHtml(value)}</code></pre>`;
+  const prediction = lesson.exerciseAnswer?.split('\n\nLoyihani yechish yo‘li:')[0];
+  const practice = lesson.learningPractice;
+  if (!practice) return `<h3>Endi o‘zingiz sinab ko‘ring</h3>${paragraph(lesson.exercise || 'Kod natijasini taxmin qiling va tekshiring.')}${lesson.exerciseCode ? code(lesson.exerciseCode) : ''}${lesson.exerciseAnswer ? `<details class="exercise-answer"><summary>Javob va tushuntirishni ko‘rish</summary>${paragraph(lesson.exerciseAnswer)}</details>` : ''}`;
+  return `<div class="practice-level" data-level="1"><h3>1. Natijani toping</h3>
+    ${paragraph(practice.predictPrompt)}${lesson.exerciseCode ? code(lesson.exerciseCode) : paragraph(lesson.exercise)}
+    ${prediction ? `<details class="exercise-answer"><summary>Natija va sababini ko‘rish</summary>${paragraph(prediction)}</details>` : ''}
+  </div>
+  <div class="practice-level" data-level="2"><h3>2. Xatoni topib tuzating</h3>
+    ${paragraph(practice.debug.task)}${code(practice.debug.brokenCode)}
+    <details class="exercise-answer debug-answer"><summary>Tuzatilgan kod va izoh</summary>${code(practice.debug.fixedCode)}${paragraph(practice.debug.explanation)}</details>
+  </div>
+  <div class="practice-level" data-level="3"><h3>3. Kodni mustaqil yozing</h3>
+    ${paragraph(practice.write.task)}<p><b>Ishingizni quyidagicha tekshiring:</b></p><ul>${practice.write.criteria.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>
+    <details class="exercise-answer writing-hint"><summary>Yordam kerak bo‘lsa: yechish yo‘li</summary>${paragraph(practice.write.hint)}</details>
+    ${lesson.exercise ? `<details class="practice-extra"><summary>Qo‘shimcha savollar</summary>${paragraph(lesson.exercise)}</details>` : ''}
+  </div>`;
+}
+
 function buildLessonSteps(lesson) {
   const text = value => `<p class="lesson-text">${escapeHtml(value)}</p>`;
   const code = value => `<pre><code>${escapeHtml(value)}</code></pre>`;
-  const steps = [{ title: 'Mavzu bilan tanishish', html: `<div class="card"><b>Bu mavzuda nimani o‘rganamiz?</b>${text(lesson.question)}</div>${text(lesson.explanation || '')}` }];
+  const steps = [{ title: 'Mavzu bilan tanishish', html: `<div class="card"><b>Bu mavzuda nimani o‘rganamiz?</b>${text(lesson.question)}</div>${renderLearningGuide(lesson)}${text(lesson.explanation || '')}` }];
   (lesson.sections || []).forEach(s => steps.push({
     title: s.title,
     html: `${s.text ? text(s.text) : ''}${s.table ? `<div class="table-wrap"><table><thead><tr>${s.table.headers.map(h => `<th scope="col">${escapeHtml(h)}</th>`).join('')}</tr></thead><tbody>${s.table.rows.map(row => `<tr>${row.map(cell => `<td>${escapeHtml(cell)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>` : ''}${s.code ? `<h3>Kodni o‘qing</h3>${code(s.code)}` : ''}${s.diagram ? `<figure class="lesson-diagram"><figcaption>Bitta obyektga ishoralar</figcaption><pre>${escapeHtml(s.diagram)}</pre></figure>` : ''}${s.note ? `<div class="card"><b>Izoh va eslatma</b>${text(s.note)}</div>` : ''}`
@@ -220,7 +254,7 @@ function buildLessonSteps(lesson) {
   else if (lesson.result) steps.push({ title: 'Natijani tushunish', html: text(lesson.result) });
   if (lesson.comparison) steps.push({ title: 'var, let va const — taqqoslash', html: '<div class="table-wrap"><table><thead><tr><th>Xususiyat</th><th>var</th><th>let</th><th>const</th></tr></thead><tbody><tr><td>Scope</td><td>Function yoki global</td><td>Block</td><td>Block</td></tr><tr><td>Qayta qiymat berish</td><td>Ha</td><td>Ha</td><td>Yo‘q</td></tr><tr><td>Bir scope ichida qayta e’lon</td><td>var bilan mumkin*</td><td>Yo‘q</td><td>Yo‘q</td></tr><tr><td>Deklaratsiyadan oldin o‘qish</td><td>undefined</td><td>ReferenceError</td><td>ReferenceError</td></tr></tbody></table></div><p>* Shu scope ichidagi let yoki const nomini var bilan ham qayta e’lon qilib bo‘lmaydi. const obyektining ichki xususiyatlari o‘zgarishi mumkin; o‘zgaruvchining o‘ziga boshqa qiymat berib bo‘lmaydi.</p>' });
   if (lesson.interactiveTruthy || lesson.interactiveScope) steps.push({ title: 'Amalda sinab ko‘ring', html: `${lesson.interactiveTruthy ? '<section id="truthy-demo" class="card"></section>' : ''}${lesson.interactiveScope ? '<section id="scope-demo" class="card"></section>' : ''}` });
-  steps.push({ title: 'Xulosa va mustaqil mashq', html: `${lesson.takeaway ? `<div class="card"><b>Esda saqlang</b>${text(lesson.takeaway)}</div>` : ''}<h3>Endi o‘zingiz sinab ko‘ring</h3>${text(lesson.exercise || 'Mavzudagi kodlardan birini o‘zgartiring. Ishga tushirishdan oldin natijani taxmin qiling, keyin tekshiring.')}${lesson.exerciseCode ? code(lesson.exerciseCode) : ''}${lesson.exerciseAnswer ? `<details class="exercise-answer"><summary>Javob va tushuntirishni ko‘rish</summary>${text(lesson.exerciseAnswer)}</details>` : ''}<p class="hint">Avval natijani o‘zingiz taxmin qiling. Keyin kodni ishga tushirib, nima uchun shunday bo‘lganini tushuntirib bering.</p>` });
+  steps.push({ title: 'Xulosa va mustaqil mashq', html: `${lesson.takeaway ? `<div class="card"><b>Esda saqlang</b>${text(lesson.takeaway)}</div>` : ''}${renderLessonPractice(lesson)}<p class="hint">Avval o‘zingiz urinib ko‘ring. Yechimni ko‘rgach, uni yopib kodni qaytadan yozing va nima uchun ishlashini ayting.</p>` });
   if (lesson.resources?.length) {
     steps[steps.length - 1].html += `<div class="lesson-resources"><h3>Qo‘shimcha o‘qish</h3><ul>${lesson.resources.map(r => `<li><a href="${escapeHtml(r.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(r.title)} ↗</a></li>`).join('')}</ul></div>`;
   }

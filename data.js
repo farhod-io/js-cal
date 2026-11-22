@@ -57,7 +57,60 @@ window.lessons = [
       }
     ],
     "takeaway": "var — function scope, qayta qiymat va var bilan qayta deklaratsiya mumkin.\nlet — block scope, qayta qiymat mumkin, bir scope ichida qayta deklaratsiya yo‘q.\nconst — block scope, qayta qiymat ham, bir scope ichida qayta deklaratsiya ham yo‘q.\nvar deklaratsiyadan oldin undefined; let/const esa TDZ sabab ReferenceError beradi.",
-    "exercise": "Kodni ishga tushirmasdan javob ber:\n\nlet a = 1;\n{\n  let a = 2;\n  console.log(a);\n}\nconsole.log(a);\n\n1) Ikkala console.log nima chiqaradi?\n2) Ichki let a o‘rniga var a yozilsa nima bo‘ladi?\n3) const list = []; list.push(1) mumkinmi? Nega?"
+    "exercise": "Kodni ishga tushirmasdan javob ber:\n\nlet a = 1;\n{\n  let a = 2;\n  console.log(a);\n}\nconsole.log(a);\n\n1) Ikkala console.log nima chiqaradi?\n2) Ichki let a o‘rniga var a yozilsa nima bo‘ladi?\n3) const list = []; list.push(1) mumkinmi? Nega?",
+    "learningGuide": {
+      "goal": "Qiymatni nom bilan saqlab, let bilan yangilaysiz va qachon const tanlashni ayta olasiz.",
+      "prerequisites": [
+        "js-intro"
+      ],
+      "terms": [
+        {
+          "term": "O‘zgaruvchi",
+          "meaning": "Qiymatga murojaat qilish uchun nom."
+        },
+        {
+          "term": "Deklaratsiya",
+          "meaning": "let, const yoki var bilan yangi nom yaratish."
+        },
+        {
+          "term": "Qayta qiymat berish",
+          "meaning": "Bor nomga boshqa qiymat yozish: yosh = 21."
+        },
+        {
+          "term": "Blok",
+          "meaning": "if yoki for tanasidagi kabi { } bilan ajratilgan kod hududi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Sanoq 2 dan 3 ga yangilanishi kerak. Nima uchun const bilan bu ishlamaydi?",
+        "brokenCode": "const sanoq = 2;\nsanoq = 3;\nconsole.log(sanoq);",
+        "fixedCode": "let sanoq = 2;\nsanoq = 3;\nconsole.log(sanoq);",
+        "expectedOutput": [
+          3
+        ],
+        "explanation": "Bu vazifada nomga yangi qiymat berish kerak; let shu imkonni beradi. const ga qayta biriktirish xato.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Mahsulotning doimiy nomi va o‘zgaradigan donasini yarating. Dona sonini oshiring, so‘ng console.log bilan chiqaring.",
+        "criteria": [
+          "let qiymati yangilanganda log yangi qiymatni beradi.",
+          "const ni qayta biriktirish mumkin emasligini tushuntirasiz.",
+          "Obyekt ichidagi maydonni yangilash bilan o‘zgaruvchiga yangi obyekt berishni farqlaysiz."
+        ],
+        "hint": "Nom uchun const nom = \"Kitob\", dona uchun let dona = 2 ishlating. dona = dona + 1 yoki dona += 1 bilan yangilang. Hali scope/hoistingni mukammal bilish bu mashq uchun shart emas."
+      }
+    },
+    "exerciseCode": "let son = 2;\nson += 3;\nconsole.log(son);\nconst ism = \"Ali\";\nconsole.log(ism);",
+    "exerciseAnswer": "1. 5 — let qiymati 2 ga 3 qo‘shildi.\n2. \"Ali\" — const da saqlangan matn o‘qildi.",
+    "exerciseExpected": [
+      5,
+      "Ali"
+    ],
+    "exerciseRuntime": "javascript"
   },
   {
     "id": "scope",
@@ -136,7 +189,54 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Glossary/Scope"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Har bir nom qaysi hududdan olinayotganini ko‘rsatib, shadowing va global/function/block farqini tushuntirasiz.",
+      "prerequisites": [
+        "var-let-const",
+        "functions"
+      ],
+      "terms": [
+        {
+          "term": "Scope",
+          "meaning": "Nomga qaysi kod hududlaridan murojaat qilish mumkinligi."
+        },
+        {
+          "term": "Lexical",
+          "meaning": "Qidiruv funksiyaning qayerda yaratilganiga bog‘liq ekanligi."
+        },
+        {
+          "term": "Shadowing",
+          "meaning": "Ichki hududdagi bir xil nom tashqi nomni shu hududda soyada qoldirishi."
+        },
+        {
+          "term": "Binding",
+          "meaning": "Nom bilan uning qiymati orasidagi bog‘lanish."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Funksiya ichidagi ismni tashqarida ishlatish kerak. Uni global qilish o‘rniga natija qaytaring.",
+        "brokenCode": "function ol() { const ism = \"Ali\"; }\nol();\nconsole.log(ism);",
+        "fixedCode": "function ol() { const ism = \"Ali\"; return ism; }\nconst natija = ol();\nconsole.log(natija);",
+        "expectedOutput": [
+          "Ali"
+        ],
+        "explanation": "Ichki nom tashqariga ko‘rinmaydi. return bilan qiymatni oldik, yangi tashqi nomga saqladik.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Global nom, funksiya ichidagi shu nom va ichki blokdagi shu nom bilan uchta misol yozing. Har log qaysi nomni olayotganini belgilang; keyin var bilan if blokidagi farqni tekshiring.",
+        "criteria": [
+          "Uch hududdagi loglar 20, 10, 5 tartibida chiqadi.",
+          "Ichki let tashqaridan ko‘rinmasligini ko‘rsatasiz.",
+          "var if blokidan chiqishi, ammo funksiyadan chiqmasligini tushuntirasiz."
+        ],
+        "hint": "Avval uch hududni qavs bilan ajrating. Har log yoniga eng yaqin deklaratsiyani chizing. Nom tashqarida topilsa ham ichki shu nom TDZ da bo‘lsa tashqariga o‘tib ketilmaydi."
+      }
+    }
   },
   {
     "id": "hoisting-tdz",
@@ -220,7 +320,64 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Glossary/Hoisting"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Nom mavjud, initialization qilingan va qiymat berilgan holatlarni alohida ko‘rib chiqasiz.",
+      "prerequisites": [
+        "scope",
+        "functions"
+      ],
+      "terms": [
+        {
+          "term": "Hoisting",
+          "meaning": "Koddan oldin scope nomlari qanday tayyorlanishini tushuntiruvchi atama."
+        },
+        {
+          "term": "Initialization",
+          "meaning": "Nomni foydalanishga tayyor boshlang‘ich holatga keltirish."
+        },
+        {
+          "term": "TDZ",
+          "meaning": "let/const nomi foydalanishga tayyor bo‘lmaguncha davom etadigan oraliq."
+        },
+        {
+          "term": "ReferenceError",
+          "meaning": "Nomni shu paytda o‘qish mumkin bo‘lmaganda yuz beradigan xato turi."
+        }
+      ],
+      "warmup": {
+        "title": "Misoldagi try/catch ni o‘qish",
+        "text": "Bu darsdagi try/catch kutilgan xatoni ko‘rsatib, keyingi misolga o‘tish uchun ishlatiladi. try ishni bajaradi, catch xato bo‘lsa uni oladi. Hozir xato nomini kuzatish yetarli.",
+        "code": "try {\n  console.log(son);\n  let son = 1;\n} catch (e) { console.log(e.name); }",
+        "expectedOutput": [
+          "ReferenceError"
+        ],
+        "explanation": "son shu blokda bor, lekin deklaratsiyasi hali bajarilmagan. Bu undefined qiymat olish emas, foydalanish taqiqlangan holat.",
+        "runtime": "javascript"
+      }
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "20 chiqishi kerak. O‘qish initializationdan oldin qolgan.",
+        "brokenCode": "console.log(yosh);\nlet yosh = 20;",
+        "fixedCode": "let yosh = 20;\nconsole.log(yosh);",
+        "expectedOutput": [
+          20
+        ],
+        "explanation": "let nomini deklaratsiya bajarilgandan keyin o‘qidik. Bu tuzatish uchun let ni var ga almashtirish shart emas.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "var, let va function declaration uchun oldin o‘qish/chaqirish misollarini alohida fayllarda sinang. Har birida “nom mavjudmi, tayyormi, qiymat berildimi?” deb yozing.",
+        "criteria": [
+          "var ni qiymat berishdan oldin o‘qish undefined beradi.",
+          "let/const ni TDZ ichida o‘qish ReferenceError beradi.",
+          "Function declaration bilan const function expression oldin chaqirilishida farq ko‘rsatiladi."
+        ],
+        "hint": "Har misolni alohida konsol yoki faylda bajaring. let n; satridan keyin undefined chiqishi bilan undan oldingi ReferenceError ni farqlang."
+      }
+    }
   },
   {
     "id": "typeof",
@@ -338,7 +495,49 @@ window.lessons = [
     "exercise": "Har bir qatorda nima chiqishini avval o‘zingiz yozing. Qo‘shtirnoq bor-yo‘qligiga e’tibor bering. Keyin javobni ochib sababini tekshiring.",
     "fullTextDefault": true,
     "exerciseCode": "let yosh = 20;\nlet matn = \"20\";\nlet javob = \"false\";\nlet ism;\n\nconsole.log(typeof yosh);        // 1: ?\nconsole.log(typeof matn);        // 2: ?\nconsole.log(typeof javob);       // 3: ?\nconsole.log(typeof true);        // 4: ?\nconsole.log(typeof ism);         // 5: ?\nconsole.log(typeof null);        // 6: ?\nconsole.log(Array.isArray([]));  // 7: ?\nconsole.log(typeof typeof 20);   // 8: ?",
-    "exerciseAnswer": "1. \"number\" — 20 son.\n2. \"string\" — \"20\" qo‘shtirnoqdagi matn.\n3. \"string\" — \"false\" ham matn.\n4. \"boolean\" — true qo‘shtirnoqsiz boolean qiymat.\n5. \"undefined\" — ism ga hali qiymat berilmagan.\n6. \"object\" — null uchun tarixiy maxsus natija; null aslida primitive qiymat.\n7. true — [] massiv, Array.isArray shuni tekshiradi.\n8. \"string\" — ichki typeof 20 avval \"number\" matnini beradi, tashqi typeof shu matnning turini tekshiradi."
+    "exerciseAnswer": "1. \"number\" — 20 son.\n2. \"string\" — \"20\" qo‘shtirnoqdagi matn.\n3. \"string\" — \"false\" ham matn.\n4. \"boolean\" — true qo‘shtirnoqsiz boolean qiymat.\n5. \"undefined\" — ism ga hali qiymat berilmagan.\n6. \"object\" — null uchun tarixiy maxsus natija; null aslida primitive qiymat.\n7. true — [] massiv, Array.isArray shuni tekshiradi.\n8. \"string\" — ichki typeof 20 avval \"number\" matnini beradi, tashqi typeof shu matnning turini tekshiradi.",
+    "learningGuide": {
+      "goal": "Qiymat bilan uning turini ajratasiz va typeof yetarli bo‘lmaydigan null/massiv holatlarini bilasiz.",
+      "prerequisites": [
+        "data-types"
+      ],
+      "terms": [
+        {
+          "term": "Operator",
+          "meaning": "Qiymat ustida amal bajarib natija chiqaradigan belgi yoki kalit so‘z."
+        },
+        {
+          "term": "typeof natijasi",
+          "meaning": "\"number\" kabi tur nomini saqlovchi string."
+        },
+        {
+          "term": "Array.isArray",
+          "meaning": "Qiymat massiv ekanini true/false bilan tekshiradigan tayyor funksiya."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Son ekanini tekshiruvchi shart true berishi kerak. Number bilan \"number\" farqini toping.",
+        "brokenCode": "const yosh = 20;\nconsole.log(typeof yosh === Number);",
+        "fixedCode": "const yosh = 20;\nconsole.log(typeof yosh === \"number\");",
+        "expectedOutput": [
+          true
+        ],
+        "explanation": "typeof matn qaytaradi. Number esa tayyor funksiya; tur nomini \"number\" stringi bilan solishtiramiz.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Son, matn, null va massiv uchun tur natijalarini chiqaradigan kichik tekshiruv yozing.",
+        "criteria": [
+          "20 uchun number, \"20\" uchun string chiqadi.",
+          "null ning typeof natijasini uning haqiqiy primitive ekanligi bilan adashtirmaysiz.",
+          "Massivni Array.isArray bilan ajratasiz."
+        ],
+        "hint": "console.log(typeof qiymat) bilan boshlang. Null uchun qiymat === null, massiv uchun Array.isArray(qiymat) tekshiruvini alohida ishlating. === tenglikni tur o‘zgartirmasdan tekshiradi."
+      }
+    }
   },
   {
     "id": "coercion-equality",
@@ -435,7 +634,50 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Equality_comparisons_and_sameness"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Qaysi joyda tur avtomatik o‘zgarishini ko‘rib, == va === natijasini sabab bilan tushuntirasiz.",
+      "prerequisites": [
+        "operators",
+        "data-types"
+      ],
+      "terms": [
+        {
+          "term": "Conversion",
+          "meaning": "Qiymatni boshqa turga aylantirish."
+        },
+        {
+          "term": "Coercion",
+          "meaning": "Amal davomida JavaScriptning avtomatik tur aylantirishi."
+        },
+        {
+          "term": "Qat’iy tenglik",
+          "meaning": "=== tekshiruvi: turlarni avtomatik bir xil qilmaydi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Forma matnidan 20 sonini aniq tekshiring. Faqat == ga almashtirish o‘rniga kirishni aylantiring.",
+        "brokenCode": "const input = \"20\";\nconsole.log(input === 20);",
+        "fixedCode": "const input = \"20\";\nconsole.log(Number(input) === 20);",
+        "expectedOutput": [
+          true
+        ],
+        "explanation": "Kiritishning turi oldin aniq aylantirildi, keyin qat’iy tenglik tekshirildi. Haqiqiy formada bo‘sh kirish ham alohida tekshiriladi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Yosh qabul qiladigan funksiya yozing: bo‘sh matnni rad etsin, qolganini Number bilan aylantirsin va chekli, manfiy bo‘lmagan son ekanini tekshirsin.",
+        "criteria": [
+          "\"20\" kirishi yaroqli 20 soniga aylantiriladi.",
+          "Bo‘sh kirish xato sifatida ajratiladi.",
+          "NaN yoki manfiy qiymat qabul qilinmaydi."
+        ],
+        "hint": "Avval input.trim() bo‘sh emasligini tekshiring. Number(input) dan keyin Number.isFinite va >= 0 tekshiruvini bajaring. Bu tekshiruvning o‘zi odam yoshini biznes qoidalariga mosligini kafolatlamaydi."
+      }
+    }
   },
   {
     "id": "truthy-falsy",
@@ -538,7 +780,50 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Glossary/Truthy"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Boolean baholashni tarkib bo‘shligi va tenglik bilan aralashtirmaysiz.",
+      "prerequisites": [
+        "operators",
+        "coercion-equality"
+      ],
+      "terms": [
+        {
+          "term": "Boolean kontekst",
+          "meaning": "if yoki ! kabi joyda qiymatning true/false sifatida baholanishi."
+        },
+        {
+          "term": "Truthy",
+          "meaning": "Boolean(qiymat) true beradigan qiymat."
+        },
+        {
+          "term": "Falsy",
+          "meaning": "Boolean(qiymat) false beradigan qiymat."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Bo‘sh ro‘yxat uchun “bo‘sh” chiqishi kerak.",
+        "brokenCode": "const list = [];\nif (list) console.log(\"bor\"); else console.log(\"bo‘sh\");",
+        "fixedCode": "const list = [];\nif (list.length > 0) console.log(\"bor\"); else console.log(\"bo‘sh\");",
+        "expectedOutput": [
+          "bo‘sh"
+        ],
+        "explanation": "Massivning boolean bahosi uning tarkibidagi elementlar sonini tekshirmaydi. length kerak.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Mahsulotlar ro‘yxati bo‘sh bo‘lsa “Hali mahsulot yo‘q”, element bo‘lsa sonini chiqaring. Qidiruv matni faqat bo‘sh joy bo‘lsa, uni ham bo‘sh deb qabul qiling.",
+        "criteria": [
+          "Bo‘sh massiv uchun “mahsulot yo‘q” chiqadi.",
+          "Elementli massiv uchun elementlar soni chiqadi.",
+          "Faqat bo‘sh joydan iborat qidiruv matni bo‘sh deb olinadi."
+        ],
+        "hint": "list.length === 0 bilan ro‘yxatni tekshiring. Matn uchun input.trim() === \"\" yozing. Qiymatning mavjudligi va tarkibning bo‘shligini alohida savollar sifatida ko‘ring."
+      }
+    }
   },
   {
     "id": "object-reference",
@@ -644,7 +929,55 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/structuredClone"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Obyektni yangilash, qayta biriktirish va chuqur/yuzaki nusxani ajratasiz.",
+      "prerequisites": [
+        "objects-basics",
+        "arrays-basics"
+      ],
+      "terms": [
+        {
+          "term": "Reference",
+          "meaning": "Aynan bir obyektga olib boradigan ishora qiymati."
+        },
+        {
+          "term": "Mutation",
+          "meaning": "Umumiy obyekt ichidagi maydonni yangilash."
+        },
+        {
+          "term": "Reassignment",
+          "meaning": "O‘zgaruvchini boshqa qiymatga biriktirish."
+        },
+        {
+          "term": "Deep clone",
+          "meaning": "Qo‘llab-quvvatlanadigan ichki ma’lumot qatlamlarini ham mustaqil nusxalash."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "b ichidagi n yangilanganda a ichidagi n 1 bo‘lib qolsin.",
+        "brokenCode": "const a = { ichki: { n: 1 } };\nconst b = { ...a };\nb.ichki.n = 9;\nconsole.log(a.ichki.n);",
+        "fixedCode": "const a = { ichki: { n: 1 } };\nconst b = { ...a, ichki: { ...a.ichki } };\nb.ichki.n = 9;\nconsole.log(a.ichki.n);\nconsole.log(b.ichki.n);",
+        "expectedOutput": [
+          1,
+          9
+        ],
+        "explanation": "Faqat tashqi spread yetmaydi. Ma’lum ichki qatlam ham yangi obyekt qilib olindi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Ichki manzilli user obyektidan nusxa oling. Avval yuzaki nusxada manzilni o‘zgartirib ta’sirni ko‘ring, keyin ichki manzilni ham nusxalab mustaqillikni ta’minlang.",
+        "criteria": [
+          "Spread tashqi obyektni boshqa reference qiladi.",
+          "Yuzaki nusxada ichki manzilning o‘zgarishi aslida ham ko‘rinadi.",
+          "Ichki manzil nusxalangach asl shahar o‘zgarmaydi."
+        ],
+        "hint": "const copy = { ...user, manzil: { ...user.manzil } }; keyin copy.manzil.shahar ni yangilang. Ko‘proq chuqurlik bo‘lsa, mos ma’lumot uchun structuredClone ni solishtiring."
+      }
+    }
   },
   {
     "id": "functions",
@@ -723,7 +1056,54 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Funksiyani chaqirish, argument berish va return natijasidan foydalanishni bilasiz.",
+      "prerequisites": [
+        "operators",
+        "conditionals"
+      ],
+      "terms": [
+        {
+          "term": "Parametr",
+          "meaning": "Funksiya e’lonidagi kirish qiymati uchun nom."
+        },
+        {
+          "term": "Argument",
+          "meaning": "Chaqirishda haqiqatda yuborilgan qiymat."
+        },
+        {
+          "term": "return",
+          "meaning": "Funksiyani tugatib natijani chaqirgan joyga berish."
+        },
+        {
+          "term": "Arrow",
+          "meaning": "=> bilan qisqa yozilgan funksiya; this qoidasi oddiy funksiyadan farq qiladi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Funksiya 5 qiymatini qaytarsin. Faqat konsolga chiqarish yetarlimi?",
+        "brokenCode": "function qosh(a, b) { console.log(a + b); }\nconst natija = qosh(2, 3);\nconsole.log(natija);",
+        "fixedCode": "function qosh(a, b) { return a + b; }\nconst natija = qosh(2, 3);\nconsole.log(natija);",
+        "expectedOutput": [
+          5
+        ],
+        "explanation": "console.log qiymatni ko‘rsatadi, return esa uni chaqirgan kodga beradi. Endi natija o‘zgaruvchisida 5 bor.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Berilgan narx, dona va chegirma uchun yakuniy qiymat qaytaradigan funksiya yozing. Noto‘g‘ri argumentni rad eting; hisoblashni console.log ga bog‘lamang.",
+        "criteria": [
+          "Bir xil kirish uchun bir xil hisob natijasi qaytadi.",
+          "0 dona uchun yakuniy narx 0 bo‘ladi.",
+          "Hisoblash funksiyasi natijani return qiladi, faqat log qilib qo‘ymaydi."
+        ],
+        "hint": "return narx * dona * (1 - foiz / 100). Avval Number.isFinite va diapazonlarni tekshiring. Natijani keyin alohida chiqarish funksiyani test qilishni osonlashtiradi."
+      }
+    }
   },
   {
     "id": "this-keyword",
@@ -794,7 +1174,55 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Har chaqirishda this qayerdan kelganini va call/apply/bind farqini aytasiz.",
+      "prerequisites": [
+        "objects-basics",
+        "functions",
+        "scope"
+      ],
+      "terms": [
+        {
+          "term": "Qabul qiluvchi",
+          "meaning": "user.salom() dagi user kabi, chaqirish bog‘langan obyekt."
+        },
+        {
+          "term": "this",
+          "meaning": "Oddiy funksiyada chaqirish usuli bilan beriladigan qiymat."
+        },
+        {
+          "term": "bind",
+          "meaning": "Funksiyani hozir chaqirmay, this va ayrim argumentlari bog‘langan yangi funksiya yaratish."
+        },
+        {
+          "term": "Strict mode",
+          "meaning": "Ayrim noaniq eski xatti-harakatlarni xato sifatida ko‘rsatadigan qat’iy rejim."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Ajratib olingan metod Ali ni qaytarsin. this bog‘lanishini saqlang.",
+        "brokenCode": "\"use strict\";\nconst user = { ism: \"Ali\", ol() { return this.ism; } };\nconst f = user.ol;\nconsole.log(f());",
+        "fixedCode": "\"use strict\";\nconst user = { ism: \"Ali\", ol() { return this.ism; } };\nconst f = user.ol.bind(user);\nconsole.log(f());",
+        "expectedOutput": [
+          "Ali"
+        ],
+        "explanation": "Metodni nomga olish obyekt orqali chaqirishni saqlamaydi. bind yangi funksiyada user ni this qilib bog‘ladi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Hisob obyektining qiymatini qaytaradigan metodini o‘zgaruvchiga oling. Ajralgan chaqirish xatosini ko‘ring, bind bilan tuzating va boshqa obyekt uchun call/apply ishlating.",
+        "criteria": [
+          "Obyekt orqali metod to‘g‘ri ismni oladi.",
+          "bind qilingan metod ajratib chaqirilganda ham kerakli obyektni oladi.",
+          "call/apply darhol, bind esa keyingi chaqirish uchun ishlashini ajratasiz."
+        ],
+        "hint": "const alohida = hisob.ol.bind(hisob). call uchun ol.call(boshqa), apply uchun ol.apply(boshqa, args) yozing. Har chaqirishdagi qabul qiluvchini belgilang."
+      }
+    }
   },
   {
     "id": "array-methods",
@@ -931,7 +1359,68 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "map, filter va reduce uchun mos callback yozib, qaytarish turlarini farqlaysiz.",
+      "prerequisites": [
+        "arrays-basics",
+        "loops"
+      ],
+      "terms": [
+        {
+          "term": "Funksiya",
+          "meaning": "Kirish olib, ish bajaradigan va natija qaytara oladigan kod."
+        },
+        {
+          "term": "Callback",
+          "meaning": "Metod har element uchun chaqiradigan funksiya."
+        },
+        {
+          "term": "return",
+          "meaning": "Chaqirgan kodga hisoblangan qiymatni berish."
+        },
+        {
+          "term": "Akkumulyator",
+          "meaning": "reduce davomida yig‘ilib borayotgan natija."
+        }
+      ],
+      "warmup": {
+        "title": "map dan oldin: qisqa funksiyani o‘qish",
+        "text": "Funksiyalar to‘liq keyinroq keladi. Hozir x => x * 2 ni “x ni ol, ikki baravarini qaytar” deb o‘qing. { } tanasi bo‘lsa return ochiq yoziladi.",
+        "code": "const ikki = x => x * 2;\nconst yana = x => { return x * 2; };\nconsole.log(ikki(3));\nconsole.log(yana(3));",
+        "expectedOutput": [
+          6,
+          6
+        ],
+        "explanation": "Ikkala funksiya bir xil natija beradi. map callback natijasini yangi massivga joylaydi; shuning uchun return yo‘qligi muhim.",
+        "runtime": "javascript"
+      }
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "map [2,4] qaytarishi kerak. Qaytarish qayerda yo‘qolgan?",
+        "brokenCode": "const a = [1, 2];\nconsole.log(a.map(x => { x * 2; }));",
+        "fixedCode": "const a = [1, 2];\nconsole.log(a.map(x => { return x * 2; }));",
+        "expectedOutput": [
+          [
+            2,
+            4
+          ]
+        ],
+        "explanation": "{ } tanali arrowda return ochiq yoziladi. Aks holda har chaqirish undefined qaytaradi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Mahsulotlardan faqat mavjudlarini filter qiling, map bilan nomlarini oling, reduce bilan umumiy summani hisoblang. Natijalarni yangi o‘zgaruvchilarga saqlang.",
+        "criteria": [
+          "filter faqat mavjud mahsulotlarni qoldiradi.",
+          "map nomlar massivini qaytaradi.",
+          "reduce narx*dona summasini 0 dan hisoblaydi; asl obyektlar o‘zgarmaydi."
+        ],
+        "hint": "products.filter(p => p.mavjud), keyin map(p => p.nom), jami uchun reduce((s,p)=>s+p.narx*p.dona,0). Callback ichida mahsulotlarni o‘zgartirmang."
+      }
+    }
   },
   {
     "id": "destructuring-spread",
@@ -1007,7 +1496,55 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Ajratib olish, yoyish va qolganini yig‘ish belgilarini yozilgan joyiga qarab farqlaysiz.",
+      "prerequisites": [
+        "arrays-basics",
+        "object-reference",
+        "array-methods"
+      ],
+      "terms": [
+        {
+          "term": "Destructuring",
+          "meaning": "Obyekt kaliti yoki massiv joyidan qiymatni mahalliy nomga olish."
+        },
+        {
+          "term": "Spread",
+          "meaning": "To‘plam qiymatlarini tashqariga yoyish."
+        },
+        {
+          "term": "Rest",
+          "meaning": "Qolgan qiymatlarni bitta massiv yoki obyektga yig‘ish."
+        },
+        {
+          "term": "Optional chaining",
+          "meaning": "Chap qiymat null/undefined bo‘lsa o‘qishni undefined bilan to‘xtatish — ?. belgisi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "n null bo‘lganda ham zaxira 5 kerak. Destructuring defaulti nima uchun ishlamadi?",
+        "brokenCode": "const { n = 5 } = { n: null };\nconsole.log(n);",
+        "fixedCode": "const { n } = { n: null };\nconst natija = n ?? 5;\nconsole.log(natija);",
+        "expectedOutput": [
+          5
+        ],
+        "explanation": "Destructuring default faqat undefined da ishlaydi. Bu vazifada null/undefined uchun ?? kerak.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "API dan kelgan user uchun nom va profil.shahar ni xavfsiz o‘qing. Yo‘q qiymatlarda default bering, lekin ball=0 ni saqlang. Qolgan maydonlarni rest bilan ajrating.",
+        "criteria": [
+          "ism va shahar yo‘q bo‘lsa tushunarli zaxira chiqadi.",
+          "ball=0 zaxiraga almashtirilmaydi.",
+          "Qolgan maydonlar rest bilan yangi tashqi obyektga yig‘iladi."
+        ],
+        "hint": "const { ism = \"Mehmon\", ...rest } = user ?? {}; ichki qiymatni user?.profil?.shahar ?? \"Noma’lum\" bilan oling. null holati uchun alohida qaror qiling."
+      }
+    }
   },
   {
     "id": "promises-async",
@@ -1017,14 +1554,16 @@ window.lessons = [
     "sections": [
       {
         "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
-        "text": "qosh darhol oddiy 5 emas, Promise beradi. await shu Promise bajarilgach 5 ni oladi. Xato tashlansa Promise rad etiladi va await joyida ushlash mumkin.",
-        "code": "(async () => {\n  async function qosh(a, b) { return a + b; }\n  const p = qosh(2, 3);\n  console.log(p instanceof Promise);\n  console.log(await p);\n})();",
+        "text": "Promise.resolve(5) tayyor Promise yaratadi. then ga berilgan callback keyinroq 5 ni oladi. Hozir A va B chiqadi; joriy kod tugagach 5 chiqadi. async/await ni quyidagi bo‘limlarda o‘rganamiz.",
+        "code": "console.log(\"A\");\nPromise.resolve(5).then(qiymat => console.log(qiymat));\nconsole.log(\"B\");",
         "expectedOutput": [
-          true,
+          "A",
+          "B",
           5
         ],
         "exampleRuntime": "async",
-        "note": "Konsolga chiqadigan qiymatlar tartibi: [true, 5]. Har bir console.log bitta natija beradi."
+        "note": "Natija tartibi: \"A\", \"B\", 5. then callbacki joriy sinxron koddan keyin bajariladi.",
+        "settleMs": 20
       },
       {
         "title": "2. Promise holatlari",
@@ -1087,7 +1626,55 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Promise natijasini zanjirlaysiz va async/await orqali muvaffaqiyat/xatoni boshqarasiz.",
+      "prerequisites": [
+        "callbacks",
+        "async-timers",
+        "errors-try-catch"
+      ],
+      "terms": [
+        {
+          "term": "Promise",
+          "meaning": "Keyin aniqlanadigan natijani ifodalovchi obyekt."
+        },
+        {
+          "term": "Pending",
+          "meaning": "Natija hali yakunlanmagan holat."
+        },
+        {
+          "term": "Fulfilled / rejected",
+          "meaning": "Muvaffaqiyatli qiymat yoki rad etilish bilan yakunlangan holatlar."
+        },
+        {
+          "term": "await",
+          "meaning": "Async davomni Promise natijasi tayyor bo‘lguncha kutdirish; butun brauzerni muzlatmaydi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Zanjirning keyingi qadamiga 3 berilishi kerak.",
+        "brokenCode": "Promise.resolve(2)\n  .then(x => { x + 1; })\n  .then(x => console.log(x));",
+        "fixedCode": "Promise.resolve(2)\n  .then(x => { return x + 1; })\n  .then(x => console.log(x));",
+        "expectedOutput": [
+          3
+        ],
+        "explanation": "then callback qaytargan qiymat keyingi Promise natijasiga aylanadi. { } tanasidagi return yo‘q bo‘lsa undefined keladi.",
+        "runtime": "async"
+      },
+      "write": {
+        "task": "Ikki mustaqil ishni Promise.all bilan parallel boshlang, keyin ularga bog‘liq hisobni bajaring. Bittasi rad etilganda foydalanuvchiga xabar, finally da loading=false holatini bering.",
+        "criteria": [
+          "Mustaqil ikkita ish oldin boshlanib, keyin birga kutiladi.",
+          "Rad etilgan Promise catch bilan ushlanadi.",
+          "Loading holati muvaffaqiyatda ham, xatoda ham yakunlanadi."
+        ],
+        "hint": "Har bir ish uchun Promise ni yarating, keyin await Promise.all. try/catch/finally bilan loading holatini yakunlang. Bajarilish va natija tartibi bir xil tushuncha emasligini tekshiring."
+      }
+    }
   },
   {
     "id": "event-loop",
@@ -1150,7 +1737,54 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Execution_model"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Sinxron kod, microtask va taymer taskini navbatlarga ajratib natija tartibini tushuntirasiz.",
+      "prerequisites": [
+        "async-timers",
+        "promises-async"
+      ],
+      "terms": [
+        {
+          "term": "Call stack",
+          "meaning": "Hozir bajarilayotgan chaqirishlar tuzilmasi."
+        },
+        {
+          "term": "Task",
+          "meaning": "Taymer callbacki kabi alohida bajarish ishi."
+        },
+        {
+          "term": "Microtask",
+          "meaning": "Promise.then kabi, belgilangan checkpointda navbati bo‘shatiladigan ish."
+        },
+        {
+          "term": "Render",
+          "meaning": "Brauzer sahifaning ko‘rinishini hisoblab chizishi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Promise callbacki n ni yangilagach 1 ni o‘qing.",
+        "brokenCode": "let n = 0;\nPromise.resolve().then(() => { n = 1; });\nconsole.log(n);",
+        "fixedCode": "(async () => {\n  let n = 0;\n  await Promise.resolve().then(() => { n = 1; });\n  console.log(n);\n})();",
+        "expectedOutput": [
+          1
+        ],
+        "explanation": "Callback keyin bajariladi. Natijaga bog‘liq davom await dan keyin yozildi. Bu barcha boshqa kodni muzlatmaydi.",
+        "runtime": "async"
+      },
+      "write": {
+        "task": "console, Promise.then, queueMicrotask va setTimeout aralashgan 4–6 satr yozing. Natijani stack, microtask va task ustunlariga ajratib bashorat qiling.",
+        "criteria": [
+          "A, D, C, B misolida har log to‘g‘ri navbatga yoziladi.",
+          "Promise executorining sinxron qismi ajratiladi.",
+          "setTimeout(0) darhol callback bajarishi deb tushuntirilmaydi."
+        ],
+        "hint": "Avval barcha sinxron satrlarni yozing. Ular ishlayotganda navbatga nima qo‘shilganini belgilang. So‘ng microtask larni qo‘shilish tartibida bo‘shating, keyin taymer taskini oling."
+      }
+    }
   },
   {
     "id": "dom-basics",
@@ -1225,7 +1859,55 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "HTML elementni topib, uning matni va classini foydalanuvchi harakati bilan yangilaysiz.",
+      "prerequisites": [
+        "js-intro",
+        "objects-basics",
+        "functions"
+      ],
+      "terms": [
+        {
+          "term": "DOM",
+          "meaning": "Brauzer HTML ni ifodalagan obyektlar daraxti."
+        },
+        {
+          "term": "Selektor",
+          "meaning": "Elementni topish qoidasi: #ism id, .active class."
+        },
+        {
+          "term": "Node",
+          "meaning": "DOM daraxtidagi tugun; element ham node turi."
+        },
+        {
+          "term": "Atribut",
+          "meaning": "HTML elementiga yozilgan ma’lumot: id, class, data-id kabi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "id si ism bo‘lgan elementdan Ali ni o‘qing.",
+        "brokenCode": "const box = document.createElement(\"div\");\nbox.innerHTML = '<p id=\"ism\">Ali</p>';\nconsole.log(box.querySelector(\"ism\").textContent);",
+        "fixedCode": "const box = document.createElement(\"div\");\nbox.innerHTML = '<p id=\"ism\">Ali</p>';\nconsole.log(box.querySelector(\"#ism\").textContent);",
+        "expectedOutput": [
+          "Ali"
+        ],
+        "explanation": "ism selektori teg nomini qidiradi. id uchun #ism kerak. Topilmagan element null bo‘lib, undan textContent o‘qish xato beradi.",
+        "runtime": "browser"
+      },
+      "write": {
+        "task": "HTML da sarlavha va button yarating. Tugma bosilganda sarlavha matni va classList dagi active belgisi almashsin. Ikkinchi bosishda oldingi holatga qaytsin.",
+        "criteria": [
+          "Tugma bosilganda sarlavha matni o‘zgaradi.",
+          "Ikkinchi bosish holatni qaytaradi.",
+          "Element topilmasa null holati tushunarli boshqariladi."
+        ],
+        "hint": "const title=document.querySelector(\"h1\"); const btn=document.querySelector(\"button\"); click listenerida classList.toggle qaytargan boolean asosida textContent ni yozing."
+      }
+    }
   },
   {
     "id": "numbers-math",
@@ -1310,7 +1992,53 @@ window.lessons = [
     "exercise": "Har bir qatordagi natijani avval o‘zingiz yozing. Matn bilan sonni farqlang, so‘ng yaxlitlash qoidalarini qo‘llang. Keyin javobni ochib tekshiring.",
     "fullTextDefault": true,
     "exerciseCode": "console.log(7 + 3);                     // 1: ?\nconsole.log(7 / 2);                     // 2: ?\nconsole.log(7 % 2);                     // 3: ?\nconsole.log(2 ** 3);                    // 4: ?\nconsole.log(\"20\" + 1);                  // 5: ?\nconsole.log(Number(\"20\") + 1);          // 6: ?\nconsole.log(Math.round(3.6));           // 7: ?\nconsole.log(Math.floor(-3.6));          // 8: ?\nconsole.log(Math.ceil(3.1));            // 9: ?\nconsole.log((0.1 + 0.2).toFixed(2));     // 10: ?\nconsole.log(Number.isNaN(Number(\"abc\"))); // 11: ?\nconsole.log(1 / 0);                     // 12: ?",
-    "exerciseAnswer": "1. 10 — qo‘shish.\n2. 3.5 — bo‘lish kasrni saqlaydi.\n3. 1 — bo‘lishdan qolgan qoldiq.\n4. 8 — 2 * 2 * 2.\n5. \"201\" — matn va 1 birlashtiriladi.\n6. 21 — avval \"20\" songa aylanadi, keyin 1 qo‘shiladi.\n7. 4 — 3.6 ga eng yaqin butun son.\n8. -4 — -3.6 dan pastdagi butun son.\n9. 4 — 3.1 dan yuqoridagi butun son.\n10. \"0.30\" — toFixed ikki kasr xonali string qaytaradi.\n11. true — Number(\"abc\") NaN bo‘ladi.\n12. Infinity — number qiymatini nolga bo‘lishdagi maxsus natija."
+    "exerciseAnswer": "1. 10 — qo‘shish.\n2. 3.5 — bo‘lish kasrni saqlaydi.\n3. 1 — bo‘lishdan qolgan qoldiq.\n4. 8 — 2 * 2 * 2.\n5. \"201\" — matn va 1 birlashtiriladi.\n6. 21 — avval \"20\" songa aylanadi, keyin 1 qo‘shiladi.\n7. 4 — 3.6 ga eng yaqin butun son.\n8. -4 — -3.6 dan pastdagi butun son.\n9. 4 — 3.1 dan yuqoridagi butun son.\n10. \"0.30\" — toFixed ikki kasr xonali string qaytaradi.\n11. true — Number(\"abc\") NaN bo‘ladi.\n12. Infinity — number qiymatini nolga bo‘lishdagi maxsus natija.",
+    "learningGuide": {
+      "goal": "Matnni songa aylantirib hisoblaysiz, kerakli yaxlitlash usulini tanlaysiz va NaN ni tekshirasiz.",
+      "prerequisites": [
+        "typeof"
+      ],
+      "terms": [
+        {
+          "term": "Operand",
+          "meaning": "Amal qatnashchisi: 2 + 3 da 2 va 3."
+        },
+        {
+          "term": "Metod",
+          "meaning": "Obyekt yoki qiymat orqali chaqiriladigan tayyor funksiya: Math.round(...)."
+        },
+        {
+          "term": "NaN",
+          "meaning": "Number turidagi, yaroqli sonli natija olinmaganini bildiruvchi maxsus qiymat."
+        },
+        {
+          "term": "Yaxlitlash",
+          "meaning": "Kasrli sonni tanlangan qoida bilan yaqin butun qiymatga olib borish."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Natija 21 bo‘lishi kerak, lekin \"201\" chiqyapti.",
+        "brokenCode": "const yosh = \"20\";\nconsole.log(yosh + 1);",
+        "fixedCode": "const yosh = \"20\";\nconsole.log(Number(yosh) + 1);",
+        "expectedOutput": [
+          21
+        ],
+        "explanation": "Avval matn songa aylantirildi. Shundan keyin + sonlarni qo‘shadi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Matn sifatidagi narx va dona qiymatlaridan jami summani hisoblang. Natijani ikki kasr xonali matn sifatida ko‘rsating.",
+        "criteria": [
+          "Narx va dona uchun qo‘shish emas ko‘paytirish ishlatiladi.",
+          "String kirish bilan noto‘g‘ri birlashtirish yuz bermaydi.",
+          "Bo‘sh yoki yaroqsiz kirishni alohida tekshirasiz."
+        ],
+        "hint": "Avval bo‘sh matnni ajrating. Number bilan aylantirib Number.isFinite tekshiring, keyin ko‘paytiring. Ko‘rsatish uchun toFixed(2) ishlating; u string qaytarishini unutmang."
+      }
+    }
   },
   {
     "id": "strings",
@@ -1457,7 +2185,54 @@ window.lessons = [
         "title": "MDN: ko‘rinadigan belgilarni ajratish",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Segmenter"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Matnni tozalab, kerakli bo‘lakni ajratasiz va metod qaytargan qiymat turini ayta olasiz.",
+      "prerequisites": [
+        "data-types",
+        "typeof"
+      ],
+      "terms": [
+        {
+          "term": "Indeks",
+          "meaning": "Qiymatning joylashuv raqami; stringda 0 dan boshlanadi."
+        },
+        {
+          "term": "Metod",
+          "meaning": "Matn ustida chaqiriladigan tayyor ish: trim(), slice(...)."
+        },
+        {
+          "term": "Immutable",
+          "meaning": "Qiymatning o‘zini joyida o‘zgartirib bo‘lmasligi; yangi string yaratish mumkin."
+        },
+        {
+          "term": "Callback",
+          "meaning": "Boshqa funksiya kerak paytda chaqirishi uchun berilgan funksiya; keyingi darslarda chuqurlashadi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Chet bo‘shliqlar olib tashlangan Ali chiqishi kerak. Nega asl matn qolgan?",
+        "brokenCode": "const ism = \"  Ali  \";\nism.trim();\nconsole.log(ism);",
+        "fixedCode": "const ism = \"  Ali  \";\nconst toza = ism.trim();\nconsole.log(toza);",
+        "expectedOutput": [
+          "Ali"
+        ],
+        "explanation": "trim yangi string qaytaradi. Natijani alohida nomga oldik, asl stringni joyida o‘zgartirishga urinmadik.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "\"  Ali Valiyev  \" ni tozalang, katta harfli ko‘rinishini va bosh harflarini A.V. shaklida oling.",
+        "criteria": [
+          "\"  Ali Valiyev  \" dan chet bo‘shliqlarsiz matn chiqadi.",
+          "Katta harfli ko‘rinish va A.V. bosh harflari chiqadi.",
+          "Asl string va yangi natija farqini tushuntirasiz."
+        ],
+        "hint": "trim bilan tozalang, split(\" \") bilan ikkita qism oling, har qismning [0] belgisini nuqtalar bilan birlashtiring. Bu sodda yechim aynan ikkita, bitta bo‘shliq bilan ajratilgan ismga mos."
+      }
+    }
   },
   {
     "id": "operators",
@@ -1562,7 +2337,54 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_operators"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Amal ustunligi, qiymat berish va taqqoslash farqini bilib, to‘g‘ri hisoblash ifodasini yozasiz.",
+      "prerequisites": [
+        "numbers-math",
+        "typeof"
+      ],
+      "terms": [
+        {
+          "term": "Ifoda",
+          "meaning": "Hisoblanib bir qiymat beradigan kod: 2 + 3."
+        },
+        {
+          "term": "Operand",
+          "meaning": "Operator ishlaydigan qiymat: x * 2 da x va 2."
+        },
+        {
+          "term": "Qisqa baholash",
+          "meaning": "Natija ma’lum bo‘lsa o‘ng tomondagi ifoda bajarilmasligi."
+        },
+        {
+          "term": "Ternary",
+          "meaning": "Shartga qarab ikki qiymatdan birini tanlash: shart ? ha : yo‘q."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "200 ning 10 foizi 20 bo‘lishi kerak. Qoldiq bilan foizni adashtirmang.",
+        "brokenCode": "const summa = 200;\nconsole.log(summa % 10);",
+        "fixedCode": "const summa = 200;\nconsole.log(summa * 10 / 100);",
+        "expectedOutput": [
+          20
+        ],
+        "explanation": "% bo‘lish qoldig‘i. Foiz uchun asosiy summani foizga ko‘paytirib 100 ga bo‘lamiz.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Narx, dona va chegirma foizidan yakuniy summani hisoblang. Dona 0 bo‘lsa uni yo‘q qiymat deb almashtirmang. Hisoblash tartibini qavs bilan ko‘rsating.",
+        "criteria": [
+          "3 dona 10 lik mahsulot jami 30 bo‘ladi.",
+          "10 foiz chegirma bilan natija 27 bo‘ladi.",
+          "Dona 0 bo‘lganda zaxira bilan almashtirilmaydi."
+        ],
+        "hint": "jami = narx * dona; chegirma = jami * foiz / 100; natija = jami - chegirma. Kiritish son ekanini va diapazonlarini tekshiring."
+      }
+    }
   },
   {
     "id": "conditionals",
@@ -1646,7 +2468,50 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Control_flow_and_error_handling"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "if/else va switch bilan bitta mos yo‘lni tanlaysiz, kirish xatosini alohida ajratasiz.",
+      "prerequisites": [
+        "operators",
+        "truthy-falsy"
+      ],
+      "terms": [
+        {
+          "term": "Shart",
+          "meaning": "Qaysi kod yo‘li ishlashini belgilaydigan ifoda."
+        },
+        {
+          "term": "Tarmoq",
+          "meaning": "Shartga qarab bajariladigan kod qismi."
+        },
+        {
+          "term": "Guard clause",
+          "meaning": "Xato yoki istisno holatida funksiyadan erta qaytish."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "95 ball A baho olishi kerak. Nega birinchi shart B ni tanlayapti?",
+        "brokenCode": "const ball = 95;\nif (ball >= 70) console.log(\"B\");\nelse if (ball >= 90) console.log(\"A\");",
+        "fixedCode": "const ball = 95;\nif (ball >= 90) console.log(\"A\");\nelse if (ball >= 70) console.log(\"B\");",
+        "expectedOutput": [
+          "A"
+        ],
+        "explanation": "Zanjir birinchi mos shartda to‘xtaydi. Yuqori chegara oldinga olindi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "0–100 ball uchun A/B/C baho chiqaring. Noto‘g‘ri tur, NaN yoki diapazondan tashqaridagi qiymatga alohida xabar yozing. Yuqori chegaralarni oldin tekshiring.",
+        "criteria": [
+          "95 uchun A, 85 uchun B chiqadi.",
+          "Chegaraviy 0 va 100 yaroqli baholanadi.",
+          "-1, 101, NaN yoki matn uchun aniq xato chiqadi."
+        ],
+        "hint": "Avval Number.isFinite(ball), 0 <= ball va ball <= 100 ni tekshiring. Keyin >=90, >=70, qolgan holat tartibida if/else yozing."
+      }
+    }
   },
   {
     "id": "loops",
@@ -1741,7 +2606,66 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Loops_and_iteration"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Takrorlashning boshlanishi, sharti va qadamini kuzatib, tugaydigan tsikl yozasiz.",
+      "prerequisites": [
+        "var-let-const",
+        "conditionals"
+      ],
+      "terms": [
+        {
+          "term": "Iteratsiya",
+          "meaning": "Tsiklning bitta takrorlanishi."
+        },
+        {
+          "term": "Indeks",
+          "meaning": "Ro‘yxatdagi joy raqami; birinchisi 0."
+        },
+        {
+          "term": "Massiv",
+          "meaning": "[] ichida tartib bilan saqlangan qiymatlar ro‘yxati."
+        },
+        {
+          "term": "Kalit",
+          "meaning": "Obyekt maydonining nomi; for...in nomlarni beradi."
+        }
+      ],
+      "warmup": {
+        "title": "for...of dan oldin: ro‘yxat nima?",
+        "text": "Massiv qiymatlar ro‘yxati. [0] birinchisini, length uzunligini beradi. Hozir faqat shu ikki narsani bilish yetarli; massivlarning to‘liq darsi keyin keladi.",
+        "code": "const sonlar = [10, 20];\nconsole.log(sonlar[0]);\nconsole.log(sonlar.length);",
+        "expectedOutput": [
+          10,
+          2
+        ],
+        "explanation": "10 — birinchi qiymat. 2 — ro‘yxat uzunligi. for...of shu qiymatlarni navbat bilan oladi.",
+        "runtime": "javascript"
+      }
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Faqat 10 va 20 chiqsin. Qaysi qadamda yo‘q indeks o‘qilyapti?",
+        "brokenCode": "const a = [10, 20];\nfor (let i = 0; i <= a.length; i++) console.log(a[i]);",
+        "fixedCode": "const a = [10, 20];\nfor (let i = 0; i < a.length; i++) console.log(a[i]);",
+        "expectedOutput": [
+          10,
+          20
+        ],
+        "explanation": "Uzunlik 2, lekin mavjud indekslar 0 va 1. < oxirgi yo‘q indeksga borishni to‘xtatdi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "1 dan n gacha sonlar yig‘indisini va faqat juftlarini hisoblang. Keyin bir xil ro‘yxatni for va for...of bilan o‘qib natijalarni solishtiring.",
+        "criteria": [
+          "n=3 uchun umumiy yig‘indi 6 bo‘ladi.",
+          "n=0 uchun ikkala yig‘indi 0 bo‘ladi.",
+          "Juft yig‘indiga faqat 2 ga qoldiqsiz bo‘linadiganlar kiradi."
+        ],
+        "hint": "jami va juftJami ni 0 dan boshlang. for i=1; i<=n; i++ ichida jami ga qo‘shing, i%2===0 bo‘lsa juftJami ga ham qo‘shing."
+      }
+    }
   },
   {
     "id": "objects-basics",
@@ -1836,7 +2760,64 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_objects"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Kalit orqali ma’lumot o‘qiysiz, yangilaysiz va own property mavjudligini tekshirasiz.",
+      "prerequisites": [
+        "data-types",
+        "conditionals"
+      ],
+      "terms": [
+        {
+          "term": "Xususiyat",
+          "meaning": "Obyektdagi nom va qiymat juftligi."
+        },
+        {
+          "term": "Kalit",
+          "meaning": "Xususiyatning nomi; obj[\"ism\"] da ism."
+        },
+        {
+          "term": "Metod",
+          "meaning": "Obyekt ichida saqlangan va chaqiriladigan funksiya."
+        },
+        {
+          "term": "Own property",
+          "meaning": "Prototipdan kelmagan, obyektning o‘ziga tegishli maydon."
+        }
+      ],
+      "warmup": {
+        "title": "Metoddan oldin: () nimani bildiradi?",
+        "text": "Funksiya — chaqirilganda bajariladigan ish. Parametr kirish nomi, return javobni qaytarish. Bu mavzuda to‘liq funksiyalar darsidan oldin shuncha tayyorgarlik yetarli.",
+        "code": "function ikki(son) { return son * 2; }\nconsole.log(ikki(3));",
+        "expectedOutput": [
+          6
+        ],
+        "explanation": "ikki(3) ichida son=3 bo‘ladi. return 6 ni qaytaradi; console.log uni chiqaradi.",
+        "runtime": "javascript"
+      }
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "O‘zgaruvchi ko‘rsatgan yosh maydonini o‘qing.",
+        "brokenCode": "const user = { yosh: 20 };\nconst kalit = \"yosh\";\nconsole.log(user.kalit);",
+        "fixedCode": "const user = { yosh: 20 };\nconst kalit = \"yosh\";\nconsole.log(user[kalit]);",
+        "expectedOutput": [
+          20
+        ],
+        "explanation": "Nuqtadan keyin literal nom o‘qiladi. [] ichida kalit o‘zgaruvchisining qiymati hisoblanadi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Mahsulot obyektini nom, narx, dona bilan yarating. Qiymatni yangilang, jami narxni hisoblaydigan metod yozing va kerakli kalit borligini tekshiring.",
+        "criteria": [
+          "Nom, narx va dona obyekt ichida saqlanadi.",
+          "jami metodi shu obyekt qiymatlaridan hisoblaydi.",
+          "Yo‘q maydon bilan undefined qiymatli mavjud maydon ajratiladi."
+        ],
+        "hint": "jami() { return this.narx * this.dona; } metodini qo‘shing. Metodni mahsulot.jami() shaklida chaqiring; Object.hasOwn bilan maydonlarni tekshiring."
+      }
+    }
   },
   {
     "id": "arrays-basics",
@@ -1950,7 +2931,54 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Tartibli ro‘yxatdan qiymat olasiz va qaysi amal asl massivni o‘zgartirishini bilasiz.",
+      "prerequisites": [
+        "objects-basics",
+        "loops"
+      ],
+      "terms": [
+        {
+          "term": "Element",
+          "meaning": "Massivdagi bitta qiymat."
+        },
+        {
+          "term": "Mutatsiya",
+          "meaning": "Mavjud massiv yoki obyektning ichini o‘zgartirish."
+        },
+        {
+          "term": "Yuzaki nusxa",
+          "meaning": "Yangi tashqi massiv, ammo ichki obyektlarga ishoralar umumiy bo‘lishi mumkin."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Natijada yangi elementli massiv ko‘rinsin, uzunlik emas.",
+        "brokenCode": "const a = [1, 2];\nconst natija = a.push(3);\nconsole.log(natija);",
+        "fixedCode": "const a = [1, 2];\na.push(3);\nconsole.log(a);",
+        "expectedOutput": [
+          [
+            1,
+            2,
+            3
+          ]
+        ],
+        "explanation": "push yangi uzunlik qaytaradi. Yangilangan ro‘yxatni ko‘rish uchun massivning o‘zini o‘qidik.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Vazifalar ro‘yxati yarating. Oxiriga qo‘shish, boshidan olib tashlash va bir qismini nusxalashni bajaring; asl ro‘yxat qachon o‘zgarganini yozing.",
+        "criteria": [
+          "Vazifa push bilan oxiriga qo‘shiladi.",
+          "shift aynan birinchi elementni qaytaradi va olib tashlaydi.",
+          "slice natijasini olish asl ro‘yxatni qisqartirmaydi."
+        ],
+        "hint": "push qaytargan qiymatni ro‘yxat deb qabul qilmang. shift() birinchi vazifani oladi, slice(0,2) ikki elementli yangi tashqi nusxa beradi."
+      }
+    }
   },
   {
     "id": "json-basics",
@@ -2032,7 +3060,64 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Obyekt bilan JSON matnini ajratasiz, sintaksis va mazmun xatosini alohida tekshirasiz.",
+      "prerequisites": [
+        "strings",
+        "objects-basics"
+      ],
+      "terms": [
+        {
+          "term": "JSON",
+          "meaning": "Ma’lumot almashish uchun aniq qoidalarga ega matn formati."
+        },
+        {
+          "term": "Serialize",
+          "meaning": "Ma’lumotni saqlash yoki yuborish uchun matnga aylantirish."
+        },
+        {
+          "term": "Parse",
+          "meaning": "Formatdagi matnni o‘qib qiymatga aylantirish."
+        },
+        {
+          "term": "Sxema",
+          "meaning": "Qaysi maydon va qanday turdagi qiymat kerakligini belgilovchi qoida."
+        }
+      ],
+      "warmup": {
+        "title": "JSON.parse xatosini qanday ko‘rsatamiz?",
+        "text": "try ichidagi ish xato bersa catch shu xatoni ushlaydi. Bu yerda faqat noto‘g‘ri JSON misoli dasturni to‘xtatmasligi uchun ishlatamiz; xatolar darsi keyin keladi.",
+        "code": "try { JSON.parse(\"xato\"); }\ncatch (e) { console.log(e.name); }",
+        "expectedOutput": [
+          "SyntaxError"
+        ],
+        "explanation": "catch dagi e — xato haqidagi obyekt; name xato turini bildiradi. JSON.parse bajarilishdagi xatoni shu yo‘l bilan ushlash mumkin.",
+        "runtime": "javascript"
+      }
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Ism o‘qilishi kerak. JSON da oxirgi ortiqcha vergul mumkinmi?",
+        "brokenCode": "console.log(JSON.parse('{\"ism\":\"Ali\",}').ism);",
+        "fixedCode": "console.log(JSON.parse('{\"ism\":\"Ali\"}').ism);",
+        "expectedOutput": [
+          "Ali"
+        ],
+        "explanation": "JSON obyektidagi oxirgi maydondan keyingi ortiqcha vergul olib tashlandi. JavaScript obyekt literali va JSON qoidasi aynan bir xil emas.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "JSON sozlamalar matnini o‘qing. Buzilgan JSON ga xato xabar bering; muvaffaqiyatli o‘qilganda theme faqat light yoki dark ekanini tekshiring.",
+        "criteria": [
+          "To‘g‘ri light/dark sozlama qabul qilinadi.",
+          "Buzilgan JSON dasturni to‘xtatmasdan xabar beradi.",
+          "Sintaksisi to‘g‘ri, lekin theme qiymati noto‘g‘ri JSON ham rad etiladi."
+        ],
+        "hint": "try/catch ichida parse qiling. Natija oddiy obyektga mosligini, so‘ng theme ruxsat etilgan qiymatlardan biriligini tekshiring; format xatosi bilan nomaqbul sozlamani farqlang."
+      }
+    }
   },
   {
     "id": "errors-try-catch",
@@ -2112,7 +3197,54 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/try...catch"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Xatoni aniqlab tashlaysiz, kerakli joyda ushlaysiz va tozalash kodini ajratasiz.",
+      "prerequisites": [
+        "functions",
+        "json-basics"
+      ],
+      "terms": [
+        {
+          "term": "throw",
+          "meaning": "Joriy oddiy bajarilishni uzib xato yuborish."
+        },
+        {
+          "term": "catch",
+          "meaning": "try ichidagi xato boshqaruvini qabul qiladigan blok."
+        },
+        {
+          "term": "finally",
+          "meaning": "try/catch yo‘lidan keyin yakunlovchi kod uchun blok."
+        },
+        {
+          "term": "Validation",
+          "meaning": "Kirish talabga mosligini tekshirish."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Manfiy kirish xato sifatida catch ga tushishi kerak. Error yaratishning o‘zi yetarlimi?",
+        "brokenCode": "function tekshir(n) { if (n < 0) new Error(\"Manfiy\"); return n; }\ntry { console.log(tekshir(-1)); } catch (e) { console.log(e.message); }",
+        "fixedCode": "function tekshir(n) { if (n < 0) throw new Error(\"Manfiy\"); return n; }\ntry { console.log(tekshir(-1)); } catch (e) { console.log(e.message); }",
+        "expectedOutput": [
+          "Manfiy"
+        ],
+        "explanation": "new Error faqat xato obyektini yaratadi. Uni throw qilganda boshqaruv catch ga o‘tadi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "JSON qabul qiladigan funksiya yozing: noto‘g‘ri JSON va noto‘g‘ri yosh maydonini alohida xabar bilan rad etsin. Muvaffaqiyat va xato holatlarini test qiling.",
+        "criteria": [
+          "Buzilgan JSON uchun sintaksis xabari bor.",
+          "To‘g‘ri JSON ichidagi noto‘g‘ri yosh ham rad etiladi.",
+          "Kutilmagan xato jim yutilib ketmaydi."
+        ],
+        "hint": "parse ichidagi SyntaxError ni ajrating; keyin natija null emas, obyekt va yosh Number.isFinite bilan to‘g‘ri ekanini tekshiring. Foydalanuvchi xabari bilan dasturchi diagnostikasini maqsadga mos ajrating."
+      }
+    }
   },
   {
     "id": "modules",
@@ -2188,7 +3320,55 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Kodlarni alohida fayllarga ajratib, named/default exportni to‘g‘ri import qilasiz.",
+      "prerequisites": [
+        "js-intro",
+        "functions",
+        "scope"
+      ],
+      "terms": [
+        {
+          "term": "Modul",
+          "meaning": "O‘z scope iga ega alohida JavaScript fayli."
+        },
+        {
+          "term": "Export",
+          "meaning": "Modul tashqarisiga ochilgan nom yoki default qiymat."
+        },
+        {
+          "term": "Import",
+          "meaning": "Boshqa modul eksportiga bog‘lanish."
+        },
+        {
+          "term": "Live binding",
+          "meaning": "Eksport o‘zgarsa import orqali keyingi o‘qish ham yangilangan qiymatni ko‘rishi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "counter.mjs ichidagi eksport qilingan hisob keyin yangilanishi kerak.",
+        "brokenCode": "export const hisob = 1;\nhisob = 2;\nconsole.log(hisob);",
+        "fixedCode": "export let hisob = 1;\nhisob = 2;\nconsole.log(hisob);",
+        "expectedOutput": [
+          2
+        ],
+        "explanation": "Bu faylni ES modul sifatida bajaring. Eksport bo‘lish const ning qayta biriktirish taqiqini olib tashlamaydi; o‘zgaradigan binding uchun let tanlandi.",
+        "runtime": "module"
+      },
+      "write": {
+        "task": "Narx hisoblashni math.mjs ga, mahsulotlarni data.mjs ga, natijani ko‘rsatishni main.mjs ga ajrating. Named, default va as bilan import qilishni sinang.",
+        "criteria": [
+          "math.mjs, data.mjs va main.mjs alohida fayllar.",
+          "Named/default import o‘z qoidasi bilan ishlaydi.",
+          "Eksport qilinmagan ichki nom tashqaridan o‘qilmaydi."
+        ],
+        "hint": "Fayllar nomi va ./ nisbiy yo‘lini tekshiring. main.mjs ni ishga tushiring. Import qilingan bindingga qayta qiymat yozmang; eksport qilingan funksiya orqali holatni yangilang."
+      }
+    }
   },
   {
     "id": "closures",
@@ -2261,7 +3441,51 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Ichki funksiya tashqi o‘zgaruvchiga keyin ham qanday murojaat qilishini tushuntirasiz.",
+      "prerequisites": [
+        "functions",
+        "scope"
+      ],
+      "terms": [
+        {
+          "term": "Closure",
+          "meaning": "Funksiya bilan u yaratilgan lexical muhit bog‘lanishi."
+        },
+        {
+          "term": "Holat",
+          "meaning": "Chaqirishlar orasida saqlanadigan o‘zgaruvchi qiymatlari."
+        },
+        {
+          "term": "Lexical muhit",
+          "meaning": "Nomlar va ularning tashqi hududlar bilan bog‘lanishi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Ketma-ket 1 va 2 chiqishi kerak. Nega holat har safar 0 dan boshlanyapti?",
+        "brokenCode": "function keyingi() { let n = 0; return ++n; }\nconsole.log(keyingi());\nconsole.log(keyingi());",
+        "fixedCode": "function yarat() { let n = 0; return () => ++n; }\nconst keyingi = yarat();\nconsole.log(keyingi());\nconsole.log(keyingi());",
+        "expectedOutput": [
+          1,
+          2
+        ],
+        "explanation": "n tashqi yarat muhitida bir marta yaratildi. Qaytgan keyingi funksiyasi shu bindingni chaqirishlar orasida ushlab turadi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Hisoblagichni oshir, kamaytir, qiymat metodlari bilan yarating. Ikki nusxasi mustaqil ishlasin va hisob o‘zgaruvchisi tashqaridan bevosita ko‘rinmasin.",
+        "criteria": [
+          "Bitta hisoblagich 1, keyin 2 qaytaradi.",
+          "Ikkinchi hisoblagich yana 1 dan boshlanadi.",
+          "Ichki n tashqi obyektning ochiq maydoni sifatida o‘qilmaydi."
+        ],
+        "hint": "Tashqi funksiya ichida let n saqlang. Ob’yekt metodlari n ni o‘qisin va yangilasin. Har yarat() chaqiruvi yangi lexical muhit beradi."
+      }
+    }
   },
   {
     "id": "prototypes",
@@ -2349,7 +3573,55 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Xususiyat qidiruvini obyekt va prototiplar bo‘yicha kuzatib, own property ni ajratasiz.",
+      "prerequisites": [
+        "objects-basics",
+        "functions",
+        "this-keyword"
+      ],
+      "terms": [
+        {
+          "term": "Prototype",
+          "meaning": "Obyekt o‘zida topmagan xususiyatni qidiradigan keyingi obyekt."
+        },
+        {
+          "term": "Konstruktor",
+          "meaning": "new bilan instance yaratishda ishlatiladigan funksiya yoki class."
+        },
+        {
+          "term": "Instance",
+          "meaning": "Konstruktor/class orqali yaratilgan alohida obyekt."
+        },
+        {
+          "term": "Zanjir",
+          "meaning": "Keyingi prototiplar bo‘yicha null gacha davom etadigan qidiruv."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "x faqat prototipda. Obyektning o‘zida bormi degan savolga false kerak.",
+        "brokenCode": "const ota = { x: 1 };\nconst bola = Object.create(ota);\nconsole.log(\"x\" in bola);",
+        "fixedCode": "const ota = { x: 1 };\nconst bola = Object.create(ota);\nconsole.log(Object.hasOwn(bola, \"x\"));",
+        "expectedOutput": [
+          false
+        ],
+        "explanation": "in prototip zanjirini ham tekshiradi. Faqat own property kerak bo‘lsa Object.hasOwn mos.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Bir salom metodini ikki User obyektiga prototype orqali ulashing. Metod reference i bir xil, ism qiymatlari esa mustaqil ekanini test qiling.",
+        "criteria": [
+          "Ikki User ism holati mustaqil bo‘ladi.",
+          "Ularning prototype metodi reference i bir xil bo‘ladi.",
+          "in va Object.hasOwn farqi ko‘rsatiladi."
+        ],
+        "hint": "User.prototype.salom ni bir marta yarating, new User bilan ikki instance oling. a.salom === b.salom true, a.ism va b.ism o‘zgarishi esa mustaqil bo‘lsin."
+      }
+    }
   },
   {
     "id": "classes",
@@ -2435,7 +3707,54 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Instance maydoni, prototype metodi, static metod va merosni ajratasiz.",
+      "prerequisites": [
+        "prototypes",
+        "this-keyword"
+      ],
+      "terms": [
+        {
+          "term": "constructor",
+          "meaning": "Yangi instance holatini boshlaydigan maxsus metod."
+        },
+        {
+          "term": "extends",
+          "meaning": "Bola classni ota class bilan bog‘lash sintaksisi."
+        },
+        {
+          "term": "super",
+          "meaning": "Ota constructor yoki metodiga murojaat vositasi."
+        },
+        {
+          "term": "Override",
+          "meaning": "Bolada ota metodining shu nomli yangi xulqini berish."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Bola constructorda this dan oldin nima bajarilishi kerak?",
+        "brokenCode": "class A { constructor(n) { this.n=n; } }\nclass B extends A { constructor(n) { this.ikki=n*2; super(n); } }\nconsole.log(new B(3).ikki);",
+        "fixedCode": "class A { constructor(n) { this.n=n; } }\nclass B extends A { constructor(n) { super(n); this.ikki=n*2; } }\nconsole.log(new B(3).ikki);",
+        "expectedOutput": [
+          6
+        ],
+        "explanation": "Derived constructorda this ni ishlatishdan oldin super chaqiriladi. Ota constructor boshlang‘ich holatni yaratdi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Mahsulot classidan ChegirmaliMahsulot yarating. Ota constructor nom va narxni saqlasin, bola foizni tekshirsin va yakuniy narx metodini override qilsin.",
+        "criteria": [
+          "Bola constructor this dan oldin super chaqiradi.",
+          "Foiz chegarasi tekshiriladi.",
+          "Override natijasi ota qiymati va foizga mos hisoblanadi."
+        ],
+        "hint": "super(nom,narx) chaqiring, foiz uchun 0–100 chegarani tekshiring, narx() ichida ota qiymatini olib foizni qo‘llang. Ruxsat etilgan kirish va chegaralarni test qiling."
+      }
+    }
   },
   {
     "id": "callbacks",
@@ -2529,7 +3848,50 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Glossary/Callback_function"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Funksiyaning o‘zini uzatish bilan uni darhol chaqirish farqini bilasiz.",
+      "prerequisites": [
+        "functions",
+        "array-methods"
+      ],
+      "terms": [
+        {
+          "term": "Callback",
+          "meaning": "Boshqa funksiya kerakli paytda chaqirishi uchun berilgan funksiya."
+        },
+        {
+          "term": "Yuqori darajali funksiya",
+          "meaning": "Funksiya qabul qiladigan yoki qaytaradigan funksiya."
+        },
+        {
+          "term": "Sinxron",
+          "meaning": "Hozirgi ish tugab, keyingisi boshlanadigan ketma-ket bajarilish."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "bajar funksiyasiga ikki funksiyasini yuboring. Natijani erta yuborib qo‘ymang.",
+        "brokenCode": "function ikki(x) { return x * 2; }\nfunction bajar(fn) { return fn(3); }\nconsole.log(bajar(ikki()));",
+        "fixedCode": "function ikki(x) { return x * 2; }\nfunction bajar(fn) { return fn(3); }\nconsole.log(bajar(ikki));",
+        "expectedOutput": [
+          6
+        ],
+        "explanation": "ikki() hozir ishlaydi va uning natijasi yuboriladi. ikki deb yozsak funksiya reference i beriladi, bajar uni 3 argumenti bilan chaqiradi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "filtrlash(ro‘yxat, qoida) funksiya yozing. U qoida(x) true qaytargan qiymatlarni yangi massivga yig‘sin. Uni juft son va musbat son qoidalari bilan sinang.",
+        "criteria": [
+          "Bir yordamchi ikki xil qoida bilan ishlaydi.",
+          "Qoida natijasiga mos yangi massiv qaytariladi.",
+          "Funksiyani uzatishda fn yoziladi, fn() bilan erta bajarib yuborilmaydi."
+        ],
+        "hint": "for...of bilan aylaning; if (qoida(x)) yangi massivga push qiling va oxirida uni return qiling. Asl ro‘yxatni o‘zgartirmang."
+      }
+    }
   },
   {
     "id": "iterators-generators",
@@ -2612,7 +3974,62 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_generators"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Iterable bilan iteratorni ajratasiz, generatorni qadam bilan o‘qib erta yopishni bilasiz.",
+      "prerequisites": [
+        "loops",
+        "arrays-basics",
+        "functions"
+      ],
+      "terms": [
+        {
+          "term": "Iterable",
+          "meaning": "Symbol.iterator orqali aylanishni boshlash usulini beradigan obyekt."
+        },
+        {
+          "term": "Iterator",
+          "meaning": "next() bilan navbatdagi value va done holatini qaytaradigan obyekt."
+        },
+        {
+          "term": "yield",
+          "meaning": "Generator qiymat berib, keyingi next gacha to‘xtaydigan joy."
+        },
+        {
+          "term": "done",
+          "meaning": "Ketma-ketlik tugaganini bildiruvchi boolean."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Ikki yurishda ham 1 va 2 chiqsin. Tugagan iteratorni qayta ishlatyapsizmi?",
+        "brokenCode": "function* g() { yield 1; yield 2; }\nconst it=g();\nconsole.log([...it]);\nconsole.log([...it]);",
+        "fixedCode": "function* g() { yield 1; yield 2; }\nconsole.log([...g()]);\nconsole.log([...g()]);",
+        "expectedOutput": [
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "explanation": "Generator obyekti yurish holatini saqlaydi. Tugagach boshiga qaytmaydi; har yurish uchun g() yangi iterator yaratadi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "1 dan n gacha sonlar beradigan generator yozing. Birinchi qiymatni next bilan olib, qolganini for...of bilan yig‘ing. Generatorni qayta ishlatish uchun yangisini yarating.",
+        "criteria": [
+          "Birinchi next birinchi qiymatni oladi.",
+          "Qolgan qiymatlar tsiklda to‘g‘ri yig‘iladi.",
+          "Qayta boshidan o‘qish uchun yangi generator yaratiladi."
+        ],
+        "hint": "function* oraliq(n) { for(let i=1;i<=n;i++) yield i; }. G=oraliq(3) ni bir marta o‘qing va ikkinchi to‘liq aylanish uchun oraliq(3) ni qayta chaqiring."
+      }
+    }
   },
   {
     "id": "map-set",
@@ -2705,7 +4122,55 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Kalit-qiymat uchun Map va takrorlanmaydigan ro‘yxat uchun Set tanlaysiz.",
+      "prerequisites": [
+        "objects-basics",
+        "arrays-basics",
+        "loops"
+      ],
+      "terms": [
+        {
+          "term": "Map",
+          "meaning": "Turli kalitlar bilan qiymat saqlaydigan kolleksiya."
+        },
+        {
+          "term": "Set",
+          "meaning": "Har bir teng qiymatni bir marta saqlaydigan kolleksiya."
+        },
+        {
+          "term": "new",
+          "meaning": "Tayyor konstruktor yordamida yangi obyekt yaratish amali."
+        },
+        {
+          "term": "Iteratsiya",
+          "meaning": "Qiymatlarni navbat bilan o‘qib chiqish."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Takror obyektlar emas, noyob id lar soni 1 chiqishi kerak.",
+        "brokenCode": "const users = [{ id: 1 }, { id: 1 }];\nconsole.log(new Set(users).size);",
+        "fixedCode": "const users = [{ id: 1 }, { id: 1 }];\nconst ids = users.map(user => user.id);\nconsole.log(new Set(ids).size);",
+        "expectedOutput": [
+          1
+        ],
+        "explanation": "Set obyekt tarkibini chuqur solishtirmaydi. Noyob id kerak bo‘lsa, oldin id qiymatlarini ajratamiz.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Ismlar ro‘yxatidan noyob ismlarni Set bilan oling. Map yordamida har bir ism necha marta qatnashganini sanang.",
+        "criteria": [
+          "Takror ismlar bitta noyob ro‘yxatga tushadi.",
+          "Har ismning sanog‘i Map da to‘g‘ri bo‘ladi.",
+          "Bo‘sh kirish bo‘sh natija beradi."
+        ],
+        "hint": "const counts = new Map(); for (const ism of ismlar) counts.set(ism,(counts.get(ism) ?? 0)+1). Noyob nomlar uchun [...counts.keys()] yoki [...new Set(ismlar)] oling."
+      }
+    }
   },
   {
     "id": "regex-basics",
@@ -2792,7 +4257,55 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Qisman qidiruv bilan butun matnni tekshirish farqini bilib, kichik validator yozasiz.",
+      "prerequisites": [
+        "strings",
+        "conditionals"
+      ],
+      "terms": [
+        {
+          "term": "Naqsh",
+          "meaning": "Qanday belgilar ketma-ketligi qidirilishini bildiradigan qoida."
+        },
+        {
+          "term": "Anchor",
+          "meaning": "^ va $ kabi bosh/oxir chegarasini bildiruvchi belgi."
+        },
+        {
+          "term": "Flag",
+          "meaning": "Regex xulqini o‘zgartiradigan i, g, u kabi belgi."
+        },
+        {
+          "term": "Guruh",
+          "meaning": "(...) bilan ajratilgan, natijasini keyin olish mumkin bo‘lgan naqsh qismi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Faqat raqamlardan iborat butun matn qabul qilinsin. a123 rad etilishi kerak.",
+        "brokenCode": "console.log(/\\d+/.test(\"a123\"));",
+        "fixedCode": "console.log(/^\\d+$/.test(\"a123\"));\nconsole.log(/^\\d+$/.test(\"123\"));",
+        "expectedOutput": [
+          false,
+          true
+        ],
+        "explanation": "Anchorlarsiz naqsh istalgan joydagi mos bo‘lakni topadi. ^ va $ butun matn bo‘yicha tekshirishni talab qildi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "3–5 ta ASCII raqamdan iborat kodni tekshiring. Bo‘sh, qisqa, uzun va ichida harf bor holatlarni test qiling. Sana regexi kalendar to‘g‘riligini alohida tekshirishga muhtoj ekanini ayting.",
+        "criteria": [
+          "\"1234\" yaroqli, \"a123\" yaroqsiz bo‘ladi.",
+          "2 va 6 raqamli kodlar rad etiladi.",
+          "Takroriy tekshiruvlar g flagning lastIndex holatiga bog‘lanmaydi."
+        ],
+        "hint": "const qoida=/^\\d{3,5}$/; bilan testlar yozing. g flag bu oddiy validatorga kerak emas. Regex formatni tekshiradi, foydalanuvchi haqiqatan kimligini tasdiqlamaydi."
+      }
+    }
   },
   {
     "id": "dates",
@@ -2880,7 +4393,54 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Timestamp, UTC va ko‘rinadigan mahalliy sana farqini bilib, vaqt oralig‘ini hisoblaysiz.",
+      "prerequisites": [
+        "numbers-math",
+        "objects-basics"
+      ],
+      "terms": [
+        {
+          "term": "Timestamp",
+          "meaning": "1970-01-01 UTC dan o‘tgan millisekundlar soni."
+        },
+        {
+          "term": "UTC",
+          "meaning": "Vaqt lahzalarini yagona tayanchda ifodalash standarti."
+        },
+        {
+          "term": "Time zone",
+          "meaning": "Bir vaqt lahzasining mahalliy ko‘rinishini belgilaydigan hudud qoidalari."
+        },
+        {
+          "term": "DST",
+          "meaning": "Ba’zi hududlarda yil davomida soat siljishi qoidasi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Yanvar oyining raqami 1 chiqishi kerak. Konstruktorda oy qayerdan boshlanadi?",
+        "brokenCode": "const d = new Date(Date.UTC(2026, 1, 1));\nconsole.log(d.getUTCMonth() + 1);",
+        "fixedCode": "const d = new Date(Date.UTC(2026, 0, 1));\nconsole.log(d.getUTCMonth() + 1);",
+        "expectedOutput": [
+          1
+        ],
+        "explanation": "Raqamli konstruktorda 0 — yanvar. Foydalanuvchiga 1–12 ko‘rsatish uchun natijaga 1 qo‘shildi; UTC usullari muhit zonasidan mustaqil.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Ikki UTC sana orasidagi soatlarni toping. Keyin bir vaqtni Intl.DateTimeFormat bilan Asia/Samarkand va UTC zonalarida ko‘rsating. Natijada timestamp emas ko‘rinish o‘zgarishini tekshiring.",
+        "criteria": [
+          "Ikki UTC kun oralig‘i 48 soat bo‘ladi.",
+          "Bir timestamp ikki zonada turlicha ko‘rsatiladi.",
+          "Noto‘g‘ri sana Invalid Date/NaN sifatida aniqlanadi."
+        ],
+        "hint": "ISO satrlarni Z bilan yarating, getTime farqini 3600000 ga bo‘ling. Formatda {timeZone:\"Asia/Samarkand\"} ni aniq yozing. Har doim foydalanuvchi talabi sana yoki vaqt lahzasi ekanini aniqlang."
+      }
+    }
   },
   {
     "id": "fetch-api",
@@ -2961,7 +4521,55 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Response ni va uning tanasini alohida kutib, HTTP xatoni tarmoq xatosidan ajratasiz.",
+      "prerequisites": [
+        "promises-async",
+        "json-basics",
+        "web-apis"
+      ],
+      "terms": [
+        {
+          "term": "HTTP status",
+          "meaning": "Server javobining natija kodi: 200, 404 kabi."
+        },
+        {
+          "term": "Response",
+          "meaning": "Status, header va javob tanasiga kirishni beradigan obyekt."
+        },
+        {
+          "term": "Body",
+          "meaning": "So‘rov yoki javobning ma’lumot qismi."
+        },
+        {
+          "term": "CORS",
+          "meaning": "Brauzer boshqa origin javobini o‘qishiga server ruxsat berishini boshqaradigan qoida."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "404 javob uchun muvaffaqiyat emas, HTTP 404 chiqishi kerak.",
+        "brokenCode": "const r = new Response(\"Topilmadi\", { status: 404 });\nconsole.log(r ? \"ok\" : \"xato\");",
+        "fixedCode": "const r = new Response(\"Topilmadi\", { status: 404 });\nconsole.log(r.ok ? \"ok\" : `HTTP ${r.status}`);",
+        "expectedOutput": [
+          "HTTP 404"
+        ],
+        "explanation": "Response obyekti mavjudligi HTTP muvaffaqiyat belgisi emas. ok status 200–299 oralig‘ini bildiradi. Bu misol tarmoqqa chiqmaydi.",
+        "runtime": "async"
+      },
+      "write": {
+        "task": "O‘zingiz nazorat qiladigan JSON endpointdan ro‘yxat oling. Loading, muvaffaqiyat, bo‘sh ro‘yxat, HTTP xato, JSON xato va bekor qilish holatlarini ko‘rsating.",
+        "criteria": [
+          "Loading, bo‘sh natija va muvaffaqiyat holatlari farqlanadi.",
+          "404/500 uchun ok tekshiriladi.",
+          "Bekor qilingan so‘rov oddiy HTTP xatosi deb ko‘rsatilmaydi."
+        ],
+        "hint": "try ichida fetch, ok tekshiruvi, 204 holati va json ni ajrating. catch da AbortError ni oddiy server xatosidan farqlang. Haqiqiy endpoint bo‘lmasa Response bilan mashq qiling."
+      }
+    }
   },
   {
     "id": "events-advanced",
@@ -3044,7 +4652,55 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/Event_bubbling"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Hodisa nishoni, listener qabul qiluvchisi va tarqalishni farqlaysiz.",
+      "prerequisites": [
+        "dom-basics",
+        "callbacks"
+      ],
+      "terms": [
+        {
+          "term": "Event",
+          "meaning": "Click yoki submit kabi yuz bergan hodisa."
+        },
+        {
+          "term": "Listener",
+          "meaning": "Hodisa bo‘lganda bajarilishi uchun ro‘yxatga olingan funksiya."
+        },
+        {
+          "term": "Bubbling",
+          "meaning": "Mos hodisaning nishondan ota elementlarga tarqalishi."
+        },
+        {
+          "term": "Delegation",
+          "meaning": "Ko‘p bolalar uchun umumiy otaga bitta listener qo‘yish."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Listener bog‘langanda n=0, tugma bosilgach n=1 bo‘lsin.",
+        "brokenCode": "const b = document.createElement(\"button\"); let n = 0;\nconst fn = () => n++;\nb.addEventListener(\"click\", fn());\nconsole.log(n); b.click(); console.log(n);",
+        "fixedCode": "const b = document.createElement(\"button\"); let n = 0;\nconst fn = () => n++;\nb.addEventListener(\"click\", fn);\nconsole.log(n); b.click(); console.log(n);",
+        "expectedOutput": [
+          0,
+          1
+        ],
+        "explanation": "fn() hozir chaqiradi va natijasini uzatadi. fn reference i listenerga berilsa, ish click vaqtida bajariladi.",
+        "runtime": "browser"
+      },
+      "write": {
+        "task": "Ro‘yxatga bitta click listener qo‘ying. Yangi qo‘shilgan tugmalar ham delegation bilan ishlasin. Ichidagi span bosilganda ham tegishli button topilsin.",
+        "criteria": [
+          "Yangi qo‘shilgan tugma ham ishlaydi.",
+          "Tugma ichidagi span bosilganda to‘g‘ri button topiladi.",
+          "Begona konteyner elementi noto‘g‘ri qayta ishlanmaydi."
+        ],
+        "hint": "Ota listenerda event.target.closest(\"button[data-id]\") ni toping. Topilgan tugma ota elementga tegishliligini contains bilan tekshiring; dataset dan identifikator oling."
+      }
+    }
   },
   {
     "id": "storage",
@@ -3130,7 +4786,50 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "String va JSON ni brauzer xotirasiga yozib, yo‘q yoki buzilgan qiymatni boshqarasiz.",
+      "prerequisites": [
+        "json-basics",
+        "dom-forms"
+      ],
+      "terms": [
+        {
+          "term": "Origin",
+          "meaning": "Protokol, host va port birikmasi; storage shu chegara bo‘yicha ajratiladi."
+        },
+        {
+          "term": "Kvota",
+          "meaning": "Brauzer saqlash uchun belgilagan hajm cheklovi."
+        },
+        {
+          "term": "Session",
+          "meaning": "Tabning ish sessiyasi; sessionStorage uning muddatiga bog‘liq."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Saqlangan user ni qayta o‘qiganda ism Ali bo‘lsin. Obyektni bevosita yozish nima beradi?",
+        "brokenCode": "const k = \"js-dars-pedagogy\";\nlocalStorage.setItem(k, { ism: \"Ali\" });\nconsole.log(localStorage.getItem(k));\nlocalStorage.removeItem(k);",
+        "fixedCode": "const k = \"js-dars-pedagogy\";\nlocalStorage.setItem(k, JSON.stringify({ ism: \"Ali\" }));\nconst user = JSON.parse(localStorage.getItem(k));\nconsole.log(user.ism);\nlocalStorage.removeItem(k);",
+        "expectedOutput": [
+          "Ali"
+        ],
+        "explanation": "Storage string saqlaydi. stringify formatni yozdi, parse qayta obyektga aylantirdi. Mashq kaliti oxirida olib tashlandi.",
+        "runtime": "browser"
+      },
+      "write": {
+        "task": "Tema tanlovini saqlang. Qayta ochilganda o‘qing, faqat light/dark qiymatlarini qabul qiling. Saqlash bloklangan holatda sahifa ishlashda davom etsin.",
+        "criteria": [
+          "Faqat light va dark qiymatlari qabul qilinadi.",
+          "Yo‘q yoki buzilgan sozlamada sayt ishlashda davom etadi.",
+          "Saqlash ruxsati bo‘lmasa foydalanuvchi tanlovi hozirgi sahifada ishlaydi."
+        ],
+        "hint": "Alohida storage kalitini ishlating. try ichida o‘qib, whitelist bilan qiymatni tekshiring. UI ni saqlash muvaffaqiyatiga qaram qilmay yangilang; natija saqlanmasa foydalanuvchiga tushunarli xabar bering."
+      }
+    }
   },
   {
     "id": "web-apis",
@@ -3219,7 +4918,58 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/API"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "JavaScript tili bilan brauzer API sini ajratib, URL, taymer va bekor qilish vositalarini ishlatasiz.",
+      "prerequisites": [
+        "dom-basics",
+        "storage",
+        "dates"
+      ],
+      "terms": [
+        {
+          "term": "API",
+          "meaning": "Muhit taklif qilgan tayyor ishlash interfeysi."
+        },
+        {
+          "term": "URL query",
+          "meaning": "Manzildagi ? dan keyingi kalit-qiymat parametrlari."
+        },
+        {
+          "term": "AbortSignal",
+          "meaning": "Ish bekor qilinganini API ga yetkazadigan signal."
+        },
+        {
+          "term": "Monotonic vaqt",
+          "meaning": "Kalendar soati tuzatilishidan mustaqil davomiylik o‘lchovi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "x ning ikkala qiymati kerak: [\"1\",\"2\"].",
+        "brokenCode": "const u = new URL(\"https://example.com/?x=1&x=2\");\nconsole.log(u.searchParams.get(\"x\"));",
+        "fixedCode": "const u = new URL(\"https://example.com/?x=1&x=2\");\nconsole.log(u.searchParams.getAll(\"x\"));",
+        "expectedOutput": [
+          [
+            "1",
+            "2"
+          ]
+        ],
+        "explanation": "get birinchi qiymatni, getAll shu kalitning barcha qiymatlarini massiv sifatida beradi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "URL query dan mavzuni olib ko‘rsatadigan kichik sahifa yarating. Qidiruvni URLSearchParams bilan yangilang. Vaqt o‘lchash uchun performance.now, bekor qilish uchun AbortController ishlating.",
+        "criteria": [
+          "Yo‘q query parametrga zaxira qiymat tanlanadi.",
+          "Bo‘sh joyli parametr URLSearchParams bilan to‘g‘ri kodlanadi.",
+          "Taymer/listener kerak bo‘lmaganda tozalanadi."
+        ],
+        "hint": "new URL(location.href).searchParams bilan o‘qing. Parametr yo‘q bo‘lsa default tanlang. Kerak bo‘lsa history.replaceState bilan manzilni yangilang; URL ga maxfiy kalit kiritmang."
+      }
+    }
   },
   {
     "id": "proxy-reflect",
@@ -3300,7 +5050,55 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Trap bilan amalni tutib, Reflect orqali standart xulqni saqlaysiz.",
+      "prerequisites": [
+        "objects-basics",
+        "this-keyword",
+        "object-descriptors"
+      ],
+      "terms": [
+        {
+          "term": "Target",
+          "meaning": "Proxy orqasidagi asl obyekt."
+        },
+        {
+          "term": "Trap",
+          "meaning": "get yoki set kabi amal tutib qolinadigan handler funksiyasi."
+        },
+        {
+          "term": "Receiver",
+          "meaning": "Getter/setter ichidagi this ga uzatiladigan qabul qiluvchi."
+        },
+        {
+          "term": "Invariant",
+          "meaning": "Proxy ham buzishga haqli bo‘lmagan til qoidasi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Strict rejimda muvaffaqiyatli yozish xato bermasin. set trap nimani qaytarishi kerak?",
+        "brokenCode": "\"use strict\";\nconst p=new Proxy({}, { set(t,k,v) { t[k]=v; return false; } });\np.x=2; console.log(p.x);",
+        "fixedCode": "\"use strict\";\nconst p=new Proxy({}, { set(t,k,v,r) { return Reflect.set(t,k,v,r); } });\np.x=2; console.log(p.x);",
+        "expectedOutput": [
+          2
+        ],
+        "explanation": "set trap boolean muvaffaqiyatni bildiradi. false strict rejimda TypeError beradi; Reflect.set odatiy yozish natijasini qaytardi. Invariantlar baribir saqlanishi kerak.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Faqat manfiy bo‘lmagan yosh yozishga ruxsat beradigan proxy yarating. Yaroqli qiymat targetga tushsin, noto‘g‘ri qiymat aniq xato bersin. Getter uchun receiver ni saqlang.",
+        "criteria": [
+          "Yaroqli yosh targetga yoziladi.",
+          "Manfiy yoki son bo‘lmagan yosh rad etiladi.",
+          "Yozishning muvaffaqiyat belgisi noto‘g‘ri true qilib berilmaydi."
+        ],
+        "hint": "set ichida prop === \"yosh\" bo‘lsa Number.isFinite va >=0 ni tekshiring. Keyin Reflect.set(t,key,value,receiver) natijasini qaytaring; yozish bo‘lmasa yolg‘on true bermang."
+      }
+    }
   },
   {
     "id": "common-pitfalls",
@@ -3392,7 +5190,52 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Introduction"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Natija xatosini tur, qiymat, mutatsiya va chaqirish tartibi bilan izohlaysiz.",
+      "prerequisites": [
+        "coercion-equality",
+        "truthy-falsy",
+        "object-reference",
+        "this-keyword"
+      ],
+      "terms": [
+        {
+          "term": "Debug",
+          "meaning": "Xatoning qayerda va nima sababdan kelganini izlash."
+        },
+        {
+          "term": "Regression",
+          "meaning": "Oldin ishlagan xulq yangi o‘zgarishdan keyin buzilishi."
+        },
+        {
+          "term": "Minimal misol",
+          "meaning": "Muammoni qaytara oladigan eng kichik kod."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "0 haqiqiy ball bo‘lganda 100 ga almashtirilmasin.",
+        "brokenCode": "const ball = 0;\nconsole.log(ball || 100);",
+        "fixedCode": "const ball = 0;\nconsole.log(ball ?? 100);",
+        "expectedOutput": [
+          0
+        ],
+        "explanation": "|| barcha falsy qiymatda zaxira tanlaydi. Bu talab faqat null/undefined yo‘qligini qamraydi, shuning uchun ?? mos.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Bir kichik hisoblagichga ataylab uch xato kiriting: string qo‘shish, noto‘g‘ri falsy tekshirish va sort mutatsiyasi. Keyin har biriga alohida test yozib tuzating.",
+        "criteria": [
+          "String qo‘shish xatosi alohida misolda ko‘rsatiladi.",
+          "Yaroqli 0 ni yo‘q qiymat deb olish tuzatiladi.",
+          "sort qaysi massivni o‘zgartirgani aniq ko‘rsatiladi."
+        ],
+        "hint": "Number bilan aniq aylantirish, null/undefined ni maqsadli tekshirish, toSorted yoki [...list].sort bilan mustaqil tartiblashdan foydalaning."
+      }
+    }
   },
   {
     "id": "recursion",
@@ -3477,7 +5320,51 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Glossary/Recursion"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Bazis va unga olib boradigan qadam bilan tugaydigan rekursiya yozasiz.",
+      "prerequisites": [
+        "functions",
+        "conditionals",
+        "loops"
+      ],
+      "terms": [
+        {
+          "term": "Rekursiya",
+          "meaning": "Funksiya masalaning kichikroq nusxasi uchun o‘zini chaqirishi."
+        },
+        {
+          "term": "Bazis",
+          "meaning": "Yana chaqirishsiz javob qaytariladigan to‘xtash holati."
+        },
+        {
+          "term": "Call stack",
+          "meaning": "Hali tugamagan funksiya chaqirishlari saqlanadigan tuzilma."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "1 dan 3 gacha yig‘indi 6 chiqishi kerak. Bazis 1 ni tashlab yuborgan.",
+        "brokenCode": "function yig(n) { if (n <= 1) return 0; return n + yig(n - 1); }\nconsole.log(yig(3));",
+        "fixedCode": "function yig(n) { if (n === 0) return 0; return n + yig(n - 1); }\nconsole.log(yig(3));",
+        "expectedOutput": [
+          6
+        ],
+        "explanation": "Bu misolda kirish manfiy bo‘lmagan butun son. 0 bazisi 1 ni ham yig‘indiga qo‘shishga imkon beradi; qadam bazisga yaqinlashadi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Faktorial funksiyasiga manfiy, kasr va noto‘g‘ri tur uchun tekshiruv qo‘shing. Keyin xuddi shu yig‘indini tsikl bilan yozib, natijalarni n=0,1,5 da solishtiring.",
+        "criteria": [
+          "n=0 uchun bazis to‘g‘ri natija qaytaradi.",
+          "n=3 uchun yig‘indi 6 bo‘ladi.",
+          "Manfiy yoki kasr kirish cheksiz chaqirishga olib bormaydi."
+        ],
+        "hint": "Tashqi funksiyada Number.isInteger(n) va n>=0 ni tekshiring. Bazisni n===0 qiling, qadamda n-1 yuboring. Cheksiz katta n ni qabul qilmaslik chegarasini alohida belgilang."
+      }
+    }
   },
   {
     "id": "debounce-throttle",
@@ -3552,7 +5439,55 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Glossary/Debounce"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Tez-tez hodisalar uchun debounce yoki throttle ni tanlab, wrapperni bir marta yaratasiz.",
+      "prerequisites": [
+        "closures",
+        "async-timers",
+        "events-advanced"
+      ],
+      "terms": [
+        {
+          "term": "Debounce",
+          "meaning": "Chaqiruvlar to‘xtagach ishni bajarish usuli."
+        },
+        {
+          "term": "Throttle",
+          "meaning": "Ishning vaqt oralig‘idagi tezligini cheklash usuli."
+        },
+        {
+          "term": "Leading / trailing",
+          "meaning": "Oraliq boshida yoki oxirida bajarish siyosati."
+        },
+        {
+          "term": "Race",
+          "meaning": "Bir nechta asinxron javob noto‘g‘ri tartibda kelib, eskisi yangisini bosishi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Tez ketma-ket a va ab chaqirishdan faqat ab qolsin.",
+        "brokenCode": "function debounce(fn, ms) { let t; return x => { clearTimeout(t); t=setTimeout(() => fn(x),ms); }; }\ndebounce(console.log, 5)(\"a\");\ndebounce(console.log, 5)(\"ab\");",
+        "fixedCode": "(async () => {\n  function debounce(fn, ms) { let t; return x => { clearTimeout(t); t=setTimeout(() => fn(x),ms); }; }\n  const qidir = debounce(x => console.log(x), 5);\n  qidir(\"a\"); qidir(\"ab\");\n  await new Promise(resolve => setTimeout(resolve, 20));\n})();",
+        "expectedOutput": [
+          "ab"
+        ],
+        "explanation": "Bitta wrapper bitta closure taymerini saqlaydi. Har safar debounce yaratish oldingi taymerni ko‘rmaydigan yangi closure ochadi.",
+        "runtime": "async"
+      },
+      "write": {
+        "task": "Qidiruv maydoniga debounce qo‘shing. Chaqiruv sonini ko‘rsating, sahifa yopilganda taymerni cancel qiling. Throttle uchun birinchi va oxirgi hodisa talabi qandayligini yozing.",
+        "criteria": [
+          "Bir tez yozish ketma-ketligidan faqat oxirgi qidiruv bajariladi.",
+          "Wrapper har input hodisasida yangidan yaratilmaydi.",
+          "Cancel kutilayotgan taymerni olib tashlaydi."
+        ],
+        "hint": "const search = debounce(qidirish,300) ni bir marta tuzing. Input listenerida search(input.value) chaqiring. Cancel uchun timer ni yopuvchi closure metodini bering. So‘rovlar uchun AbortController yoki requestId ishlating."
+      }
+    }
   },
   {
     "id": "currying",
@@ -3633,7 +5568,51 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Glossary/Currying"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Argumentni bosqichlab olish bilan qisman oldindan bog‘lashni ajratasiz.",
+      "prerequisites": [
+        "functions",
+        "closures",
+        "this-keyword"
+      ],
+      "terms": [
+        {
+          "term": "Currying",
+          "meaning": "Ko‘p argumentli ishni ketma-ket funksiya chaqirishlariga ajratish."
+        },
+        {
+          "term": "Partial application",
+          "meaning": "Ba’zi argumentlarni oldindan belgilab qo‘yish."
+        },
+        {
+          "term": "Arity",
+          "meaning": "Funksiya kutiladigan parametrlar soni; length har vaziyatda to‘liq talabni bermaydi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Currying qilingan qosh dan 5 oling.",
+        "brokenCode": "const qosh=a=>b=>a+b;\nconsole.log(qosh(2,3));",
+        "fixedCode": "const qosh=a=>b=>a+b;\nconsole.log(qosh(2)(3));",
+        "expectedOutput": [
+          5
+        ],
+        "explanation": "Birinchi chaqirish a ni saqlagan funksiyani qaytaradi. b ikkinchi chaqirishda beriladi; birinchi chaqirishdagi ortiqcha argument avtomatik ikkinchisiga o‘tmaydi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Soliq foizi oldindan berilgan hisoblash funksiyasini yarating. Keyin turli narxlar bilan ishlating. Oddiy uch argumentli variant va currying variantining natijalarini solishtiring.",
+        "criteria": [
+          "Oldindan tanlangan foiz turli narxlarga qo‘llanadi.",
+          "Oddiy va curried variant bir xil javob beradi.",
+          "0 foiz narxni o‘zgartirmaydi."
+        ],
+        "hint": "const soliq = foiz => narx => narx * (1+foiz/100). Foiz va narxlarni tekshirishni hisoblashdan oldin ajrating."
+      }
+    }
   },
   {
     "id": "memoization",
@@ -3713,7 +5692,57 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Glossary/Memoization"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Kesh kaliti va haqiqiy hisoblashni ajratib, 0 kabi natijalarni ham keshlaysiz.",
+      "prerequisites": [
+        "map-set",
+        "iife-pure",
+        "recursion"
+      ],
+      "terms": [
+        {
+          "term": "Kesh",
+          "meaning": "Oldin hisoblangan natijalar saqlanadigan joy."
+        },
+        {
+          "term": "Cache hit",
+          "meaning": "Kerakli kalit keshda topilishi."
+        },
+        {
+          "term": "Invalidation",
+          "meaning": "Eskirgan natijani olib tashlash yoki yangilash siyosati."
+        },
+        {
+          "term": "TTL / LRU",
+          "meaning": "Vaqti tugagan yoki eng uzoq ishlatilmagan yozuvni chiqarish usullari."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "0 natijasi ham cache dan olinsin; hisoblash faqat bir marta bo‘lsin.",
+        "brokenCode": "const cache=new Map(); let calls=0;\nfunction f(n) { if(cache.get(n)) return cache.get(n); calls++; const v=n*2; cache.set(n,v); return v; }\nconsole.log(f(0)); console.log(f(0)); console.log(calls);",
+        "fixedCode": "const cache=new Map(); let calls=0;\nfunction f(n) { if(cache.has(n)) return cache.get(n); calls++; const v=n*2; cache.set(n,v); return v; }\nconsole.log(f(0)); console.log(f(0)); console.log(calls);",
+        "expectedOutput": [
+          0,
+          0,
+          1
+        ],
+        "explanation": "Cache mavjudligini natijaning truthy bo‘lishidan ajrating. has 0, false va undefined kabi saqlangan qiymatlarni ham topadi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Bitta primitive argumentli sof funksiyani Map bilan keshlang. Hisoblash nechta bo‘lganini alohida hisoblagich bilan kuzating; bir xil kirishda qayta hisoblamasin. Kesh hajmi chegarasini belgilang.",
+        "criteria": [
+          "Bir xil kirish takrorlanganda hisoblash qayta bajarilmaydi.",
+          "0 natija keshda bor deb to‘g‘ri tan olinadi.",
+          "Kesh cheksiz o‘sib ketmasligi uchun qoida bor."
+        ],
+        "hint": "Map.has bilan tekshiring, hisoblashdan keyin set qiling. MaxSize bo‘lsa yangi kalitdan oldin kerakli eski kalitni o‘chiring. Bu FIFO misolimi yoki haqiqiy LRU mi, aniq belgilang."
+      }
+    }
   },
   {
     "id": "symbol-bigint",
@@ -3798,7 +5827,55 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Symbol identikligi va BigInt butun hisoblarini oddiy string/Numberdan farqlaysiz.",
+      "prerequisites": [
+        "data-types",
+        "numbers-math",
+        "objects-basics"
+      ],
+      "terms": [
+        {
+          "term": "Symbol",
+          "meaning": "Alohida yaratilganda noyob identifikator qiymati."
+        },
+        {
+          "term": "Registry",
+          "meaning": "Symbol.for nomlari uchun umumiy ro‘yxat."
+        },
+        {
+          "term": "BigInt",
+          "meaning": "Katta butun qiymatlarni aniq saqlash va hisoblash turi."
+        },
+        {
+          "term": "Identiklik",
+          "meaning": "Qiymat yoki obyekt aynan o‘sha qiymat/obyekt ekanligi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "BigInt qiymatga bir qo‘shing. Natijani string qilib chiqaring.",
+        "brokenCode": "console.log(String(1n + 1));",
+        "fixedCode": "console.log(String(1n + 1n));",
+        "expectedOutput": [
+          "2"
+        ],
+        "explanation": "Arifmetikada BigInt va Number bevosita aralashtirilmaydi. Ikkala operand BigInt bo‘ldi; String faqat chiqarish uchun ishlatildi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Katta butun identifikatorni stringdan BigInt ga aylantiring, 1n qo‘shing va JSON ga yozish uchun yana string qiling. Qayta o‘qishda schema asosida BigInt ga tiklang.",
+        "criteria": [
+          "Katta id Numberga aylantirilmasdan BigInt qilinadi.",
+          "1n qo‘shilganda aniq natija olinadi.",
+          "JSON da id string sifatida saqlanib, sxema bilan qayta tiklanadi."
+        ],
+        "hint": "const id=BigInt(\"9007199254740993\"); natijani (id+1n).toString() bilan saqlang. Hamma raqamli stringni avtomatik BigInt qilish o‘rniga maydon sxemasini ishlating."
+      }
+    }
   },
   {
     "id": "weakmap-weakset",
@@ -3882,7 +5959,55 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Weak kolleksiyani mos vazifada tanlab, GC vaqtiga natijani bog‘lamaysiz.",
+      "prerequisites": [
+        "map-set",
+        "object-reference",
+        "symbol-bigint"
+      ],
+      "terms": [
+        {
+          "term": "Kuchli reference",
+          "meaning": "Obyektni reachable saqlab turadigan odatiy ishora."
+        },
+        {
+          "term": "Weak reference",
+          "meaning": "O‘zining o‘zi obyekt yashashini kuchli ushlab qolmaydigan bog‘lanish."
+        },
+        {
+          "term": "Reachable",
+          "meaning": "Faol koddan reference zanjiri orqali yetib borish mumkin bo‘lgan obyekt."
+        },
+        {
+          "term": "GC",
+          "meaning": "Endi kerakli yo‘li qolmagan obyekt xotirasini keyinroq yig‘ishi mumkin bo‘lgan mexanizm."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Aynan shu kalit saqlanganmi? WeakMap da size mavjud deb hisoblamang.",
+        "brokenCode": "const k={};\nconst m=new WeakMap([[k, 1]]);\nconsole.log(m.size > 0);",
+        "fixedCode": "const k={};\nconst m=new WeakMap([[k, 1]]);\nconsole.log(m.has(k));",
+        "expectedOutput": [
+          true
+        ],
+        "explanation": "WeakMap size yoki kalitlar ro‘yxatini bermaydi. Sizdagi aniq kalitni has orqali tekshirish mumkin.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Obyektga kesh ma’lumoti bog‘laydigan WeakMap va bir marta ishlangan obyektlarni belgilaydigan WeakSet yozing. Bir xil va yangi obyekt reference larini solishtiring.",
+        "criteria": [
+          "Aynan bir obyekt keshidan ma’lumot olinadi.",
+          "Tarkibi o‘xshash yangi obyekt boshqa kalit bo‘ladi.",
+          "size yoki iteratsiyaga tayanilmaydi."
+        ],
+        "hint": "WeakMap.set(obj, natija) bilan saqlang. WeakSet.has(obj) true bo‘lsa qayta ishlamang. Iteratsiya yoki kalitlar soni kerak bo‘lsa Map/Set mosroq."
+      }
+    }
   },
   {
     "id": "object-descriptors",
@@ -3970,7 +6095,56 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Yozish, sanash va qayta sozlash qoidalarini alohida boshqarib, freeze chegarasini bilasiz.",
+      "prerequisites": [
+        "objects-basics",
+        "prototypes",
+        "class-private"
+      ],
+      "terms": [
+        {
+          "term": "Descriptor",
+          "meaning": "Xususiyatning qiymat va ruxsat qoidalarini tavsiflovchi obyekt."
+        },
+        {
+          "term": "Writable",
+          "meaning": "Data property ga yangi qiymat yozish mumkinligi."
+        },
+        {
+          "term": "Enumerable",
+          "meaning": "Kalit Object.keys kabi sanashga chiqishi."
+        },
+        {
+          "term": "Configurable",
+          "meaning": "Xususiyatni o‘chirish va qoidalarini qayta sozlash imkoniyati."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Ichki obyekt ham o‘zgarmas bo‘lsin. Tashqi freeze yetadimi?",
+        "brokenCode": "const o = Object.freeze({ ichki: { n: 1 } });\no.ichki.n = 9;\nconsole.log(o.ichki.n);",
+        "fixedCode": "\"use strict\";\nconst o = Object.freeze({ ichki: Object.freeze({ n: 1 }) });\ntry { o.ichki.n = 9; } catch (e) { console.log(e.name); }\nconsole.log(o.ichki.n);",
+        "expectedOutput": [
+          "TypeError",
+          1
+        ],
+        "explanation": "freeze yuzaki. Ma’lum ichki obyekt ham muzlatildi. Strict rejimdagi yozish xatosi tutilgach, asl qiymat 1 bo‘lib qoldi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Obyektga sanalmaydigan id va o‘zgaradigan name maydoni yarating. Object.keys bilan farqini ko‘ring, freeze dan oldin va keyin yozish holatini tekshiring.",
+        "criteria": [
+          "id o‘qiladi, ammo Object.keys da chiqmaydi.",
+          "name freeze dan oldin yangilanadi.",
+          "Freeze yuzaki ekani ichki obyekt misolida ko‘rsatiladi."
+        ],
+        "hint": "Object.defineProperty(o,\"id\",{value:1,enumerable:false}) va oddiy name property yarating. Strict testda taqiqlangan yozishni try/catch ichida alohida sinang."
+      }
+    }
   },
   {
     "id": "dynamic-import-async-iteration",
@@ -4047,7 +6221,69 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Kerakli modulni keyin yuklaysiz va asinxron qiymatlar ketma-ketligini o‘qiysiz.",
+      "prerequisites": [
+        "modules",
+        "promises-async",
+        "loops"
+      ],
+      "terms": [
+        {
+          "term": "Iterator",
+          "meaning": "next() orqali keyingi value va done holatini beradigan obyekt."
+        },
+        {
+          "term": "Generator",
+          "meaning": "yield bilan to‘xtab-davom etadigan ketma-ketlik yaratuvchi funksiya."
+        },
+        {
+          "term": "Async iterator",
+          "meaning": "Keyingi qadam natijasi Promise orqali keladigan iterator."
+        },
+        {
+          "term": "Lazy loading",
+          "meaning": "Kod yoki ma’lumotni kerak paytida yuklash."
+        }
+      ],
+      "warmup": {
+        "title": "Async generatordan oldin: oddiy generator",
+        "text": "function* va yield ketma-ketlik beradi. g() tana natijasi emas, iterator yaratadi. next() keyingi qadamni oladi; done true bo‘lsa tugagan. To‘liq iterator darsi keyin keladi.",
+        "code": "function* g() { yield 1; }\nconst it = g();\nconsole.log(it.next().value);\nconsole.log(it.next().done);",
+        "expectedOutput": [
+          1,
+          true
+        ],
+        "explanation": "Birinchi next 1 ni beradi. Ikkinchi next da yield qolmagani uchun done true. Async variantda shunday qadamlarni await bilan kutamiz.",
+        "runtime": "javascript"
+      }
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Async generatorning ikkala qiymatini yig‘ing. Oddiy for...of nega mos emas?",
+        "brokenCode": "(async () => {\n  async function* g() { yield 1; yield 2; }\n  const out = [];\n  for (const n of g()) out.push(n);\n  console.log(out);\n})();",
+        "fixedCode": "(async () => {\n  async function* g() { yield 1; yield 2; }\n  const out = [];\n  for await (const n of g()) out.push(n);\n  console.log(out);\n})();",
+        "expectedOutput": [
+          [
+            1,
+            2
+          ]
+        ],
+        "explanation": "Async iterator qadamlarini kutish kerak. for await...of next natijalarini kutib qiymatlarni ketma-ket beradi.",
+        "runtime": "async"
+      },
+      "write": {
+        "task": "Async generator bilan 1 dan 3 gacha qiymat bering va for await bilan yig‘ing. Keyin tugma bosilganda alohida math.mjs modulini import qiladigan sahifa yarating.",
+        "criteria": [
+          "Async generator 1,2,3 ni tartib bilan beradi.",
+          "Tugma importni kerak paytda boshlaydi.",
+          "Yuklash xatosi va modulning default eksporti alohida boshqariladi."
+        ],
+        "hint": "Generator next natijalaridagi done qiymatini kuzating. import xatosini try/catch bilan tuting; tugmani yuklanish davomida boshqaring. Modul yo‘li va fayl kengaytmasini aniq yozing."
+      }
+    }
   },
   {
     "id": "promise-combinators",
@@ -4135,7 +6371,50 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "all, allSettled, race va any ni talab qilingan natijaga qarab tanlaysiz.",
+      "prerequisites": [
+        "promises-async",
+        "array-methods"
+      ],
+      "terms": [
+        {
+          "term": "Settlement",
+          "meaning": "Promise fulfilled yoki rejected bilan yakunlanishi."
+        },
+        {
+          "term": "AggregateError",
+          "meaning": "Bir nechta xato sababini birga ifodalovchi xato obyekt turi."
+        },
+        {
+          "term": "Parallel boshlash",
+          "meaning": "Mustaqil ishlarni birining natijasini kutmasdan boshlash; CPU doim ko‘p oqimda ishlaydi degani emas."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Birinchi muvaffaqiyatli javob kerak, birinchi rad etilish emas.",
+        "brokenCode": "(async () => {\n  try { console.log(await Promise.race([Promise.reject(\"xato\"), Promise.resolve(\"ok\")])); }\n  catch (e) { console.log(e); }\n})();",
+        "fixedCode": "(async () => {\n  try { console.log(await Promise.any([Promise.reject(\"xato\"), Promise.resolve(\"ok\")])); }\n  catch (e) { console.log(e); }\n})();",
+        "expectedOutput": [
+          "ok"
+        ],
+        "explanation": "race birinchi yakunni oladi, any esa birinchi muvaffaqiyatni kutadi. Hammasi rad etilsa any ham AggregateError bilan rad etiladi.",
+        "runtime": "async"
+      },
+      "write": {
+        "task": "Uchta mustaqil ishni allSettled bilan ishga tushiring. Muvaffaqiyatli qiymatlarni va xatolarni ikki ro‘yxatga ajrating. Boshqa variantda birinchi muvaffaqiyatni any bilan oling.",
+        "criteria": [
+          "allSettled natijasidan muvaffaqiyatlar va xatolar alohida olinadi.",
+          "any birinchi muvaffaqiyatni qaytaradi.",
+          "Bo‘sh ro‘yxatning all/any/race farqlari aytiladi."
+        ],
+        "hint": "Natijalarni status === \"fulfilled\" bo‘yicha filter qiling, value ni oling. Rejected holatda reason dan xabar tayyorlang. Bo‘sh kirishni ham test qiling."
+      }
+    }
   },
   {
     "id": "node-basics",
@@ -4214,7 +6493,54 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://nodejs.org/api/packages.html"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Brauzer va Node muhitini, .cjs/.mjs va process argumentlarini ajratasiz.",
+      "prerequisites": [
+        "git-npm",
+        "modules"
+      ],
+      "terms": [
+        {
+          "term": "Runtime",
+          "meaning": "JavaScript kodini bajaradigan muhit."
+        },
+        {
+          "term": "CommonJS",
+          "meaning": "require/module.exports bilan ishlaydigan Node modul tizimi."
+        },
+        {
+          "term": "ESM",
+          "meaning": "import/export bilan ishlaydigan ES modul tizimi."
+        },
+        {
+          "term": "Process",
+          "meaning": "Ishlayotgan Node dasturining jarayoni; argv/env kabi ma’lumotlarni beradi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "node demo.cjs Ali buyrug‘idagi Ali ni o‘qing.",
+        "brokenCode": "console.log(process.argv[0]);",
+        "fixedCode": "console.log(process.argv[2]);",
+        "expectedOutput": [
+          "Ali"
+        ],
+        "explanation": "argv[0] Node bajariladigan fayl, argv[1] skript, argv[2] birinchi foydalanuvchi argumentidir.",
+        "runtime": "node"
+      },
+      "write": {
+        "task": "hello.cjs faylini node hello.cjs Ali bilan ishga tushiring. process.argv[2] dan ism oling, keyin qosh funksiyasini alohida .cjs va .mjs modulga ajratib sinang.",
+        "criteria": [
+          "node hello.cjs Ali buyruq argumentini o‘qiydi.",
+          "Argument yo‘q bo‘lsa zaxira ism olinadi.",
+          ".cjs va .mjs misollari mos modul sintaksisi bilan bajariladi."
+        ],
+        "hint": "const ism=process.argv[2] ?? \"Mehmon\". .cjs uchun module.exports/require, .mjs uchun export/import yozing. Fayl yo‘llarini ./ bilan aniq bering."
+      }
+    }
   },
   {
     "id": "node-fs-path",
@@ -4294,7 +6620,55 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://nodejs.org/api/fs.html"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Faylni mos encoding bilan o‘qib/yozib, yo‘l va fayl xatosini tekshirasiz.",
+      "prerequisites": [
+        "node-basics",
+        "promises-async",
+        "json-basics"
+      ],
+      "terms": [
+        {
+          "term": "Encoding",
+          "meaning": "Baytlarni matn sifatida qanday talqin qilish qoidasi, masalan UTF-8."
+        },
+        {
+          "term": "Buffer",
+          "meaning": "Node muhitida baytlar ketma-ketligini saqlovchi obyekt."
+        },
+        {
+          "term": "Nisbiy yo‘l",
+          "meaning": "Ishchi papka yoki belgilangan asosga nisbatan yozilgan yo‘l."
+        },
+        {
+          "term": "ENOENT",
+          "meaning": "So‘ralgan fayl yoki yo‘l topilmaganini bildiruvchi xato kodi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Buffer ichidagi Salom matnini sonlarga aylantirmasdan o‘qing.",
+        "brokenCode": "const b=Buffer.from(\"Salom\", \"utf8\");\nconsole.log(String([...b]));",
+        "fixedCode": "const b=Buffer.from(\"Salom\", \"utf8\");\nconsole.log(b.toString(\"utf8\"));",
+        "expectedOutput": [
+          "Salom"
+        ],
+        "explanation": "Buffer baytlarni saqlaydi. UTF-8 bilan dekodlash matn beradi; massivga yoyish esa bayt raqamlarini beradi. readFile encoding berilmasa ham Buffer qaytaradi.",
+        "runtime": "node"
+      },
+      "write": {
+        "task": "Alohida mashq papkasiga JSON yozing va qayta o‘qing. Buzilgan JSON bilan yo‘q fayl xatosini ajrating. Faqat mashq uchun yaratilgan fayllarni tozalang.",
+        "criteria": [
+          "Mashq papkasiga yozilgan JSON qayta to‘g‘ri o‘qiladi.",
+          "Yo‘q fayl va buzilgan JSON alohida ajratiladi.",
+          "Faqat mashq uchun yaratilgan fayllar tozalanadi."
+        ],
+        "hint": "fs/promises bilan await writeFile(JSON.stringify(...)) va readFile(\"utf8\") ishlating. catch da e.code === \"ENOENT\" ni JSON SyntaxError dan farqlang."
+      }
+    }
   },
   {
     "id": "node-streams",
@@ -4372,7 +6746,55 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://nodejs.org/api/stream.html"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Bo‘laklab uzatish, backpressure va EventEmitter hayotini boshqarasiz.",
+      "prerequisites": [
+        "node-fs-path",
+        "callbacks",
+        "promises-async"
+      ],
+      "terms": [
+        {
+          "term": "Chunk",
+          "meaning": "Oqimdan kelgan bitta ma’lumot bo‘lagi; bitta satr bo‘lishi shart emas."
+        },
+        {
+          "term": "Backpressure",
+          "meaning": "Qabul qiluvchi sekin bo‘lsa ishlab chiqarish tezligini cheklash mexanizmi."
+        },
+        {
+          "term": "Pipeline",
+          "meaning": "Oqimlarni ulab, yakun va xatolarini muvofiqlashtirish."
+        },
+        {
+          "term": "EventEmitter",
+          "meaning": "Nomlangan hodisalarni chiqarish va tinglash vositasi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Event ikki marta yuborilsa ham handler faqat bir marta ishlasin.",
+        "brokenCode": "const { EventEmitter }=require(\"node:events\");\nconst e=new EventEmitter(); let n=0;\ne.on(\"tayyor\",()=>n++);\ne.emit(\"tayyor\"); e.emit(\"tayyor\"); console.log(n);",
+        "fixedCode": "const { EventEmitter }=require(\"node:events\");\nconst e=new EventEmitter(); let n=0;\ne.once(\"tayyor\",()=>n++);\ne.emit(\"tayyor\"); e.emit(\"tayyor\"); console.log(n);",
+        "expectedOutput": [
+          1
+        ],
+        "explanation": "on doimiy tinglaydi, once birinchi chaqirilishdan keyin tinglovchini olib tashlaydi.",
+        "runtime": "node"
+      },
+      "write": {
+        "task": "Kichik faylni pipeline bilan nusxalang. Yo‘q kirish fayli uchun xatoni tuting. EventEmitter da on, once va off farqlarini sinang.",
+        "criteria": [
+          "Kichik fayl nusxasi asl baytlar bilan mos bo‘ladi.",
+          "Yo‘q kirish fayli xatosi ushlanadi.",
+          "once bir marta, on bir necha marta ishlashi ko‘rsatiladi."
+        ],
+        "hint": "await pipeline(createReadStream(kirish), createWriteStream(chiqish)) ni try/catch bilan o‘rang. Chiqishning finish holati bilan oddiy data hodisasini adashtirmang."
+      }
+    }
   },
   {
     "id": "design-patterns",
@@ -4455,7 +6877,55 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://developer.mozilla.org/en-US/docs/Glossary/Design_pattern"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Patternni nom uchun emas, aniq yaratish/obuna/holat muammosi uchun tanlaysiz.",
+      "prerequisites": [
+        "classes",
+        "closures",
+        "callbacks"
+      ],
+      "terms": [
+        {
+          "term": "Factory",
+          "meaning": "Obyekt yaratish qarorini bir joyga jamlovchi funksiya yoki interfeys."
+        },
+        {
+          "term": "Observer",
+          "meaning": "O‘zgarish bo‘lganda obunachilarga xabar berish usuli."
+        },
+        {
+          "term": "Singleton",
+          "meaning": "Muayyan modul yoki muhit doirasida umumiy bitta instance ulashish usuli."
+        },
+        {
+          "term": "Unsubscribe",
+          "meaning": "Oldin qo‘shilgan tinglovchini olib tashlash amali."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Obunani bekor qilgach handler ikkinchi xabarni olmasin.",
+        "brokenCode": "const subs=new Set();\nconst fn=x=>console.log(x); subs.add(fn);\nfor(const f of subs) f(\"bir\");\nsubs.delete(x=>console.log(x));\nfor(const f of subs) f(\"ikki\");",
+        "fixedCode": "const subs=new Set();\nconst fn=x=>console.log(x); subs.add(fn);\nfor(const f of subs) f(\"bir\");\nsubs.delete(fn);\nfor(const f of subs) f(\"ikki\");",
+        "expectedOutput": [
+          "bir"
+        ],
+        "explanation": "Bir xil yozilgan ikki funksiya alohida reference. Obunani o‘chirish uchun qo‘shilgan funksiyaning o‘zi kerak.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Obuna bo‘lish va obunani bekor qilish funksiyasini qaytaradigan kuzatuvchi yozing. Bir tinglovchini o‘chirib, keyingi xabar faqat qolganlariga borishini tekshiring.",
+        "criteria": [
+          "Ikkita obunachi bir xabarni oladi.",
+          "Bittasi unsubscribe bo‘lgach faqat qolganiga xabar boradi.",
+          "Obunachi qo‘shish/olib tashlash emit qoidasi aniq belgilangan."
+        ],
+        "hint": "subscribe(fn) Set ga qo‘shsin va () => set.delete(fn) qaytarsin. emit snapshot bo‘yicha yursin. Listener throw qilsa qolganlari ishlash siyosatini aniq belgilang."
+      }
+    }
   },
   {
     "id": "testing-basics",
@@ -4548,7 +7018,56 @@ window.lessons = [
         "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
         "url": "https://vitest.dev/guide/"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Kutilgan xulqni assert bilan tekshirib, normal va chegaraviy holatlarni sinaysiz.",
+      "prerequisites": [
+        "functions",
+        "errors-try-catch",
+        "promises-async",
+        "git-npm"
+      ],
+      "terms": [
+        {
+          "term": "Assertion",
+          "meaning": "Haqiqiy natija kutilgan talabga mosligini tekshirish."
+        },
+        {
+          "term": "Test runner",
+          "meaning": "Testlarni topib bajaradigan va hisobot beradigan vosita."
+        },
+        {
+          "term": "Matcher",
+          "meaning": "toBe/toEqual kabi taqqoslash qoidasi."
+        },
+        {
+          "term": "Mock",
+          "meaning": "Testda vaqt yoki tashqi tizimni nazoratli o‘rinbosar bilan almashtirish."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Ikki massivning qiymatlari tengligini tekshiring.",
+        "brokenCode": "const assert=require(\"node:assert/strict\");\nassert.equal([1,2],[1,2]);\nconsole.log(\"o‘tdi\");",
+        "fixedCode": "const assert=require(\"node:assert/strict\");\nassert.deepEqual([1,2],[1,2]);\nconsole.log(\"o‘tdi\");",
+        "expectedOutput": [
+          "o‘tdi"
+        ],
+        "explanation": "Strict equal obyekt reference larini taqqoslaydi. node:assert/strict dagi deepEqual ichki qiymatlar va tuzilmani tekshiradi.",
+        "runtime": "node"
+      },
+      "write": {
+        "task": "Chegirma funksiyasini normal qiymat, 0, chegaraviy foiz va noto‘g‘ri tur bilan test qiling. Asinxron rad etilishni ham await bilan tekshiring.",
+        "criteria": [
+          "Oddiy narx uchun kutilgan chegirma tasdiqlanadi.",
+          "0 va chegaraviy foizlar tekshiriladi.",
+          "Asinxron xato testi haqiqatan Promise ni kutadi."
+        ],
+        "hint": "Kutilgan natijani qo‘lda hisoblab yozing. toThrow uchun funksiya reference i, Promise rejection uchun await expect(...).rejects ishlating. BeforeEach orqali kerakli holatni har testga yangidan bering."
+      }
+    }
   }
 ];
 
@@ -6130,7 +8649,55 @@ window.lessons.push(...[
         "title": "MDN: JavaScript bilan boshlash",
         "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/What_is_JavaScript"
       }
-    ]
+    ],
+    "learningGuide": {
+      "goal": "Kodni Console da sinab, HTML ga alohida JavaScript faylini ulay olasiz.",
+      "prerequisites": [],
+      "terms": [
+        {
+          "term": "Buyruq",
+          "meaning": "Kompyuter bajarishi kerak bo‘lgan ish."
+        },
+        {
+          "term": "Console",
+          "meaning": "Kod yozish va natija yoki xatoni ko‘rish oynasi."
+        },
+        {
+          "term": "Script",
+          "meaning": "JavaScript buyruqlari yozilgan fayl yoki HTML bo‘lagi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Ali matni chiqishi kerak. Nega bu yozuv nom qidiryapti?",
+        "brokenCode": "console.log(Ali);",
+        "fixedCode": "console.log(\"Ali\");",
+        "expectedOutput": [
+          "Ali"
+        ],
+        "explanation": "Qo‘shtirnoqsiz Ali o‘zgaruvchi nomi deb o‘qiladi. Matn uchun qo‘shtirnoq qo‘yildi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Ismingizni va 7 + 8 natijasini Console ga chiqaring. Keyin shu kodni app.js fayliga yozib HTML ga ulang.",
+        "criteria": [
+          "Console da ism va hisob natijasi ko‘rinadi.",
+          "HTML app.js faylini topadi; konsolda ulanish xatosi yo‘q.",
+          "Koddagi bir sonni o‘zgartirganda yangi natijani tushuntirasiz."
+        ],
+        "hint": "console.log(\"Ismingiz\"); console.log(7 + 8); yozing. HTML da <script src=\"app.js\" defer></script> bilan aynan shu faylni ulang. Brauzerda sahifani yangilang."
+      }
+    },
+    "exerciseCode": "console.log(\"Salom\");\nconsole.log(2 + 3);\nconsole.log(\"2 + 3\");",
+    "exerciseAnswer": "1. \"Salom\" — tayyor matn.\n2. 5 — sonlar qo‘shildi.\n3. \"2 + 3\" — qo‘shtirnoqdagi yozuv hisoblanmaydi.",
+    "exerciseExpected": [
+      "Salom",
+      5,
+      "2 + 3"
+    ],
+    "exerciseRuntime": "javascript"
   },
   {
     "id": "data-types",
@@ -6258,7 +8825,54 @@ window.lessons.push(...[
       }
     ],
     "exerciseCode": "let a = 10;\nlet b = a;\nb = 30;\n\nconst x = { son: 10 };\nconst y = x;\ny.son = 30;\n\nconsole.log(a);     // ?\nconsole.log(x.son); // ?",
-    "exerciseAnswer": "Birinchi natija: 10. Ikkinchi natija: 30.\n\na dagi 10 primitive qiymati b ga nusxalandi. b ga 30 berish a ni o‘zgartirmadi.\n\nx va y esa bitta obyektga ishora qiladi. y.son = 30 umumiy obyektning son xususiyatini o‘zgartirdi, shuning uchun x.son ham 30."
+    "exerciseAnswer": "Birinchi natija: 10. Ikkinchi natija: 30.\n\na dagi 10 primitive qiymati b ga nusxalandi. b ga 30 berish a ni o‘zgartirmadi.\n\nx va y esa bitta obyektga ishora qiladi. y.son = 30 umumiy obyektning son xususiyatini o‘zgartirdi, shuning uchun x.son ham 30.",
+    "learningGuide": {
+      "goal": "Matn, son va boolean ni farqlab, primitive nusxasi bilan umumiy obyektga ishora farqini tushuntirasiz.",
+      "prerequisites": [
+        "var-let-const"
+      ],
+      "terms": [
+        {
+          "term": "Tur",
+          "meaning": "Qiymat qanday qiymat ekanini bildiradi: matn, son va hokazo."
+        },
+        {
+          "term": "Primitive",
+          "meaning": "Obyekt bo‘lmagan oddiy, o‘zgarmas qiymat."
+        },
+        {
+          "term": "Obyekt",
+          "meaning": "Nomlangan xususiyatlarni birga saqlaydigan qiymat."
+        },
+        {
+          "term": "Reference",
+          "meaning": "Obyektga olib boradigan ishora qiymati; nusxalansa ham o‘sha obyektni ko‘rsatishi mumkin."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "javob boolean false bo‘lishi kerak. Hozir qaysi tur saqlanyapti?",
+        "brokenCode": "const javob = \"false\";\nconsole.log(typeof javob);",
+        "fixedCode": "const javob = false;\nconsole.log(typeof javob);\nconsole.log(javob);",
+        "expectedOutput": [
+          "boolean",
+          false
+        ],
+        "explanation": "\"false\" matn. Boolean qiymat kerak bo‘lsa false qo‘shtirnoqsiz yoziladi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Ism, yosh va talabalik holatini mos turlarda saqlang. Keyin bitta user obyektini boshqa nomga bering va ism maydonini yangilang.",
+        "criteria": [
+          "Matn qo‘shtirnoqda, son va boolean qo‘shtirnoqsiz yoziladi.",
+          "Primitive nusxasiga yangi qiymat berish aslini o‘zgartirmaydi.",
+          "Umumiy obyektning maydonini o‘zgartirish ikkala nom orqali ko‘rinadi."
+        ],
+        "hint": "const ism=\"Ali\", yosh=20, talaba=true kabi qiymatlardan boshlang. const user={ism}; const boshqa=user; boshqa.ism=\"Vali\" misolini primitive a va b nusxasi bilan solishtiring."
+      }
+    }
   },
   {
     "id": "iife-pure",
@@ -6336,7 +8950,59 @@ window.lessons.push(...[
       7
     ],
     "exerciseRuntime": "javascript",
-    "exerciseAnswer": "1. [1, 2] — asl o‘zgarmadi\n2. [1, 2, 3] — yangi massiv\n3. false — tashqi massiv boshqa reference\n4. 7 — IIFE darhol chaqirildi\n\nLoyihani yechish yo‘li: return [...savatcha, mahsulot]. Ichki obyektlarni keyin o‘zgartirsangiz ular umumiy reference ekanini unutmang; kerakli qatlamni ham nusxalang."
+    "exerciseAnswer": "1. [1, 2] — asl o‘zgarmadi\n2. [1, 2, 3] — yangi massiv\n3. false — tashqi massiv boshqa reference\n4. 7 — IIFE darhol chaqirildi\n\nLoyihani yechish yo‘li: return [...savatcha, mahsulot]. Ichki obyektlarni keyin o‘zgartirsangiz ular umumiy reference ekanini unutmang; kerakli qatlamni ham nusxalang.",
+    "learningGuide": {
+      "goal": "Darhol chaqiriladigan ifoda va sof funksiya xulqini bir-biridan ajratasiz.",
+      "prerequisites": [
+        "functions",
+        "closures",
+        "object-reference"
+      ],
+      "terms": [
+        {
+          "term": "IIFE",
+          "meaning": "Funksiya ifodasini yaratib, shu zahoti chaqirish usuli."
+        },
+        {
+          "term": "Yon ta’sir",
+          "meaning": "Funksiya tashqarisidan kuzatiladigan o‘zgarish: inputga yozish, DOM yoki keshni yangilash."
+        },
+        {
+          "term": "Pure function",
+          "meaning": "Bir xil kirishga bir xil javob berib, tashqi holatni o‘zgartirmaydigan funksiya."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Qo‘shish funksiyasi asl ro‘yxatni o‘zgartirmasin.",
+        "brokenCode": "function qosh(list, x) { list.push(x); return list; }\nconst a = [1, 2]; const b = qosh(a, 3);\nconsole.log(a);",
+        "fixedCode": "function qosh(list, x) { return [...list, x]; }\nconst a = [1, 2]; const b = qosh(a, 3);\nconsole.log(a);\nconsole.log(b);",
+        "expectedOutput": [
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            2,
+            3
+          ]
+        ],
+        "explanation": "Yangi tashqi massiv qaytarildi. Kirgan massivga push qilish yon ta’sir edi; bu misolda elementlar oddiy sonlar.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Savatchaga mahsulot qo‘shadigan sof funksiya yozing: eski massivga push qilmasin, yangi massiv qaytarsin. Natija va asl qiymatni alohida tekshiring.",
+        "criteria": [
+          "Qo‘shilgan mahsulot yangi massivda bor.",
+          "Asl savatcha uzunligi va tarkibi o‘zgarmaydi.",
+          "Natija faqat argumentlarga bog‘liq."
+        ],
+        "hint": "return [...savatcha, mahsulot]. Ichki obyektlarni keyin o‘zgartirsangiz ular umumiy reference ekanini unutmang; kerakli qatlamni ham nusxalang."
+      }
+    }
   },
   {
     "id": "git-npm",
@@ -6409,7 +9075,56 @@ window.lessons.push(...[
       "Loyiha scripts buyruqlari"
     ],
     "exerciseRuntime": "terminal",
-    "exerciseAnswer": "1. \"Joriy fayllar holati\" — nima o‘zgarganini ko‘rsatadi\n2. \"Commitga kirmagan fayl farqlari\" — qaysi satrlar o‘zgarganini ko‘rsatadi\n3. \"Commitlar qisqa tarixi\" — tarixni o‘qiydi\n4. \"Loyiha scripts buyruqlari\" — scripts ro‘yxatini ko‘rsatadi\n\nLoyihani yechish yo‘li: Avval git init -b main va fayl yaratish. git add index.html dan keyin git diff --staged ni ko‘ring, so‘ng commit qiling. Remote bo‘lsa URL ini tekshirib, tegishli branchga push qiling."
+    "exerciseAnswer": "1. \"Joriy fayllar holati\" — nima o‘zgarganini ko‘rsatadi\n2. \"Commitga kirmagan fayl farqlari\" — qaysi satrlar o‘zgarganini ko‘rsatadi\n3. \"Commitlar qisqa tarixi\" — tarixni o‘qiydi\n4. \"Loyiha scripts buyruqlari\" — scripts ro‘yxatini ko‘rsatadi\n\nLoyihani yechish yo‘li: Avval git init -b main va fayl yaratish. git add index.html dan keyin git diff --staged ni ko‘ring, so‘ng commit qiling. Remote bo‘lsa URL ini tekshirib, tegishli branchga push qiling.",
+    "learningGuide": {
+      "goal": "Mahalliy commit, remote ga push va npm scripts vazifalarini ajratasiz.",
+      "prerequisites": [
+        "js-intro",
+        "modules"
+      ],
+      "terms": [
+        {
+          "term": "Terminal",
+          "meaning": "Kompyuter buyruqlarini matn bilan bajarish oynasi; JavaScript Console emas."
+        },
+        {
+          "term": "Repozitoriy",
+          "meaning": "Git yuritadigan loyiha va uning tarixi."
+        },
+        {
+          "term": "Stage",
+          "meaning": "Keyingi commitga kiritiladigan o‘zgarishlarni tayyorlash."
+        },
+        {
+          "term": "Paket",
+          "meaning": "Loyihada qayta ishlatiladigan tashqi kod yoki ishlab chiqish vositasi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir buyruq nima bajarishini ayting. Natija loyiha holatiga bog‘liq bo‘lsa, nimani ko‘rsatishini tushuntiring.",
+      "debug": {
+        "task": "Faqat index.html o‘zgarishini keyingi commitga kiriting. Tayyorlash qadami yo‘q.",
+        "brokenCode": "git commit -m \"Sahifani yangilash\"",
+        "fixedCode": "git add index.html\ngit diff --staged\ngit commit -m \"Sahifani yangilash\"",
+        "expectedOutput": [
+          "index.html stage qilinadi",
+          "Stage qilingan farq ko‘riladi",
+          "Commit yaratiladi"
+        ],
+        "explanation": "Buyruqlar terminalda, Git repozitoriysi ichida bajariladi. git commit ishchi papkadagi hamma o‘zgarishni o‘zi stage qilmaydi. Natija repozitoriy holatiga bog‘liq.",
+        "runtime": "terminal"
+      },
+      "write": {
+        "task": "Alohida mashq repozitoriy yarating. index.html ni commit qiling, matnni yangilang va git diff bilan farqini ko‘ring. package.json ga format:check scriptini qo‘shing.",
+        "criteria": [
+          "Commitdan oldin aynan qaysi fayl o‘zgargani ko‘rinadi.",
+          "node_modules o‘rniga package.json va lock fayli saqlanadi.",
+          "Script nomi package.json dagi buyruq bilan mos."
+        ],
+        "hint": "Avval git init -b main va fayl yaratish. git add index.html dan keyin git diff --staged ni ko‘ring, so‘ng commit qiling. Remote bo‘lsa URL ini tekshirib, tegishli branchga push qiling."
+      }
+    }
   },
   {
     "id": "dom-forms",
@@ -6491,7 +9206,55 @@ window.lessons.push(...[
       "string"
     ],
     "exerciseRuntime": "browser",
-    "exerciseAnswer": "1. \"5\" — name bo‘yicha qiymat olindi\n2. false — disabled maydon chiqarildi\n3. false — belgilanmagan checkbox yo‘q\n4. \"string\" — value matn\n\nLoyihani yechish yo‘li: submit ichida preventDefault, input qiymatlarini tekshirish, keyin document.createElement bilan karta tuzing. textContent ishlating. Formani muvaffaqiyatli qo‘shilgach reset qiling."
+    "exerciseAnswer": "1. \"5\" — name bo‘yicha qiymat olindi\n2. false — disabled maydon chiqarildi\n3. false — belgilanmagan checkbox yo‘q\n4. \"string\" — value matn\n\nLoyihani yechish yo‘li: submit ichida preventDefault, input qiymatlarini tekshirish, keyin document.createElement bilan karta tuzing. textContent ishlating. Formani muvaffaqiyatli qo‘shilgach reset qiling.",
+    "learningGuide": {
+      "goal": "Forma qiymatini o‘qib tekshirasiz va sahifani yangilamasdan natija chiqarasiz.",
+      "prerequisites": [
+        "dom-basics",
+        "events-advanced",
+        "json-basics"
+      ],
+      "terms": [
+        {
+          "term": "submit",
+          "meaning": "Forma yuborish hodisasi; faqat tugma clicki bilan cheklanmaydi."
+        },
+        {
+          "term": "FormData",
+          "meaning": "name atributlari bo‘yicha forma ma’lumotlarini yig‘adigan obyekt."
+        },
+        {
+          "term": "Validation",
+          "meaning": "Kiritilgan qiymat talabga mosligini tekshirish."
+        },
+        {
+          "term": "preventDefault",
+          "meaning": "Hodisaning standart harakatini bekor qilish."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "FormData ismni o‘qishi kerak. id bilan name ning qaysi biri kalit bo‘ladi?",
+        "brokenCode": "const form = document.createElement(\"form\");\nform.innerHTML = '<input id=\"ism\" value=\"Ali\">';\nconsole.log(new FormData(form).get(\"ism\"));",
+        "fixedCode": "const form = document.createElement(\"form\");\nform.innerHTML = '<input id=\"ism\" name=\"ism\" value=\"Ali\">';\nconsole.log(new FormData(form).get(\"ism\"));",
+        "expectedOutput": [
+          "Ali"
+        ],
+        "explanation": "FormData name atributi orqali kalit oladi. id elementni tanlash/label bilan bog‘lash uchun; bu vazifani o‘zi bajarmaydi.",
+        "runtime": "browser"
+      },
+      "write": {
+        "task": "Ism va yosh formasini tuzing. Bo‘sh ismni trim bilan rad eting, yaroqli ma’lumotni createElement va textContent bilan kartaga qo‘shing. O‘chirish tugmasi kartani olib tashlasin.",
+        "criteria": [
+          "Bo‘sh yoki faqat bo‘sh joyli ism qabul qilinmaydi.",
+          "Yosh stringdan tekshirilgan songa aylantiriladi.",
+          "Qo‘shilgan karta o‘chirish tugmasi bilan olib tashlanadi."
+        ],
+        "hint": "submit ichida preventDefault, input qiymatlarini tekshirish, keyin document.createElement bilan karta tuzing. textContent ishlating. Formani muvaffaqiyatli qo‘shilgach reset qiling."
+      }
+    }
   },
   {
     "id": "async-timers",
@@ -6501,15 +9264,16 @@ window.lessons.push(...[
     "sections": [
       {
         "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
-        "text": "Taymer rejalashtirildi, lekin sinxron davom satri avval chiqdi. await faqat shu async funksiyaning davom qismini kutdiradi, butun brauzerni to‘xtatmaydi.",
-        "code": "(async () => {\n  console.log(\"boshlanish\");\n  const tayyor = new Promise(resolve => setTimeout(() => {\n    console.log(\"keyin\"); resolve();\n  }, 0));\n  console.log(\"davom\");\n  await tayyor;\n})();",
+        "text": "Avval boshlanish chiqadi. setTimeout callbackni keyinga rejalashtiradi. davom hozir chiqadi, keyin taymer callbacki keyin matnini chiqaradi. Promise yoki await bilish bu misol uchun kerak emas.",
+        "code": "console.log(\"boshlanish\");\nsetTimeout(() => console.log(\"keyin\"), 0);\nconsole.log(\"davom\");",
         "expectedOutput": [
           "boshlanish",
           "davom",
           "keyin"
         ],
         "exampleRuntime": "async",
-        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"boshlanish\", \"davom\", \"keyin\"]. Har bir console.log bitta natija beradi."
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"boshlanish\", \"davom\", \"keyin\"]. Har bir console.log bitta natija beradi.",
+        "settleMs": 20
       },
       {
         "title": "2. Sinxron tartib",
@@ -6552,13 +9316,62 @@ window.lessons.push(...[
     ],
     "fullTextDefault": true,
     "courseExpanded": 1,
-    "exerciseCode": "(async () => {\n  const id = setTimeout(() => console.log(\"chiqmaydi\"), 0);\n  clearTimeout(id);\n  console.log(\"A\");\n  await new Promise(resolve => setTimeout(resolve, 0));\n  console.log(\"B\");\n})();",
+    "exerciseCode": "const id = setTimeout(() => console.log(\"chiqmaydi\"), 0);\nclearTimeout(id);\nconsole.log(\"A\");\nsetTimeout(() => console.log(\"B\"), 0);",
     "exerciseExpected": [
       "A",
       "B"
     ],
     "exerciseRuntime": "async",
-    "exerciseAnswer": "1. \"A\" — bekor qilingan callback ishlamaydi\n2. \"B\" — kutish tugagach async davomi\n\nLoyihani yechish yo‘li: let timer=null saqlang. Start faqat timer===null bo‘lsa interval ochsin. Stop clearInterval(timer); timer=null qilsin. Limitga yetganda ham Stop ni chaqiring."
+    "exerciseAnswer": "1. \"A\" — bekor qilingan callback ishlamaydi\n2. \"B\" — kutish tugagach async davomi\n\nLoyihani yechish yo‘li: let timer=null saqlang. Start faqat timer===null bo‘lsa interval ochsin. Stop clearInterval(timer); timer=null qilsin. Limitga yetganda ham Stop ni chaqiring.",
+    "learningGuide": {
+      "goal": "Sinxron satr va keyinroq chaqiriladigan callback tartibini oldindan aytasiz.",
+      "prerequisites": [
+        "callbacks",
+        "events-advanced"
+      ],
+      "terms": [
+        {
+          "term": "Asinxron",
+          "meaning": "Javob yoki callback keyinroq keladigan ish usuli."
+        },
+        {
+          "term": "Taymer",
+          "meaning": "Callbackni minimal muddatdan keyin bajarishga tayyorlovchi muhit vositasi."
+        },
+        {
+          "term": "Callback",
+          "meaning": "Taymer keyinroq chaqiradigan funksiya."
+        },
+        {
+          "term": "Bekor qilish",
+          "meaning": "Hali kerak bo‘lmagan rejalashtirilgan ishni to‘xtatish."
+        }
+      ]
+    },
+    "exerciseSettleMs": 20,
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Avval hozir, keyin keyin chiqsin. Funksiyani hozir chaqirib yubormang.",
+        "brokenCode": "function keyin() { console.log(\"keyin\"); }\nsetTimeout(keyin(), 0);\nconsole.log(\"hozir\");",
+        "fixedCode": "function keyin() { console.log(\"keyin\"); }\nsetTimeout(keyin, 0);\nconsole.log(\"hozir\");",
+        "expectedOutput": [
+          "hozir",
+          "keyin"
+        ],
+        "explanation": "Taymerga funksiya reference i berildi. () qo‘yilsa funksiya so‘rov berilayotgan paytning o‘zida ishlaydi. 0 callbackni sinxron qilmaydi.",
+        "runtime": "async"
+      },
+      "write": {
+        "task": "Boshlash/to‘xtatish tugmali sanagich qiling. Boshlash ikki marta bosilganda ikki interval yaratilmasin. 5 ga yetganda to‘xtasin.",
+        "criteria": [
+          "Start ikki marta bosilganda bitta interval qoladi.",
+          "Stop bosilgach yangi sanoq chiqmaydi.",
+          "5 ga yetganda avtomatik to‘xtaydi."
+        ],
+        "hint": "let timer=null saqlang. Start faqat timer===null bo‘lsa interval ochsin. Stop clearInterval(timer); timer=null qilsin. Limitga yetganda ham Stop ni chaqiring."
+      }
+    }
   },
   {
     "id": "class-private",
@@ -6621,7 +9434,50 @@ window.lessons.push(...[
       []
     ],
     "exerciseRuntime": "javascript",
-    "exerciseAnswer": "1. 2 — getter private qiymatni oldi\n2. 8 — setter private qiymatni o‘zgartirdi\n3. [] — private maydon enumerable ochiq kalit emas\n\nLoyihani yechish yo‘li: get fahrenheit() { return this.#c * 9 / 5 + 32; }. set c(v) Number.isFinite bilan tekshirsin. Tashqi kodga faqat kerakli ochiq interfeysni bering."
+    "exerciseAnswer": "1. 2 — getter private qiymatni oldi\n2. 8 — setter private qiymatni o‘zgartirdi\n3. [] — private maydon enumerable ochiq kalit emas\n\nLoyihani yechish yo‘li: get fahrenheit() { return this.#c * 9 / 5 + 32; }. set c(v) Number.isFinite bilan tekshirsin. Tashqi kodga faqat kerakli ochiq interfeysni bering.",
+    "learningGuide": {
+      "goal": "Getter/setter bilan tekshiriladigan ochiq interfeys va yashirin ichki maydon yaratasiz.",
+      "prerequisites": [
+        "classes",
+        "errors-try-catch"
+      ],
+      "terms": [
+        {
+          "term": "Getter",
+          "meaning": "Xususiyat o‘qilganda natija hisoblaydigan metod."
+        },
+        {
+          "term": "Setter",
+          "meaning": "Xususiyatga qiymat yozilganda uni qabul qiladigan metod."
+        },
+        {
+          "term": "Private maydon",
+          "meaning": "Class ichida e’lon qilinadigan # bilan boshlangan yopiq maydon."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Setter o‘zini qayta-qayta chaqirmasligi kerak. Ichki private maydon yarating.",
+        "brokenCode": "class C { set x(v) { this.x = v; } }\nconst c = new C(); c.x=2;",
+        "fixedCode": "class C {\n  #x = 0;\n  set x(v) { this.#x=v; }\n  get x() { return this.#x; }\n}\nconst c = new C(); c.x=2; console.log(c.x);",
+        "expectedOutput": [
+          2
+        ],
+        "explanation": "this.x ga setter ichida yozish yana o‘sha setterni chaqiradi. #x ichki qiymatni alohida saqlaydi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Harorat classi yozing: Selsiy private maydonda bo‘lsin, setter chekli sonni qabul qilsin. Fahrenheit getter hisoblasin. Qayta qiymat berganda getter yangilansin.",
+        "criteria": [
+          "0°C uchun 32°F olinadi.",
+          "Selsiy yangilanganda Fahrenheit getter yangilanadi.",
+          "NaN yoki son bo‘lmagan qiymat setter tomonidan rad etiladi."
+        ],
+        "hint": "get fahrenheit() { return this.#c * 9 / 5 + 32; }. set c(v) Number.isFinite bilan tekshirsin. Tashqi kodga faqat kerakli ochiq interfeysni bering."
+      }
+    }
   },
   {
     "id": "memory-management",
@@ -6699,7 +9555,51 @@ window.lessons.push(...[
       null
     ],
     "exerciseRuntime": "javascript",
-    "exerciseAnswer": "1. 1 — reference keshda saqlanadi\n2. 0 — yozuv olib tashlandi\n3. null — o‘zgaruvchi null, GC vaqtini bu log aytmaydi\n\nLoyihani yechish yo‘li: interval ID ni null bilan belgilang, Start uni tekshirsin. Stop intervalni bekor qilib ID ni null qilsin. Listener uchun ayni callback yoki AbortController saqlang."
+    "exerciseAnswer": "1. 1 — reference keshda saqlanadi\n2. 0 — yozuv olib tashlandi\n3. null — o‘zgaruvchi null, GC vaqtini bu log aytmaydi\n\nLoyihani yechish yo‘li: interval ID ni null bilan belgilang, Start uni tekshirsin. Stop intervalni bekor qilib ID ni null qilsin. Listener uchun ayni callback yoki AbortController saqlang.",
+    "learningGuide": {
+      "goal": "Keraksiz reference larni aniqlab, taymer/listener/kesh hayotini boshqarasiz.",
+      "prerequisites": [
+        "object-reference",
+        "closures",
+        "weakmap-weakset"
+      ],
+      "terms": [
+        {
+          "term": "Xotira leak",
+          "meaning": "Endi kerak bo‘lmagan ma’lumotning reference sabab saqlanib qolishi."
+        },
+        {
+          "term": "Heap snapshot",
+          "meaning": "Obyektlar va bog‘lanishlar holatini ko‘rish uchun xotira tasviri."
+        },
+        {
+          "term": "Cleanup",
+          "meaning": "Taymer, listener va boshqa resurslarni yakunlash/tozalash."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Map dagi keraksiz yozuvni olib tashlang. Faqat tashqi o‘zgaruvchini null qilish yetadimi?",
+        "brokenCode": "let key={};\nconst cache=new Map([[key,\"katta qiymat\"]]);\nkey=null; console.log(cache.size);",
+        "fixedCode": "let key={};\nconst cache=new Map([[key,\"katta qiymat\"]]);\ncache.delete(key);\nkey=null; console.log(cache.size);",
+        "expectedOutput": [
+          0
+        ],
+        "explanation": "Map kalitni kuchli reference bilan ushlab turadi. delete yozuvni olib tashlaydi. Bu GC qachon ishlashini yoki xotira darhol qaytishini kafolatlamaydi.",
+        "runtime": "javascript"
+      },
+      "write": {
+        "task": "Start/stop sanagich yarating: bir vaqtda bitta interval bo‘lsin. Listener va taymerlarni tozalash funksiyasini yozing. Keshga eng ko‘p nechta yozuv sig‘ishini belgilang.",
+        "criteria": [
+          "Bir vaqtda ko‘pi bilan bitta interval ishlaydi.",
+          "Stop barcha kerakli resurslarni tozalaydi.",
+          "Kesh hajmi belgilangan chegaradan oshmaydi."
+        ],
+        "hint": "interval ID ni null bilan belgilang, Start uni tekshirsin. Stop intervalni bekor qilib ID ni null qilsin. Listener uchun ayni callback yoki AbortController saqlang."
+      }
+    }
   },
   {
     "id": "node-http",
@@ -6780,7 +9680,55 @@ window.lessons.push(...[
       "{\"xabar\":\"Salom\"}"
     ],
     "exerciseRuntime": "node",
-    "exerciseAnswer": "1. \"/api/salom\" — query yo‘ldan ajratildi\n2. \"Ali\" — parametr matn sifatida olindi\n3. \"{\\\"xabar\\\":\\\"Salom\\\"}\" — javob tanasi JSON matniga aylantirildi\n\nLoyihani yechish yo‘li: Request yo‘lini new URL bilan parse qiling. Mos metod va pathname uchun 200/JSON, boshqa holat uchun 404/JSON. Node server callbackida sof route funksiyasining natijasini res ga yozing."
+    "exerciseAnswer": "1. \"/api/salom\" — query yo‘ldan ajratildi\n2. \"Ali\" — parametr matn sifatida olindi\n3. \"{\\\"xabar\\\":\\\"Salom\\\"}\" — javob tanasi JSON matniga aylantirildi\n\nLoyihani yechish yo‘li: Request yo‘lini new URL bilan parse qiling. Mos metod va pathname uchun 200/JSON, boshqa holat uchun 404/JSON. Node server callbackida sof route funksiyasining natijasini res ga yozing.",
+    "learningGuide": {
+      "goal": "Method va pathname bo‘yicha route tanlab, aniq status va JSON javob berasiz.",
+      "prerequisites": [
+        "node-basics",
+        "fetch-api",
+        "json-basics"
+      ],
+      "terms": [
+        {
+          "term": "Route",
+          "meaning": "HTTP method va yo‘lga mos bajariladigan ish."
+        },
+        {
+          "term": "Header",
+          "meaning": "Javob yoki so‘rov haqidagi metama’lumot, masalan Content-Type."
+        },
+        {
+          "term": "Middleware",
+          "meaning": "Expressda request yo‘lining bir bosqichida ishlaydigan funksiya."
+        },
+        {
+          "term": "Port",
+          "meaning": "Kompyuterda server ulanishni qaysi raqamli nuqtada qabul qilishi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir console.log natijasini avval yozing. Qiymat turini va nima uchun shu natija chiqqanini tushuntiring.",
+      "debug": {
+        "task": "Query bor bo‘lsa ham /api/salom marshruti topilsin.",
+        "brokenCode": "const requestUrl=\"/api/salom?ism=Ali\";\nconsole.log(requestUrl === \"/api/salom\");",
+        "fixedCode": "const requestUrl=\"/api/salom?ism=Ali\";\nconst u=new URL(requestUrl, \"http://localhost\");\nconsole.log(u.pathname === \"/api/salom\");",
+        "expectedOutput": [
+          true
+        ],
+        "explanation": "So‘rov URL ida query ham bo‘lishi mumkin. pathname yo‘lni ajratadi; parametrlar searchParams orqali olinadi.",
+        "runtime": "node"
+      },
+      "write": {
+        "task": "GET /api/vaqt va GET /api/salom yo‘llarini yozing. Query param orqali ism oling, noma’lum yo‘lga 404 qaytaring. Alohida funksiyada route natijasini test qiling.",
+        "criteria": [
+          "GET /api/salom va /api/vaqt to‘g‘ri JSON beradi.",
+          "Query ism pathname dan alohida olinadi.",
+          "Noma’lum yo‘l 404 qaytaradi va javob bir marta yakunlanadi."
+        ],
+        "hint": "Request yo‘lini new URL bilan parse qiling. Mos metod va pathname uchun 200/JSON, boshqa holat uchun 404/JSON. Node server callbackida sof route funksiyasining natijasini res ga yozing."
+      }
+    }
   },
   {
     "id": "lint-format",
@@ -6857,7 +9805,54 @@ window.lessons.push(...[
       "Loyihadagi test scripti bajariladi"
     ],
     "exerciseRuntime": "terminal",
-    "exerciseAnswer": "1. \"ESLint qoidalari tekshiriladi\" — scripts da lint bo‘lishi kerak\n2. \"Prettier format mosligini tekshiradi\" — --check o‘zi formatlamaydi\n3. \"Loyihadagi test scripti bajariladi\" — test vositasi package.json da tanlanadi\n\nLoyihani yechish yo‘li: scripts ichida lint: eslint ., format:check: prettier . --check, test: vitest run kabi buyruqlarni belgilang. Tool ishlamasa o‘rnatilgan paket va muhit konfiguratsiyasini tekshiring."
+    "exerciseAnswer": "1. \"ESLint qoidalari tekshiriladi\" — scripts da lint bo‘lishi kerak\n2. \"Prettier format mosligini tekshiradi\" — --check o‘zi formatlamaydi\n3. \"Loyihadagi test scripti bajariladi\" — test vositasi package.json da tanlanadi\n\nLoyihani yechish yo‘li: scripts ichida lint: eslint ., format:check: prettier . --check, test: vitest run kabi buyruqlarni belgilang. Tool ishlamasa o‘rnatilgan paket va muhit konfiguratsiyasini tekshiring.",
+    "learningGuide": {
+      "goal": "Linter, formatter va test topadigan turli muammolarni ajratasiz.",
+      "prerequisites": [
+        "git-npm",
+        "testing-basics"
+      ],
+      "terms": [
+        {
+          "term": "Linter",
+          "meaning": "Qoidaga zid yoki shubhali kodni ko‘rsatuvchi vosita."
+        },
+        {
+          "term": "Formatter",
+          "meaning": "Kodning chekinish va satr ko‘rinishini izchil qiluvchi vosita."
+        },
+        {
+          "term": "Configuration",
+          "meaning": "Vosita qaysi fayl va qoidalar bilan ishlashini belgilovchi sozlama."
+        },
+        {
+          "term": "Exit code",
+          "meaning": "Buyruq muvaffaqiyat yoki xato bilan tugaganini ko‘rsatuvchi son."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Har bir buyruq nima bajarishini ayting. Natija loyiha holatiga bog‘liq bo‘lsa, nimani ko‘rsatishini tushuntiring.",
+      "debug": {
+        "task": "CI tekshiruvi fayllarni o‘zgartirmasdan formatni tekshirsin.",
+        "brokenCode": "npx prettier . --write",
+        "fixedCode": "npx prettier . --check",
+        "expectedOutput": [
+          "Format mos bo‘lsa muvaffaqiyat kodi, mos kelmasa xato kodi qaytadi."
+        ],
+        "explanation": "--write fayllarni qayta yozadi; --check faqat mosligini tekshiradi. Buyruq Prettier o‘rnatilgan loyiha ildizida bajariladi.",
+        "runtime": "terminal"
+      },
+      "write": {
+        "task": "Oldingi kichik loyihaga lint, format:check va test skriptlarini qo‘shing. Bir ataylab noto‘g‘ri nom, bir format farqi va bir noto‘g‘ri hisob natijasini uchta vosita qanday topishini solishtiring.",
+        "criteria": [
+          "Noto‘g‘ri o‘zgaruvchi nomini linter ko‘rsatadi.",
+          "Format farqini Prettier check aniqlaydi.",
+          "Noto‘g‘ri hisob natijasini test aniqlaydi; formatlash uni tuzatmaydi."
+        ],
+        "hint": "scripts ichida lint: eslint ., format:check: prettier . --check, test: vitest run kabi buyruqlarni belgilang. Tool ishlamasa o‘rnatilgan paket va muhit konfiguratsiyasini tekshiring."
+      }
+    }
   }
 ]);
 window.lessonStages = [
@@ -7248,4 +10243,18 @@ window.interviewQuestions.push(...[
   "note": "Jestning odatiy CommonJS muhitida test va expect global beriladi; Vitest misolida ular import qilindi. Ikkita runnerni aralashtirmasdan bittasini tanlang."
 });
   testing.resources = [{ title: "Vitest: boshlash", url: "https://vitest.dev/guide/" }, { title: "Jest: boshlash", url: "https://jestjs.io/docs/getting-started" }];
+}
+
+// Keep setup before use and move reference material before the final practice.
+for (const id of ['dom-basics', 'functions', 'conditionals', 'destructuring-spread', 'testing-basics']) {
+  const lesson = window.lessons.find(item => item.id === id);
+  if (id === 'dom-basics') {
+    const setup = lesson.sections.findIndex(section => section.title.includes('HTML va JS ni ulash'));
+    lesson.sections.splice(1, 0, lesson.sections.splice(setup, 1)[0]);
+  }
+  const rank = section => section.title.includes('Kichik amaliy loyiha') ? 2 : section.title.includes('Ko‘p uchraydigan xatolar') ? 1 : 0;
+  lesson.sections.sort((a, b) => rank(a) - rank(b));
+  lesson.sections.forEach((section, index) => {
+    section.title = `${index + 1}. ${section.title.replace(/^\d+\.\s*/, '')}`;
+  });
 }

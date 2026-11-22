@@ -46,6 +46,7 @@ test('all new standalone JavaScript, asynchronous and Node examples produce thei
     };
     const result=vm.runInNewContext(example.code,context,{timeout:1000});
     if(result&&typeof result.then==='function')await result;
+    else if(example.runtime==='async')await new Promise(resolve=>setTimeout(resolve,20));
     assert.deepEqual(logs,encode(example.expected),example.lesson+': '+example.title);
     checked++;
   }
