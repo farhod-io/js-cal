@@ -63,79 +63,164 @@ window.lessons = [
     "id": "scope",
     "title": "Scope: global, function va block",
     "question": "Scope nima? Global scope, function scope va block scope qanday ishlaydi?",
-    "explanation": "Scope — kodning ma’lum joyidan qaysi o‘zgaruvchi nomlarini ishlata olishimizni belgilaydigan hudud. Buni uyga o‘xshat: global — umumiy hovli, funksiya — xona, block — xona ichidagi kichik hudud. Ichkaridan tashqaridagi nomlarni topish mumkin; tashqaridan ichkaridagi mahalliy nomlar ko‘rinmaydi. Misollar deklaratsiyalar bajarilganidan keyingi holatni ko‘rsatadi.",
+    "explanation": "Scope — o‘zgaruvchiga qayerdan murojaat qilish mumkinligi. Ichki xonadan tashqi xonadagi nomni ko‘rish mumkin, tashqaridan ichki mahalliy nomni ko‘rib bo‘lmaydi. JavaScript nomni funksiya qayerda yaratilganiga qarab qidiradi: bu lexical scope.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "interactiveScope": true,
     "sections": [
       {
-        "title": "1. Global scope",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Har bir const son boshqa hududda yaratilgan. Blokdagi log eng yaqin 20 ni oladi; undan tashqaridagi funksiya 10 ni, global kod 5 ni oladi. Bu shadowing, qiymatlarni o‘zaro almashtirish emas.",
+        "code": "const son = 5;\nfunction tekshir() {\n  const son = 10;\n  {\n    const son = 20;\n    console.log(son);\n  }\n  console.log(son);\n}\ntekshir();\nconsole.log(son);",
+        "expectedOutput": [
+          20,
+          10,
+          5
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [20, 10, 5]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Global scope",
         "text": "Funksiya va blocklardan tashqarida, oddiy scriptning yuqori darajasida e’lon qilingan nom global scope’da bo‘ladi. Shu muhitdagi ichki funksiyalar va blocklar unga murojaat qilishi mumkin. Global degani barcha fayllar yoki barcha brauzer tablarida avtomatik mavjud degani emas.",
         "code": "const til = \"JavaScript\";\n\nfunction salom() {\n  console.log(til); // JavaScript\n}\nsalom();\nconsole.log(til);   // JavaScript",
         "note": "Bu misol oddiy script uchun. type=\"module\" faylining yuqori darajasidagi nomlar modul scope’ida bo‘ladi. Brauzerda global let/const window xususiyati bo‘lib qolmaydi."
       },
       {
-        "title": "2. Function scope",
+        "title": "3. Function scope",
         "text": "Funksiya ichida e’lon qilingan mahalliy nomni tashqaridan ishlatib bo‘lmaydi. var eng yaqin funksiyaga bog‘lanadi. let va const ham funksiya tanasida mahalliy, lekin qo‘shimcha ichki block bilan chegaralanishi mumkin.",
         "code": "function tanish() {\n  var ism = \"Ali\";\n  console.log(ism); // Ali\n}\n\ntanish();\n// console.log(ism); // ReferenceError\n// Funksiyani chaqirish uning mahalliy nomini global qilmaydi."
       },
       {
-        "title": "3. Block scope",
+        "title": "4. Block scope",
         "text": "if, for yoki alohida { } ichida let/const bilan yaratilgan nom shu block ichida va uning ichki hududlarida ko‘rinadi. var oddiy block chegarasiga bo‘ysunmaydi.",
         "code": "function misol() {\n  if (true) {\n    let yosh = 20;\n    const shahar = \"Toshkent\";\n    var ball = 100;\n    console.log(yosh, shahar); // 20 Toshkent\n  }\n  console.log(ball); // 100: var funksiya ichida qoladi\n  // console.log(yosh); // ReferenceError\n}\nmisol();"
       },
       {
-        "title": "4. Scope chain — nom qayerdan qidiriladi?",
+        "title": "5. Scope chain — nom qayerdan qidiriladi?",
         "text": "JavaScript avval hozirgi scope’dan qidiradi. Topilmasa, tashqi scope’ga chiqadi va shu tartibda davom etadi. Globalgacha topilmasa, oddiy o‘qishda ReferenceError bo‘ladi. Ichkaridagi bir xil nom tashqaridagini soyada qoldiradi (shadowing).",
         "code": "const ism = \"Global Ali\";\nfunction salom() {\n  const ism = \"Mahalliy Vali\";\n  {\n    console.log(ism); // Mahalliy Vali\n  }\n}\nsalom();\nconsole.log(ism); // Global Ali",
         "note": "Scope funksiya qayerda yozilganiga bog‘liq (lexical scope), qayerdan chaqirilganiga emas. Nom topilsa-yu TDZ ichida bo‘lsa, qidiruv tashqariga davom etmaydi — ReferenceError chiqadi."
+      },
+      {
+        "title": "6. Scope chaqirilgan joy bilan o‘zgarmaydi",
+        "text": "Funksiya qayerdan chaqirilgani lexical nom qidirishini almashtirmaydi. this qoidasi esa alohida; uni scope bilan aralashtirmang.",
+        "code": "const ism = \"Global\";\nfunction olish() { return ism; }\nfunction chaqir() {\n  const ism = \"Mahalliy\";\n  return olish();\n}\nconsole.log(chaqir());",
+        "expectedOutput": [
+          "Global"
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "7. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "{ } ichidagi let/const tashqariga chiqmaydi, var esa eng yaqin funksiyaga bog‘liq. Funksiyani chaqirish uning parametrini global qilmaydi. Modul yuqori darajasidagi nomlar global scope emas. Brauzer oddiy scriptida ham global let/const window xususiyati sifatida yaratilmaydi."
+      },
+      {
+        "title": "8. Kichik amaliy loyiha",
+        "text": "Global nom, funksiya ichidagi shu nom va ichki blokdagi shu nom bilan uchta misol yozing. Har log qaysi nomni olayotganini belgilang; keyin var bilan if blokidagi farqni tekshiring."
       }
     ],
     "code": "const til = \"JS\";          // global\n\nfunction dars() {\n  var ism = \"Ali\";         // function\n\n  if (true) {\n    let yosh = 20;        // block\n    console.log(til);     // JS\n    console.log(ism);     // Ali\n    console.log(yosh);    // 20\n  }\n\n  console.log(ism);       // Ali\n  // console.log(yosh);   // ReferenceError\n}\n\ndars();\nconsole.log(til);         // JS\n// console.log(ism);      // ReferenceError",
-    "takeaway": "Global → tashqi umumiy hudud (oddiy script misolida).\nFunction → funksiyaning mahalliy hududi.\nBlock → { } ichidagi let/const hududi.\nNom qidirish yo‘nalishi: ichkaridan tashqariga.",
-    "exercise": "Interaktiv misolda avval Global, so‘ng Function, keyin Block tugmasini bos. Har birida qaysi nomlar ko‘rinishini oldindan taxmin qil.\n\nEndi o‘yla: let yosh o‘rniga var yosh yozsak, funksiya ichida if’dan keyin yosh ko‘rinadimi? Funksiyadan tashqarida-chi?"
+    "takeaway": "Scope — o‘zgaruvchiga qayerdan murojaat qilish mumkinligi.\n{ } ichidagi let/const tashqariga chiqmaydi, var esa eng yaqin funksiyaga bog‘liq.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Global nom, funksiya ichidagi shu nom va ichki blokdagi shu nom bilan uchta misol yozing. Har log qaysi nomni olayotganini belgilang; keyin var bilan if blokidagi farqni tekshiring.\n\nQo‘shimcha savollar:\nInteraktiv misolda avval Global, so‘ng Function, keyin Block tugmasini bos. Har birida qaysi nomlar ko‘rinishini oldindan taxmin qil.\n\nEndi o‘yla: let yosh o‘rniga var yosh yozsak, funksiya ichida if’dan keyin yosh ko‘rinadimi? Funksiyadan tashqarida-chi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "let x = 1;\nfunction f() {\n  let x = 2;\n  { let x = 3; console.log(x); }\n  console.log(x);\n}\nf();\nconsole.log(x);",
+    "exerciseExpected": [
+      3,
+      2,
+      1
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 3 — eng ichki blokdagi x\n2. 2 — funksiya x si saqlangan\n3. 1 — global x o‘zgarmagan\n\nLoyihani yechish yo‘li: Avval uch hududni qavs bilan ajrating. Har log yoniga eng yaqin deklaratsiyani chizing. Nom tashqarida topilsa ham ichki shu nom TDZ da bo‘lsa tashqariga o‘tib ketilmaydi.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Glossary/Scope"
+      }
+    ]
   },
   {
     "id": "hoisting-tdz",
     "title": "Hoisting va Temporal Dead Zone (TDZ)",
     "question": "Hoisting nima? Uning muhim joylari va TDZ qanday ishlaydi?",
-    "explanation": "Hoisting — kod bajarilishidan oldin deklaratsiyalar uchun nomlar tayyorlanishini tushuntiradigan atama. Kod satrlari haqiqatan tepaga ko‘chmaydi. Muhim savol: nom tayyorlanganda u foydalanishga ham tayyormi? var uchun boshlang‘ich qiymat undefined; let va const uchun esa deklaratsiya bajarilguncha foydalanish taqiqlangan.",
+    "explanation": "Hoisting — kod ishlashidan oldin scope uchun nomlar qanday tayyorlanishini tushuntiradigan atama. Kod satrlari jismonan yuqoriga ko‘chirilmaydi. var oldindan undefined bilan tayyorlanadi; let/const nomi band bo‘ladi, lekin deklaratsiya bajarilguncha foydalanishga tayyor emas. Shu oraliq TDZ.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. var: nom tayyor, qiymat hali berilmagan",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Birinchi logdan oldin var a mavjud, lekin =10 hali bajarilmagan. b ichki try blokida e’lon qilinadi va uni oldin o‘qish ReferenceError beradi; catch shu xatoni ko‘rsatadi.",
+        "code": "console.log(a);\nvar a = 10;\nconsole.log(a);\ntry {\n  console.log(b);\n  let b = 20;\n} catch (e) { console.log(e.name); }",
+        "expectedOutput": [
+          {
+            "$undefined": true
+          },
+          10,
+          "ReferenceError"
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [undefined, 10, \"ReferenceError\"]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. var: nom tayyor, qiymat hali berilmagan",
         "text": "var nomi o‘z scope’i tayyorlanganda yaratiladi va undefined bilan boshlanadi. Lekin = 10 kabi qiymat berish faqat shu satr bajarilganda sodir bo‘ladi.",
         "code": "console.log(son); // undefined\nvar son = 10;\nconsole.log(son); // 10",
         "note": "undefined xato emas, bu qiymat. Umuman e’lon qilinmagan nomni oddiy o‘qish esa ReferenceError beradi."
       },
       {
-        "title": "2. let va const: nom bor, foydalanish hali mumkin emas",
+        "title": "3. let va const: nom bor, foydalanish hali mumkin emas",
         "text": "let va const ham o‘z scope’i boshidan nomni band qiladi. Ammo ular dastlab initialization qilinmagan, ya’ni foydalanishga tayyor emas. Deklaratsiya bajarilguncha ularga murojaat ReferenceError beradi.",
         "code": "// Har bir misolni alohida ishga tushiring.\nconsole.log(yosh); // ReferenceError\nlet yosh = 20;\n\n// Alohida misol:\nconsole.log(PI); // ReferenceError\nconst PI = 3.14;",
         "note": "“let va const hoisting bo‘lmaydi” deyish chalg‘itadi. Aniq farq: var undefined bilan tayyor; let va const esa TDZ ichida."
       },
       {
-        "title": "3. TDZ — vaqtinchalik foydalanish taqiqlangan oraliq",
+        "title": "4. TDZ — vaqtinchalik foydalanish taqiqlangan oraliq",
         "text": "Temporal Dead Zone scope’ga kirilgan paytdan let yoki const deklaratsiyasi bajarilib, nom foydalanishga tayyor bo‘lguncha davom etadi. TDZ faqat deklaratsiyadan bitta oldingi satr emas — scope boshidan boshlanadi.",
         "code": "{\n  // ↓ TDZ boshlandi\n  // console.log(narx); // ReferenceError\n  // narx = 50;         // ReferenceError\n\n  let narx = 100;       // TDZ tugadi\n  console.log(narx);    // 100\n}\n\nlet tayyor;            // deklaratsiya bajarildi: undefined\nconsole.log(tayyor);   // undefined, TDZ emas",
         "note": "TDZError degan alohida xato turi yo‘q. TDZ sabab chiqadigan xato — ReferenceError. Xato ushlanmasa, joriy bajarilish to‘xtaydi; pastdagi satrlar davom etmaydi."
       },
       {
-        "title": "4. Ichki nom tashqi nomni scope boshidanoq soyada qoldiradi",
+        "title": "5. Ichki nom tashqi nomni scope boshidanoq soyada qoldiradi",
         "text": "JavaScript ichki scope’da nomni topsa, tashqaridagi shu nomga o‘tib ketmaydi. Ichki nom TDZ ichida bo‘lsa, xato beradi.",
         "code": "let son = 5;\n\n{\n  // console.log(son); // ReferenceError, tashqi 5 emas!\n  let son = 10;\n  console.log(son);    // 10\n}\nconsole.log(son);      // 5"
       },
       {
-        "title": "5. typeof ham TDZ’dan qutqarmaydi",
+        "title": "6. typeof ham TDZ’dan qutqarmaydi",
         "text": "typeof umuman mavjud bo‘lmagan oddiy nom uchun \"undefined\" satrini qaytaradi. Ammo TDZ ichidagi nomga typeof ishlatish ham ReferenceError beradi.",
         "code": "console.log(typeof mavjudEmas); // \"undefined\"\n\n{\n  // console.log(typeof yosh); // ReferenceError\n  let yosh = 20;\n}"
       },
       {
-        "title": "6. Function declaration va function expression farqi",
+        "title": "7. Function declaration va function expression farqi",
         "text": "Oddiy function declaration scope tayyorlanganda funksiyaning o‘zi bilan tayyor bo‘ladi: uni deklaratsiyadan oldin chaqirish mumkin. Funksiya let/const/var ga qiymat sifatida berilsa, o‘sha o‘zgaruvchining qoidalari ishlaydi. Bu misollar block ichidagi function declaration’larning muhitga bog‘liq holatlarini qamramaydi.",
         "code": "salom(); // Salom\nfunction salom() {\n  console.log(\"Salom\");\n}\n\n// Quyidagi misollarni alohida sinang:\n// kutibOl(); // ReferenceError: const TDZ ichida\nconst kutibOl = () => console.log(\"Salom\");\n\n// xayr(); // TypeError: undefined funksiya emas\nvar xayr = function () {\n  console.log(\"Xayr\");\n};",
         "note": "var bilan funksiya ifodasi: nomni o‘qish mumkin, qiymati undefined; uni chaqirish TypeError beradi. const bilan funksiya ifodasi: nomni deklaratsiyadan oldin o‘qishning o‘zi ReferenceError."
+      },
+      {
+        "title": "8. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "TDZ xatosi undefined qaytishi emas. typeof ham let/const TDZ dan o‘ta olmaydi. const uchun qiymat deklaratsiyada beriladi. var ga yozilgan function expression declaration kabi oldin chaqirilmaydi: nom undefined bo‘lsa chaqirish TypeError. Blokdagi function deklaratsiyalarining eski script qoidalari muhitga bog‘liq."
+      },
+      {
+        "title": "9. Kichik amaliy loyiha",
+        "text": "var, let va function declaration uchun oldin o‘qish/chaqirish misollarini alohida fayllarda sinang. Har birida “nom mavjudmi, tayyormi, qiymat berildimi?” deb yozing."
       }
     ],
-    "takeaway": "1. Hoisting kodni haqiqatan tepaga ko‘chirmaydi.\n2. var oldindan undefined bilan tayyorlanadi; qiymat berish ko‘tarilmaydi.\n3. let/const deklaratsiya bajarilguncha TDZ ichida.\n4. TDZ’da o‘qish, qiymat berish va typeof — ReferenceError.\n5. Function declaration’ni oldin chaqirish mumkin; function expression o‘zgaruvchi qoidasiga bo‘ysunadi.\n6. Amaliy odat: o‘zgaruvchini ishlatishdan oldin e’lon qil.",
-    "exercise": "Har birini alohida misol deb ol. Javoblarni taxmin qil:\n\nA) console.log(a); var a = 7;\nB) console.log(b); let b = 7;\nC) let c; console.log(c);\nD) ish(); var ish = () => 7;\n\nQaysi biri undefined, qaysi biri ReferenceError, qaysi biri TypeError beradi?"
+    "takeaway": "Hoisting — kod ishlashidan oldin scope uchun nomlar qanday tayyorlanishini tushuntiradigan atama.\nTDZ xatosi undefined qaytishi emas.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: var, let va function declaration uchun oldin o‘qish/chaqirish misollarini alohida fayllarda sinang. Har birida “nom mavjudmi, tayyormi, qiymat berildimi?” deb yozing.\n\nQo‘shimcha savollar:\nHar birini alohida misol deb ol. Javoblarni taxmin qil:\n\nA) console.log(a); var a = 7;\nB) console.log(b); let b = 7;\nC) let c; console.log(c);\nD) ish(); var ish = () => 7;\n\nQaysi biri undefined, qaysi biri ReferenceError, qaysi biri TypeError beradi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "console.log(a);\nvar a = 7;\nconsole.log(f());\nfunction f() { return \"tayyor\"; }\ntry {\n  console.log(typeof n);\n  let n = 1;\n} catch (e) { console.log(e.name); }",
+    "exerciseExpected": [
+      {
+        "$undefined": true
+      },
+      "tayyor",
+      "ReferenceError"
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. undefined — var hali qiymat olmagan\n2. \"tayyor\" — declaration funksiya tayyor\n3. \"ReferenceError\" — typeof ham TDZ ichida xato\n\nLoyihani yechish yo‘li: Har misolni alohida konsol yoki faylda bajaring. let n; satridan keyin undefined chiqishi bilan undan oldingi ReferenceError ni farqlang.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Glossary/Hoisting"
+      }
+    ]
   },
   {
     "id": "typeof",
@@ -259,384 +344,888 @@ window.lessons = [
     "id": "coercion-equality",
     "title": "Type coercion, == va === qoidalari",
     "question": "Avtomatik tur o‘zgartirish qanday ishlaydi? Ikki teng va uch teng farqi, batafsil qoidalari qanday?",
-    "explanation": "Type coercion — amal bajarilayotganda JavaScript qiymatni kerakli turga avtomatik aylantirishi. Masalan, \"5\" - 2 sonli hisoblash uchun 5 - 2 bo‘ladi. Number(\"5\") esa o‘zing aniq yozgan tur o‘zgartirish (explicit conversion). Bu amallar boshlang‘ich o‘zgaruvchi qiymatini o‘z-o‘zidan almashtirmaydi.",
+    "explanation": "Conversion — tur o‘zgartirish. Number(\"5\") ni o‘zingiz yozsangiz bu aniq aylantirish; \"5\" - 1 da JavaScriptning o‘zi aylantirsa coercion deyiladi. == va === ikkalasi tenglikni tekshiradi, lekin faqat == ayrim turlar uchun aylantirish qoidalarini qo‘llaydi.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. +: son qo‘shish yoki matn birlashtirish",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Kiritish boshida matn. === matn va sonni bir xil deb qabul qilmaydi. Number yangi son qaytaradi; asl kiritish o‘zgaruvchisi string bo‘lib qoladi.",
+        "code": "const kiritish = \"20\";\nconsole.log(typeof kiritish);\nconsole.log(kiritish === 20);\nconst yosh = Number(kiritish);\nconsole.log(yosh === 20);",
+        "expectedOutput": [
+          "string",
+          false,
+          true
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"string\", false, true]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. +: son qo‘shish yoki matn birlashtirish",
         "text": "Avval operandlar primitive qiymatga keltiriladi. Shundan so‘ng bittasi string bo‘lsa, ikkinchisi ham string qilinib birlashtiriladi. Aks holda sonli qo‘shish bajariladi. Bir qatordagi + amallari chapdan o‘ngga hisoblanadi.",
         "code": "console.log(\"5\" + 2);     // \"52\"\nconsole.log(5 + 2);       // 7\nconsole.log(1 + 2 + \"3\"); // \"33\": 3 + \"3\"\nconsole.log(\"1\" + 2 + 3); // \"123\": \"12\" + 3\nconsole.log(true + 1);    // 2\nconsole.log(null + 1);    // 1",
         "note": "BigInt bilan Number’ni arifmetik amalda aralashtirish TypeError beradi: 1n + 1. Ammo \"1\" + 1n matn birlashtirish bo‘lib \"11\" qaytaradi."
       },
       {
-        "title": "2. -, *, /: sonli hisoblash",
+        "title": "3. -, *, /: sonli hisoblash",
         "text": "Bu operatorlar matn birlashtirmaydi. Qiymatlar sonli turga aylantiriladi. Oddiy raqamli string son bo‘ladi; son sifatida o‘qib bo‘lmaydigan matn NaN beradi.",
         "code": "console.log(\"5\" - 2);    // 3\nconsole.log(\"5\" * 2);    // 10\nconsole.log(\"10\" / 2);   // 5\nconsole.log(\"salom\" - 2); // NaN\nconsole.log(\"\" - 0);     // 0\nconsole.log(\"   \" - 0);  // 0\nconsole.log(true * 5);   // 5\nconsole.log(null - 0);   // 0\nconsole.log(undefined - 0); // NaN"
       },
       {
-        "title": "3. ===: birinchi navbatda tur",
+        "title": "4. ===: birinchi navbatda tur",
         "text": "=== tur o‘zgartirmaydi. Turlar farq qilsa false. Turlar bir xil bo‘lsa, shu turga mos tenglik qoidasi ishlaydi. Number uchun NaN hech narsaga, hatto o‘ziga teng emas; +0 va -0 teng. String belgilar ketma-ketligi bo‘yicha teng. Obyektlar tarkibi bilan emas, aynan bitta obyekt ekanligi bilan tekshiriladi.",
         "code": "console.log(5 === \"5\");    // false: number va string\nconsole.log(5 === 5);      // true\nconsole.log(\"Ali\" === \"Ali\"); // true\nconsole.log(\"Ali\" === \"ali\"); // false\nconsole.log(true === 1);   // false\nconsole.log(null === null); // true\nconsole.log(undefined === undefined); // true\nconsole.log(NaN === NaN);  // false\nconsole.log(+0 === -0);    // true"
       },
       {
-        "title": "4. ==: asosiy qoidalar ketma-ketligi",
+        "title": "5. ==: asosiy qoidalar ketma-ketligi",
         "text": "== hamma narsani bitta turga ko‘r-ko‘rona aylantirmaydi. Muayyan juftliklarga qarab qoida tanlaydi. Quyidagi holatlarni tartib bilan o‘rgan:\n\n1) Turlar bir xil bo‘lsa → === kabi taqqoslanadi.\n2) null va undefined juftligi → true. Ularni bu tekshiruvda 0 ga aylantirmaydi.\n3) Number va String → string songa aylantiriladi, qayta solishtiriladi.\n4) Operandlardan biri Boolean bo‘lsa → true 1 ga, false 0 ga aylanadi; solishtirish davom etadi.\n5) Obyekt va String/Number/BigInt/Symbol bo‘lsa → obyekt primitive qiymatga keltiriladi; solishtirish davom etadi.\n6) BigInt va String → string butun BigInt sifatida o‘qilsa solishtiriladi; yaroqsiz string bo‘lsa false.\n7) BigInt va Number → sonli qiymatlar matematik teng bo‘lsa true; Number kasr, NaN yoki Infinity bo‘lsa false.\n8) Mos qoida bo‘lmasa → false.",
         "code": "console.log(5 == \"5\");    // true: 5 == 5\nconsole.log(false == 0);  // true: 0 == 0\nconsole.log(true == \"1\"); // true: 1 == \"1\" → 1 == 1\nconsole.log(null == undefined); // true: maxsus qoida\nconsole.log(null == 0);   // false\nconsole.log(undefined == 0); // false",
         "note": "Brauzerdagi eski document.all obyektining null/undefined bilan == uchun maxsus tarixiy istisnosi bor. Oddiy dastur qiymatlarida null == undefined juftligi qoidasiga tayansa bo‘ladi."
       },
       {
-        "title": "5. Eng ko‘p adashtiradigan holat: false va string",
+        "title": "6. Eng ko‘p adashtiradigan holat: false va string",
         "text": "false == \"0\" tekshiruvi string’ni Boolean’ga aylantirmaydi. Avval false → 0, so‘ng \"0\" → 0. Shuning uchun natija true. Boolean(\"0\") esa true, chunki bu bo‘sh bo‘lmagan string. Tenglik qoidasi bilan truthy/falsy qoidasi bir xil emas.",
         "code": "console.log(false == \"0\");  // true: 0 == 0\nconsole.log(Boolean(\"0\"));   // true\nconsole.log(false === \"0\"); // false\n\nconsole.log(0 == \"\");       // true: 0 == 0\nconsole.log(0 == \"   \");    // true: 0 == 0\nconsole.log(false == \"false\"); // false: 0 == NaN\nconsole.log(true == 2);      // false: 1 == 2"
       },
       {
-        "title": "6. null, undefined va NaN",
+        "title": "7. null, undefined va NaN",
         "text": "null va undefined == bilan o‘zaro teng, lekin 0, false yoki bo‘sh stringga teng emas. NaN esa == va === bilan hech qachon o‘ziga teng bo‘lmaydi. NaN’ni Number.isNaN bilan tekshir.",
         "code": "console.log(null == undefined);  // true\nconsole.log(null === undefined); // false\nconsole.log(null == false);      // false\nconsole.log(null == \"\");         // false\nconsole.log(undefined == false); // false\nconsole.log(NaN == NaN);         // false\nconsole.log(Number.isNaN(NaN));  // true"
       },
       {
-        "title": "7. Obyekt va massiv: tarkib tengligi emas",
+        "title": "8. Obyekt va massiv: tarkib tengligi emas",
         "text": "Ikkala operand ham obyekt bo‘lsa, == ham === ham aynan bitta obyektni ko‘rsatayaptimi deb tekshiradi. Yangi yaratilgan ikkita massiv ichidagi qiymatlar bir xil bo‘lsa ham teng emas. Bitta obyekt va primitive solishtirilganda esa == obyektni primitive’ga aylantirishi mumkin.",
         "code": "const a = [1];\nconst b = a;\nconsole.log(a === b);    // true: bitta massiv\nconsole.log(a == b);     // true\nconsole.log([1] === [1]); // false: ikki massiv\nconsole.log([1] == [1]);  // false\n\nconsole.log([] == 0);    // true: [] → \"\" → 0\nconsole.log([5] == 5);   // true: [5] → \"5\" → 5\nconsole.log([] === 0);   // false",
         "note": "Oddiy massivlarda primitive’ga aylanish odatda matn orqali bo‘ladi. Maxsus obyektlarda Symbol.toPrimitive/valueOf/toString natijani belgilashi mumkin; obyekt doim oddiy string bo‘ladi deb o‘ylama."
       },
       {
-        "title": "8. BigInt va Symbol — qo‘shimcha qoidalar",
+        "title": "9. BigInt va Symbol — qo‘shimcha qoidalar",
         "text": "== BigInt bilan boshqa ayrim turlarni qiymat bo‘yicha solishtira oladi. === esa tur farq qilsa false. Alohida yaratilgan Symbol qiymatlari tavsifi bir xil bo‘lsa ham bir xil emas.",
         "code": "console.log(5n == 5);      // true\nconsole.log(5n === 5);     // false\nconsole.log(5n == \"5\");    // true\nconsole.log(5n == \"5.0\");  // false: yaroqli BigInt matni emas\nconsole.log(5n == 5.1);    // false\n\nconst s = Symbol(\"id\");\nconsole.log(s === s);      // true\nconsole.log(Symbol(\"id\") == Symbol(\"id\")); // false"
       },
       {
-        "title": "9. =, ==, === va amaliy tanlov",
+        "title": "10. =, ==, === va amaliy tanlov",
         "text": "= qiymat beradi. == tur o‘zgartirish qoidalari bilan tenglikni tekshiradi. === tur o‘zgartirmasdan tenglikni tekshiradi. Odatda === tanla, tashqaridan kelgan ma’lumotni kerakli turga aniq aylantir. != — == natijasining teskarisi; !== — === natijasining teskarisi.",
         "code": "let yosh = 20; // qiymat berish\nconsole.log(yosh == \"20\");  // true\nconsole.log(yosh === \"20\"); // false\nconsole.log(yosh !== \"20\"); // true\n\nconst input = \"20\";\nconst son = Number(input);\nif (Number.isFinite(son) && son === 20) {\n  console.log(\"Yosh 20\");\n}\n\nconst qiymat = null;\nconsole.log(qiymat == null);\n// true: null yoki undefined tekshiruvi\nconsole.log(qiymat === null || qiymat === undefined);\n// Yuqoridagi maqsadning ochiq yozilishi",
         "note": "Number(\"\") va Number(\"   \") ham 0 beradi. Forma uchun bo‘sh kiritishni son qilib aylantirishdan oldin alohida tekshir. == null ishlatish — ikkala yo‘qlik qiymatini qasddan qamrash usuli."
+      },
+      {
+        "title": "11. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Boolean(\"0\") true bo‘lsa ham \"0\" == false true chiqishi mumkin: boolean baholash bilan tenglik algoritmi boshqa. Obyektlarning == bilan solishtirilishi ham ularning maydonlarini solishtirmaydi. Number(\"\") 0 bo‘lgani uchun bo‘sh inputni oldin tekshiring. BigInt arifmetikasini Number bilan aralashtirish xato beradi."
+      },
+      {
+        "title": "12. Kichik amaliy loyiha",
+        "text": "Yosh qabul qiladigan funksiya yozing: bo‘sh matnni rad etsin, qolganini Number bilan aylantirsin va chekli, manfiy bo‘lmagan son ekanini tekshirsin."
       }
     ],
-    "takeaway": "===: tur o‘zgarmaydi; turlar farq qilsa false.\n==: juftlikka mos qoida ishlaydi, ba’zan bir necha bosqichda.\nBoolean tenglikda songa aylanadi; ikkinchi qiymatni Boolean qilish shart emas.\nnull == undefined → true, null == 0 → false.\nIkkita obyekt har ikki operator bilan identiklik bo‘yicha tekshiriladi.\nNaN == NaN va NaN === NaN → false.\nOdatda === va aniq tur o‘zgartirish ishlat.",
-    "exercise": "Har biriga natija va sabab yoz:\n1) \"\" == false\n2) \"0\" === 0\n3) null == 0\n4) undefined == null\n5) [] == false\n6) [] === []\n7) \"2\" + 1 + 1\n8) \"2\" - 1 + 1\n\nFaqat true/false demasdan, qaysi qiymat qaysi turga o‘tganini ham ayt."
+    "takeaway": "Conversion — tur o‘zgartirish.\nBoolean(\"0\") true bo‘lsa ham \"0\" == false true chiqishi mumkin: boolean baholash bilan tenglik algoritmi boshqa.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Yosh qabul qiladigan funksiya yozing: bo‘sh matnni rad etsin, qolganini Number bilan aylantirsin va chekli, manfiy bo‘lmagan son ekanini tekshirsin.\n\nQo‘shimcha savollar:\nHar biriga natija va sabab yoz:\n1) \"\" == false\n2) \"0\" === 0\n3) null == 0\n4) undefined == null\n5) [] == false\n6) [] === []\n7) \"2\" + 1 + 1\n8) \"2\" - 1 + 1\n\nFaqat true/false demasdan, qaysi qiymat qaysi turga o‘tganini ham ayt.",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "console.log(\"\" == false);\nconsole.log(\"0\" === 0);\nconsole.log(null == undefined);\nconsole.log([] === []);\nconsole.log(\"2\" - 1 + 1);",
+    "exerciseExpected": [
+      true,
+      false,
+      true,
+      false,
+      2
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. true — false 0 ga, bo‘sh matn 0 ga aylanadi\n2. false — turlar boshqa\n3. true — == ning maxsus yo‘qlik juftligi\n4. false — ikkita mustaqil massiv\n5. 2 — minus sonli aylantirish qiladi, keyin 1 qo‘shiladi\n\nLoyihani yechish yo‘li: Avval input.trim() bo‘sh emasligini tekshiring. Number(input) dan keyin Number.isFinite va >= 0 tekshiruvini bajaring. Bu tekshiruvning o‘zi odam yoshini biznes qoidalariga mosligini kafolatlamaydi.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Equality_comparisons_and_sameness"
+      }
+    ]
   },
   {
     "id": "truthy-falsy",
     "title": "Truthy va Falsy",
     "question": "Truthy va falsy nima? Boolean([]) nega true, Boolean(\"\") nega false?",
-    "explanation": "Boolean(qiymat) berilgan qiymatni true yoki false ga aylantirib natija qaytaradi. Bu tekshiruv “ichida ma’lumot bormi?” degani emas: JavaScript qiymatning turiga mos boolean qoidasini qo‘llaydi. Truthy — true ga, falsy — false ga aylanadigan qiymat. Bu alohida ma’lumot turi emas va tekshirish asl qiymatni o‘zgartirmaydi.",
+    "explanation": "Truthy va falsy — yangi tur nomlari emas. Ular qiymat shart sifatida ishlatilganda true yoki false deb baholanishini bildiradi. Boolean(x) shu bahoni ko‘rsatadi. “Bo‘sh” degan kundalik so‘z bilan JavaScript bahosi doim mos kelmaydi.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "Avval sen so‘ragan ikkita misol",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "royxat — obyekt bo‘lgani uchun truthy. Undagi elementlar soni 0, demak length > 0 false. Bo‘sh string esa falsy. Bular uchta turli tekshiruv.",
+        "code": "const royxat = [];\nconsole.log(Boolean(royxat));\nconsole.log(royxat.length > 0);\nconsole.log(Boolean(\"\"));",
+        "expectedOutput": [
+          true,
+          false,
+          false
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [true, false, false]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Avval sen so‘ragan ikkita misol",
         "text": "[] — bo‘sh massiv. Massiv obyekt hisoblanadi va oddiy obyektlar boolean kontekstda har doim truthy: ichidagi elementlar soni tekshirilmaydi. \"\" esa uzunligi 0 bo‘lgan bo‘sh string; u falsy ro‘yxatiga kiradi. Shuning uchun natijalar farqli.",
         "code": "console.log(Boolean([])); // true\nconsole.log(Boolean(\"\")); // false",
         "note": "[] va \"\" ikkalasi kundalik tilda “bo‘sh” bo‘lishi mumkin. Lekin JavaScript uchun ular boshqa turlar: biri massiv-obyekt, ikkinchisi string. Boolean barcha turlar uchun umumiy “bo‘shlik tekshiruvi” emas."
       },
       {
-        "title": "Boolean qanday qaror qiladi?",
+        "title": "3. Boolean qanday qaror qiladi?",
         "text": "Boolean qiymatni baholaydi: falsy qiymatlardan birimi? Ha bo‘lsa false; qolgan oddiy qiymatlar uchun true. Massivning length qiymatini, obyektning kalitlarini yoki stringdagi yozuvning ma’nosini avtomatik tekshirmaydi.",
         "code": "Boolean([])       // true: massiv-obyekt\nBoolean([0])      // true: massiv-obyekt\nBoolean([false])  // true: massiv-obyekt\nBoolean({})       // true: obyekt\n\nBoolean(\"\")       // false: 0 ta belgi\nBoolean(\" \")      // true: bitta bo‘sh joy belgisi\nBoolean(\"0\")      // true: bitta belgi\nBoolean(\"false\")  // true: beshta belgi"
       },
       {
-        "title": "Bir xil massiv, ikki xil savol",
+        "title": "4. Bir xil massiv, ikki xil savol",
         "text": "Boolean(list) — massivning boolean bahosi qanday? list.length > 0 — massivda element bormi? Bu boshqa-boshqa savollar, shuning uchun javoblar farq qilishi tabiiy.",
         "code": "const list = [];\n\nconsole.log(Boolean(list));        // true\nconsole.log(list.length);          // 0\nconsole.log(Boolean(list.length)); // false\nconsole.log(list.length > 0);      // false\n\nlist.push(\"Olma\");\nconsole.log(Boolean(list));        // true: oldin ham true edi\nconsole.log(list.length > 0);      // true: endi element bor"
       },
       {
-        "title": "if, Boolean va !! bog‘liqligi",
+        "title": "5. if, Boolean va !! bog‘liqligi",
         "text": "if shart bajarilishini tanlash uchun boolean baholashdan foydalanadi. Boolean(x) va !!x shu bahoni true/false qiymati sifatida beradi. ! esa bahoni teskarilaydi.",
         "code": "if ([]) {\n  console.log(\"A ishlaydi\");\n}\n\nif (\"\") {\n  console.log(\"B ishlamaydi\");\n} else {\n  console.log(\"C ishlaydi\");\n}\n\nconsole.log(!![]); // true\nconsole.log(![]);  // false\nconsole.log(!!\"\"); // false\nconsole.log(!\"\");  // true"
       },
       {
-        "title": "1. Falsy qiymatlar: yodlab oladigan ro‘yxat",
+        "title": "6. Falsy qiymatlar: yodlab oladigan ro‘yxat",
         "text": "Oddiy JavaScript qiymatlaridan false, 0, -0, 0n, bo‘sh string (\"\"), null, undefined va NaN boolean kontekstda false bo‘ladi. Qolgan oddiy qiymatlar truthy. BigInt’da -0n ham aynan 0n qiymatidir.",
         "code": "console.log(Boolean(false));     // false\nconsole.log(Boolean(0));         // false\nconsole.log(Boolean(-0));        // false\nconsole.log(Boolean(0n));        // false\nconsole.log(Boolean(\"\"));        // false\nconsole.log(Boolean(null));      // false\nconsole.log(Boolean(undefined)); // false\nconsole.log(Boolean(NaN));       // false",
         "note": "Brauzerdagi eski document.all — falsy bo‘ladigan maxsus tarixiy istisno. Odatdagi kod uchun yuqoridagi ro‘yxatni bilish yetarli."
       },
       {
-        "title": "2. Truthy: bo‘sh bo‘lmagan string va obyektlar",
+        "title": "7. Truthy: bo‘sh bo‘lmagan string va obyektlar",
         "text": "\"0\" va \"false\" — boolean emas, bo‘sh bo‘lmagan stringlar. Hatto faqat bo‘sh joydan iborat string ham truthy. Massiv yoki obyektning ichi bo‘shligi uning boolean bahosini o‘zgartirmaydi. Manfiy sonlar ham 0 bo‘lmasa truthy.",
         "code": "console.log(Boolean(\"Hello\")); // true\nconsole.log(Boolean(\"0\"));     // true\nconsole.log(Boolean(\"false\")); // true\nconsole.log(Boolean(\" \"));     // true\nconsole.log(Boolean([]));      // true\nconsole.log(Boolean({}));      // true\nconsole.log(Boolean(-1));      // true\nconsole.log(Boolean(() => {})); // true"
       },
       {
-        "title": "3. if ichida qanday ishlaydi?",
+        "title": "8. if ichida qanday ishlaydi?",
         "text": "if qiymatni boolean sifatida baholaydi. Qiymatning o‘zi esa o‘z turida qoladi. ! natijani teskarilaydi; !! esa Boolean(...) bilan bir xil boolean natija beradi.",
         "code": "const xabar = \"Hello\";\nif (xabar) {\n  console.log(\"Truthy\"); // ishlaydi\n}\nconsole.log(typeof xabar); // \"string\" — o‘zgarmadi\n\nconsole.log(!\"Hello\");  // false\nconsole.log(!!\"Hello\"); // true\nconsole.log(!!0);       // false"
       },
       {
-        "title": "4. if (qiymat) va qiymat == false bir xil emas",
+        "title": "9. if (qiymat) va qiymat == false bir xil emas",
         "text": "if va Boolean qiymatni bevosita boolean sifatida baholaydi. == esa tenglikning tur o‘zgartirish qoidalarini ishlatadi. Shu sabab bitta qiymat truthy bo‘lib, ayni paytda == false tekshiruvida true berishi mumkin.",
         "code": "console.log(Boolean([])); // true\nconsole.log([] == false); // true\n// false → 0\n// [] → \"\"\n// \"\" → 0\n// 0 == 0 → true\n\nconsole.log(Boolean(\"0\")); // true\nconsole.log(\"0\" == false); // true\n\nif ([]) {\n  console.log(\"Massiv truthy\"); // ishlaydi\n}",
         "note": "Truthy degani qiymat === true degani ham emas: Boolean(\"Hello\") true, lekin \"Hello\" === true false."
       },
       {
-        "title": "5. Bo‘sh massiv va bo‘sh obyektni aniq tekshir",
+        "title": "10. Bo‘sh massiv va bo‘sh obyektni aniq tekshir",
         "text": "if (list) massiv borligini boolean baholaydi; unda element borligini tekshirmaydi. Massiv uchun length, oddiy obyektning o‘ziga tegishli enumerable string kalitlari uchun Object.keys(...).length ishlat. Object.keys barcha turdagi obyektlar uchun universal bo‘shlik tekshiruvi emas.",
         "code": "const list = [];\nif (list) console.log(\"Truthy\"); // ishlaydi\nconsole.log(list.length > 0);    // false\n\nconst user = {};\nconsole.log(Object.keys(user).length > 0); // false\n\nconst input = \"   \";\nconsole.log(Boolean(input));     // true\nconsole.log(input.trim() !== \"\"); // false: faqat bo‘sh joy"
       },
       {
-        "title": "6. 0 yo‘q qiymat degani emas",
+        "title": "11. 0 yo‘q qiymat degani emas",
         "text": "if (!qiymat) barcha falsy qiymatlarni birga ushlaydi. Lekin 0, false yoki bo‘sh string loyihada yaroqli qiymat bo‘lishi mumkin. Faqat null/undefined tekshirilishi kerak bo‘lsa, shuni aniq yoz. || barcha falsy qiymatlarda zaxirani tanlaydi; ?? esa faqat null/undefined uchun.",
         "code": "const ball = 0;\nconsole.log(ball || 100); // 100\nconsole.log(ball ?? 100); // 0\n\nconst ism = \"\";\nconsole.log(ism || \"Mehmon\"); // \"Mehmon\"\nconsole.log(ism ?? \"Mehmon\"); // \"\"\n\nconst qiymat = 0;\nif (qiymat !== null && qiymat !== undefined) {\n  console.log(\"Qiymat mavjud\"); // ishlaydi\n}",
         "note": "|| va ?? har doim boolean qaytarmaydi: ular operandlardan birining asl qiymatini qaytaradi."
+      },
+      {
+        "title": "12. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Bo‘sh massiv truthy ekanligi uning ichida element borligini anglatmaydi. \"false\" ham oddiy bo‘sh bo‘lmagan string. 0 yaroqli ball bo‘lsa || zaxirani noto‘g‘ri tanlashi mumkin; faqat null/undefined uchun ?? ishlating. document.all brauzerdagi tarixiy maxsus istisno, oddiy obyektlarga qoida sifatida ko‘chirmang."
+      },
+      {
+        "title": "13. Kichik amaliy loyiha",
+        "text": "Mahsulotlar ro‘yxati bo‘sh bo‘lsa “Hali mahsulot yo‘q”, element bo‘lsa sonini chiqaring. Qidiruv matni faqat bo‘sh joy bo‘lsa, uni ham bo‘sh deb qabul qiling."
       }
     ],
-    "takeaway": "Falsy ro‘yxatni yodla; qolgan oddiy qiymatlar truthy.\n\"0\", \"false\", \" \" — truthy.\n[] va {} bo‘sh bo‘lsa ham truthy.\nBoolean(x), !!x va if (x) bir xil boolean baholashga asoslanadi.\nTruthy/falsy tekshiruvi == false bilan bir xil emas.\n0 ni saqlab qolish kerak bo‘lsa, zaxira qiymat uchun ?? ni ko‘rib chiq.",
-    "exercise": "Natija va sababini ayt:\n1) Boolean([])\n2) Boolean(\"\")\n3) Boolean(\" \")\n4) Boolean([false])\n5) Boolean([].length)\n6) Boolean(\"0\")\n7) Boolean(0)\n\nAmaliy mashq: const mahsulotlar = []; uchun faqat element bo‘lganda “Mahsulot bor” chiqaradigan if yoz.",
-    "interactiveTruthy": true
+    "takeaway": "Truthy va falsy — yangi tur nomlari emas.\nBo‘sh massiv truthy ekanligi uning ichida element borligini anglatmaydi.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Mahsulotlar ro‘yxati bo‘sh bo‘lsa “Hali mahsulot yo‘q”, element bo‘lsa sonini chiqaring. Qidiruv matni faqat bo‘sh joy bo‘lsa, uni ham bo‘sh deb qabul qiling.\n\nQo‘shimcha savollar:\nNatija va sababini ayt:\n1) Boolean([])\n2) Boolean(\"\")\n3) Boolean(\" \")\n4) Boolean([false])\n5) Boolean([].length)\n6) Boolean(\"0\")\n7) Boolean(0)\n\nAmaliy mashq: const mahsulotlar = []; uchun faqat element bo‘lganda “Mahsulot bor” chiqaradigan if yoz.",
+    "interactiveTruthy": true,
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "console.log(Boolean([]));\nconsole.log(Boolean(\" \"));\nconsole.log(Boolean(0n));\nconsole.log(0 || 100);\nconsole.log(0 ?? 100);",
+    "exerciseExpected": [
+      true,
+      true,
+      false,
+      100,
+      0
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. true — massiv obyekt\n2. true — bitta bo‘sh joy — bo‘sh bo‘lmagan string\n3. false — 0n falsy\n4. 100 — || barcha falsy qiymatda zaxirani oladi\n5. 0 — ?? 0 ni saqlaydi\n\nLoyihani yechish yo‘li: list.length === 0 bilan ro‘yxatni tekshiring. Matn uchun input.trim() === \"\" yozing. Qiymatning mavjudligi va tarkibning bo‘shligini alohida savollar sifatida ko‘ring.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Glossary/Truthy"
+      }
+    ]
   },
   {
     "id": "object-reference",
     "title": "Object Reference — noldan",
     "question": "Object reference nima? O‘zgaruvchi, obyekt, mutation va nusxalashni noldan tushuntir.",
-    "explanation": "Avval ikkita narsani ajrat: o‘zgaruvchi — koddagi nom; obyekt — xususiyatlar saqlanadigan qiymat. Reference — o‘sha obyektga murojaat qilish imkonini beradigan qiymat. Uni yo‘llanma deb tasavvur qilish mumkin. Bu o‘xshatish, JavaScript orqali ko‘rinadigan xotira manzili emas.",
+    "explanation": "Reference — obyektga olib boruvchi ishora qiymati. Bitta uyga ikkita kalit bo‘lishi kabi, ikki o‘zgaruvchi bir obyektga qarashi mumkin. b = a yozuvi yangi obyekt yaratmaydi. Xususiyatni o‘zgartirish bilan o‘zgaruvchini yangi obyektga biriktirishni ajratamiz.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "0. Obyekt nima?",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Birinchi yozuv umumiy obyekt ichini o‘zgartiradi. Keyingi { son: 3 } yangi obyekt yaratadi va faqat b ning ishorasini almashtiradi. a eski obyektga qarab qoladi.",
+        "code": "let a = { son: 1 };\nlet b = a;\nb.son = 2;\nconsole.log(a.son);\nb = { son: 3 };\nconsole.log(a.son);\nconsole.log(b.son);",
+        "expectedOutput": [
+          2,
+          2,
+          3
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [2, 2, 3]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Obyekt nima?",
         "text": "Obyekt bir-biriga bog‘liq ma’lumotlarni xususiyat nomlari bilan saqlaydi. Quyida user — o‘zgaruvchi nomi, { ... } — yangi obyekt, ism va yosh — uning xususiyatlari. user.ism shu obyektning ism xususiyatini o‘qiydi.",
         "code": "const user = {\n  ism: \"Ali\",\n  yosh: 20\n};\n\nconsole.log(user.ism); // Ali\nconsole.log(user.yosh); // 20"
       },
       {
-        "title": "Bitta obyektga ikkita nom orqali murojaat",
+        "title": "3. Bitta obyektga ikkita nom orqali murojaat",
         "text": "const boshqa = user yozilganda, { ... } qayta ishlatilmayapti va yangi obyekt yaratilmayapti. user ichidagi reference qiymati boshqa o‘zgaruvchisiga beriladi. Ikkalasi bitta obyektga murojaat qiladi. Buni ikki odamda bitta uyga kirish kaliti borligiga o‘xshat: kalitlar ikkita, uy bitta.",
         "code": "const user = { ism: \"Ali\" }; // 1 ta obyekt\nconst boshqa = user;        // yangi obyekt yo‘q\n\n// user   ──→ { ism: \"Ali\" }\n// boshqa ──↗\n\nboshqa.ism = \"Vali\";\nconsole.log(user.ism); // Vali\n// Ikkalasi o‘sha o‘zgargan obyektni ko‘radi."
       },
       {
-        "title": "Yangi obyekt qachon yaratiladi?",
+        "title": "4. Yangi obyekt qachon yaratiladi?",
         "text": "Har bir alohida bajarilgan obyekt literali ({ ... }) yangi obyekt yaratadi. Ichidagi yozuv bir xil bo‘lishi ularni bitta obyekt qilmaydi. Faqat boshqa o‘zgaruvchini biriktirish esa yangi obyekt yaratmaydi.",
         "code": "const a = { ism: \"Ali\" }; // birinchi obyekt\nconst b = { ism: \"Ali\" }; // ikkinchi obyekt\nconst c = a;              // birinchi obyektga reference\n\nconsole.log(a === b); // false\nconsole.log(a === c); // true\n\nb.ism = \"Vali\";\nconsole.log(a.ism); // Ali: a va b mustaqil"
       },
       {
-        "title": "1. Primitive: qiymatlar mustaqil",
+        "title": "5. Primitive: qiymatlar mustaqil",
         "text": "Number, string, boolean, bigint, symbol, null va undefined primitive qiymatlardir. Bir o‘zgaruvchidan boshqasiga berilganda, birini keyin almashtirish ikkinchisiga ta’sir qilmaydi.",
         "code": "let a = 10;\nlet b = a;\nb = 20;\n\nconsole.log(a); // 10\nconsole.log(b); // 20"
       },
       {
-        "title": "2. Obyekt: bitta obyektga ikki yo‘llanma",
+        "title": "6. Obyekt: bitta obyektga ikki yo‘llanma",
         "text": "b = a yangi obyekt yaratmaydi. a va b orqali bitta obyektning xususiyatlariga murojaat qilamiz. Shu sabab b.ism ni o‘zgartirish a.ism orqali ham ko‘rinadi.",
         "code": "const a = { ism: \"Ali\" };\nconst b = a;\n\nb.ism = \"Vali\";\n\nconsole.log(a.ism); // Vali\nconsole.log(b.ism); // Vali\nconsole.log(a === b); // true",
         "note": "Tasavvur: a → bitta obyekt ← b. Ikkita o‘zgaruvchi bor, lekin obyekt bitta. Massivlarda ham shu qoida ishlaydi."
       },
       {
-        "title": "3. Mutation va reassignment farqi",
+        "title": "7. Mutation va reassignment farqi",
         "text": "Mutation — mavjud obyektning ichini o‘zgartirish. Reassignment — o‘zgaruvchini boshqa qiymatga biriktirish. b ni yangi obyektga biriktirish a ning yo‘llanmasini o‘zgartirmaydi.",
         "code": "let a = { son: 1 };\nlet b = a;\n\nb.son = 2; // mutation: umumiy obyekt o‘zgardi\nconsole.log(a.son); // 2\n\nb = { son: 3 }; // reassignment: yangi obyekt\nconsole.log(a.son); // 2\nconsole.log(b.son); // 3\nconsole.log(a === b); // false"
       },
       {
-        "title": "4. Nega const obyekt o‘zgaradi?",
+        "title": "8. Nega const obyekt o‘zgaradi?",
         "text": "const o‘zgaruvchini boshqa qiymatga qayta biriktirishni taqiqlaydi. U obyektning xususiyatlarini avtomatik muzlatmaydi.",
         "code": "const user = { ism: \"Ali\" };\nuser.ism = \"Vali\"; // mumkin: mutation\n\n// user = { ism: \"Hasan\" }; // TypeError: reassignment\n\nconst list = [1, 2];\nlist.push(3); // mumkin\n// list = []; // TypeError"
       },
       {
-        "title": "5. Tenglik: tarkib emas, aynan bitta obyekt",
+        "title": "9. Tenglik: tarkib emas, aynan bitta obyekt",
         "text": "Ikki alohida obyekt ichidagi ma’lumotlar bir xil bo‘lsa ham, ular ikkita turli obyekt. Ikkala operand obyekt bo‘lganda == va === identiklikni tekshiradi.",
         "code": "const a = { son: 1 };\nconst b = { son: 1 };\nconst c = a;\n\nconsole.log(a === b); // false\nconsole.log(a == b);  // false\nconsole.log(a === c); // true\nconsole.log([] === []); // false"
       },
       {
-        "title": "6. Spread: yuzaki nusxa (shallow copy)",
+        "title": "10. Spread: yuzaki nusxa (shallow copy)",
         "text": "{ ...a } yangi tashqi obyekt yaratadi. Yuqori darajadagi primitive xususiyatlar mustaqil, lekin ichki obyektlar uchun reference ko‘chiriladi. Shu sabab ichma-ich obyektlar hali umumiy bo‘lishi mumkin. Oddiy ma’lumot obyektlari misolida ko‘ramiz.",
         "code": "const a = {\n  ism: \"Ali\",\n  manzil: { shahar: \"Toshkent\" }\n};\nconst b = { ...a };\n\nb.ism = \"Vali\";\nconsole.log(a.ism); // Ali\n\nb.manzil.shahar = \"Samarqand\";\nconsole.log(a.manzil.shahar); // Samarqand!\n\nconsole.log(a === b); // false\nconsole.log(a.manzil === b.manzil); // true",
         "note": "[...list] va Object.assign({}, obj) ham yuzaki nusxa qiladi. Spread barcha xususiyat va prototiplarni aynan saqlaydigan universal klon emas."
       },
       {
-        "title": "7. Ichki obyektni ham mustaqil nusxalash",
+        "title": "11. Ichki obyektni ham mustaqil nusxalash",
         "text": "Ma’lum tuzilma uchun kerakli ichki qatlamlarni ham spread bilan nusxalash mumkin. Chuqurroq mos ma’lumotlarni mustaqil nusxalash uchun structuredClone ishlatiladi.",
         "code": "const a = {\n  ism: \"Ali\",\n  manzil: { shahar: \"Toshkent\" }\n};\n\nconst b = { ...a, manzil: { ...a.manzil } };\nb.manzil.shahar = \"Buxoro\";\nconsole.log(a.manzil.shahar); // Toshkent\n\nconst c = structuredClone(a);\nc.manzil.shahar = \"Xiva\";\nconsole.log(a.manzil.shahar); // Toshkent",
         "note": "structuredClone barcha qiymatlarni klonlamaydi: masalan, funksiya yoki DOM element kiritilsa DataCloneError chiqadi. Oddiy ma’lumotlar uchun qulay. JSON.parse(JSON.stringify(...)) ham universal nusxalash usuli emas: ayrim turlar yo‘qoladi yoki o‘zgaradi."
       },
       {
-        "title": "8. Funksiya argumenti: reference qiymati nusxalanadi",
+        "title": "12. Funksiya argumenti: reference qiymati nusxalanadi",
         "text": "JavaScript argumentlarni qiymat orqali uzatadi. Obyekt argumentida uzatiladigan qiymat obyektga reference bo‘lgani uchun funksiya ham o‘sha obyektga murojaat qiladi. Xususiyatini o‘zgartirish tashqarida ko‘rinadi; parametrni yangi obyektga qayta biriktirish tashqi o‘zgaruvchini almashtirmaydi.",
         "code": "const user = { ism: \"Ali\" };\n\nfunction yangila(obj) {\n  obj.ism = \"Vali\"; // umumiy obyektni o‘zgartiradi\n}\nyangila(user);\nconsole.log(user.ism); // Vali\n\nfunction almashtir(obj) {\n  obj = { ism: \"Hasan\" }; // faqat mahalliy parametr\n}\nalmashtir(user);\nconsole.log(user.ism); // Vali",
         "note": "“Obyektlar pass-by-reference orqali uzatiladi” degan jumla chalg‘itadi. Aniqrog‘i: obyektga reference qiymati nusxalanib uzatiladi."
+      },
+      {
+        "title": "13. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Spread va Object.assign chuqur nusxa emas. structuredClone ko‘p ma’lumot turlarini klonlaydi, ammo funksiyalarni yoki ixtiyoriy class xulqini to‘liq ko‘chirish vositasi emas. JSON orqali klonlash Date, undefined, BigInt va sikllar bilan muammoga uchraydi. Obyekt argumenti pass-by-reference emas: reference qiymati nusxalanadi."
+      },
+      {
+        "title": "14. Kichik amaliy loyiha",
+        "text": "Ichki manzilli user obyektidan nusxa oling. Avval yuzaki nusxada manzilni o‘zgartirib ta’sirni ko‘ring, keyin ichki manzilni ham nusxalab mustaqillikni ta’minlang."
       }
     ],
-    "takeaway": "O‘zgaruvchi — nom, obyekt — qiymat.\nconst b = a obyektni klonlamaydi: reference qiymatini ko‘chiradi.\nb.ism = ... → mavjud obyektni o‘zgartirish (mutation).\nb = {...} → b ni yangi obyektga biriktirish (reassignment).\nconst qayta biriktirishni taqiqlaydi, xususiyatlarni o‘zgartirishni emas.\n{ ...a } yangi tashqi obyekt yaratadi; ichki obyektlar reference’i umumiy qolishi mumkin.\nObyektlar === bilan ichidagi ma’lumot bo‘yicha emas, identiklik bo‘yicha solishtiriladi.",
-    "exercise": "Avval faqat shu misolni yech:\n\nconst a = { son: 1 };\nconst b = a;\nb.son = 7;\nconsole.log(a.son);\n\n1) Natija nima?\n2) Bu yerda nechta obyekt yaratilgan?\n\nKeyingi bosqich:\nconst c = { ...a };\nc.son = 9;\nconsole.log(a.son);\nconsole.log(c.son);\nconsole.log(a === c);"
+    "takeaway": "Reference — obyektga olib boruvchi ishora qiymati.\nSpread va Object.assign chuqur nusxa emas.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Ichki manzilli user obyektidan nusxa oling. Avval yuzaki nusxada manzilni o‘zgartirib ta’sirni ko‘ring, keyin ichki manzilni ham nusxalab mustaqillikni ta’minlang.\n\nQo‘shimcha savollar:\nAvval faqat shu misolni yech:\n\nconst a = { son: 1 };\nconst b = a;\nb.son = 7;\nconsole.log(a.son);\n\n1) Natija nima?\n2) Bu yerda nechta obyekt yaratilgan?\n\nKeyingi bosqich:\nconst c = { ...a };\nc.son = 9;\nconsole.log(a.son);\nconsole.log(c.son);\nconsole.log(a === c);",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const a = { x: { n: 1 } };\nconst b = { ...a };\nb.x.n = 9;\nconsole.log(a.x.n);\nconsole.log(a === b);\nconsole.log(a.x === b.x);\nconst c = structuredClone(a);\nc.x.n = 5;\nconsole.log(a.x.n);",
+    "exerciseExpected": [
+      9,
+      false,
+      true,
+      9
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 9 — ichki obyekt umumiy\n2. false — tashqi obyekt yangi\n3. true — ichki reference bir xil\n4. 9 — chuqur klon aslni o‘zgartirmadi\n\nLoyihani yechish yo‘li: const copy = { ...user, manzil: { ...user.manzil } }; keyin copy.manzil.shahar ni yangilang. Ko‘proq chuqurlik bo‘lsa, mos ma’lumot uchun structuredClone ni solishtiring.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/structuredClone"
+      }
+    ]
   },
   {
     "id": "functions",
     "title": "Funksiyalar: declaration, expression, arrow",
     "question": "Function declaration bilan function expression / arrow farqi nima? Parametrlar qanday ishlaydi?",
-    "explanation": "Declaration butun scope boshida tayyor bo'ladi, shuning uchun uni e'lon qilishdan oldin ham chaqirish mumkin. Expression va arrow esa o'z satriga yetgandagina mavjud bo'ladi — oldin o'qisang TDZ sabab ReferenceError. Arrow funksiyada o'z this va arguments yo'q.",
+    "explanation": "Funksiya — nom berilgan qayta ishlatiladigan ish. Uni e’lon qilish ishni tayyorlaydi, () bilan chaqirish bajaradi. Parametr — ichkaridagi kirish nomi, argument — chaqirishda berilgan qiymat. return hisoblangan javobni chaqirgan kodga qaytaradi.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Declaration vs expression",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "qosh ichida a=2, b=3 bo‘lib 5 qaytariladi. Keyingi chaqirish uchun boshqa parametr qiymatlari olinadi. Funksiya tanasi faqat chaqirilganda ishlaydi.",
+        "code": "function qosh(a, b) {\n  return a + b;\n}\nconst javob = qosh(2, 3);\nconsole.log(javob);\nconsole.log(qosh(4, 1));",
+        "expectedOutput": [
+          5,
+          5
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [5, 5]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Declaration vs expression",
         "text": "Declaration: function salom() {}. U hoisting qilinadi — nom va tanasi birga tayyor. Expression: const salom = function() {} yoki const salom = () => {}. Bular const bilan e'lon qilingani uchun TDZ ichida bo'ladi.",
         "code": "console.log(a()); // Salom\nfunction a() { return \"Salom\"; }\n\n// console.log(b()); // ReferenceError\nconst b = () => \"Salom\";"
       },
       {
-        "title": "2. Default parametrlar",
+        "title": "3. Default parametrlar",
         "text": "Parametrga qiymat berilsa, argument yuborilmagan yoki undefined yuborilganda ishlatiladi. Lekin null defaultni ishga solmaydi: null ataylab berilgan qiymat hisoblanadi.",
         "code": "function poz(n = 5) { return n; }\nconsole.log(poz());       // 5\nconsole.log(poz(undefined)); // 5\nconsole.log(poz(null));   // null"
       },
       {
-        "title": "3. Rest parametrlar",
+        "title": "4. Rest parametrlar",
         "text": "...params qolgan argumentlarni massivga yig'adi. Rest parametri oxirida turishi shart. Bu spread bilan aralashtirib yuborilmasin: spread massivni elementlarga tarqatadi, rest esa elementlarni massivga yig'adi.",
         "code": "function yig(first, ...rest) {\n  return first + rest.length;\n}\nconsole.log(yig(1, 2, 3, 4)); // 4\n\nconst sonlar = [1, 2];\nconsole.log(...sonlar); // 1 2 (spread)"
       },
       {
-        "title": "4. Arrow va oddiy funksiya",
+        "title": "5. Arrow va oddiy funksiya",
         "text": "Arrow o'z this ga ega emas: u atrof-dagi this ni oladi. Shuning uchun obyekt metodini arrow bilan yozish noto'g'ri bo'ladi. Arrow ni new bilan chaqirib bo'lmaydi va unda arguments obyekti yo'q.",
         "code": "const obyekt = {\n  x: 10,\n  oddiy() { return this.x; }, // 10\n  arrow: () => this.x         // noto'g'ri ishlatish\n};\nconsole.log(obyekt.oddiy());\n\n// const F = () => {};\n// new F(); // TypeError"
+      },
+      {
+        "title": "6. Chaqirish, callback va return turini ajratish",
+        "text": "f funksiyaning o‘zi, f() esa chaqirish natijasi. return yozilmasa undefined qaytadi. Parametrga obyekt berilganda reference qiymati nusxalanadi, xususiyat o‘zgarishi tashqarida ko‘rinadi.",
+        "code": "function korsat() { return; }\nconsole.log(typeof korsat);\nconsole.log(korsat());\nconst qoida = (x, y = 1) => x + y;\nconsole.log(qoida(2));",
+        "expectedOutput": [
+          "function",
+          {
+            "$undefined": true
+          },
+          3
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "7. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "console.log bilan return farq qiladi: log ko‘rsatadi, return qiymat beradi. return dan keyingi yangi satr avtomatik ; sabab undefined qaytarishi mumkin. Arrow { } tanasida return kerak, obyekt qaytarish uchun ({ ... }) yoziladi. Arrow o‘z this, arguments yoki konstruktoriga ega emas."
+      },
+      {
+        "title": "8. Kichik amaliy loyiha",
+        "text": "Berilgan narx, dona va chegirma uchun yakuniy qiymat qaytaradigan funksiya yozing. Noto‘g‘ri argumentni rad eting; hisoblashni console.log ga bog‘lamang."
       }
     ],
-    "takeaway": "Declaration oldin chaqirilsa ishlaydi; expression/arrow — ReferenceError.\nundefined default parameterni ishga soladi, null — yo'q.\nRest yig'adi, spread tarqatadi.\nArrow o'z this/arguments ga ega emas va new bilan ishlamaydi.",
-    "exercise": "1) console.log(salom()); function salom(){ return 1; } natijasi?\n2) const f = () => this; ni obyekt metodi sifatida ishlatish nega xato?\n3) function f(a, ...rest) { return rest; } f(1,2,3) nima qaytaradi?"
+    "takeaway": "Funksiya — nom berilgan qayta ishlatiladigan ish.\nconsole.log bilan return farq qiladi: log ko‘rsatadi, return qiymat beradi.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Berilgan narx, dona va chegirma uchun yakuniy qiymat qaytaradigan funksiya yozing. Noto‘g‘ri argumentni rad eting; hisoblashni console.log ga bog‘lamang.\n\nQo‘shimcha savollar:\n1) console.log(salom()); function salom(){ return 1; } natijasi?\n2) const f = () => this; ni obyekt metodi sifatida ishlatish nega xato?\n3) function f(a, ...rest) { return rest; } f(1,2,3) nima qaytaradi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "function f(a = 5) { return a; }\nconsole.log(f());\nconsole.log(f(null));\nconst ikki = x => x * 2;\nconsole.log(ikki(3));\nconst user = ism => ({ ism });\nconsole.log(user(\"Ali\").ism);",
+    "exerciseExpected": [
+      5,
+      null,
+      6,
+      "Ali"
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 5 — argument yo‘q, default olindi\n2. null — null defaultni yoqmaydi\n3. 6 — implicit return\n4. \"Ali\" — qavs ichida obyekt qaytarildi\n\nLoyihani yechish yo‘li: return narx * dona * (1 - foiz / 100). Avval Number.isFinite va diapazonlarni tekshiring. Natijani keyin alohida chiqarish funksiyani test qilishni osonlashtiradi.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions"
+      }
+    ]
   },
   {
     "id": "this-keyword",
     "title": "this: metod, arrow, call/apply/bind",
     "question": "this qanday aniqlanadi? Nega arrow funksiyada this boshqacha?",
-    "explanation": "Oddiy funksiyada this chaqirish usuliga bog'liq: obyekt.method() qilsang this = obyekt; mustaqil chaqirsang this = undefined (strict mode) yoki global. Arrow esa this ni o'ziga olmaydi, yaratilgan joyidagi this ni ishlatadi.",
+    "explanation": "this — oddiy funksiyada chaqirish usuliga qarab beriladigan qiymat. user.salom() chaqirilsa this odatda user. Funksiya qayerda yozilgani emas, qanday chaqirilgani muhim. Arrow esa o‘z this ini yaratmaydi, tashqi lexical this ni oladi.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. this chaqirishga bog'liq",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Birinchi chaqirishda qabul qiluvchi user. call darhol boshqa this bilan chaqirdi. bind yangi funksiya yaratdi; uni () bilan keyin chaqirdik.",
+        "code": "\"use strict\";\nfunction ism() { return this.ism; }\nconst user = { ism: \"Ali\", ol: ism };\nconsole.log(user.ol());\nconsole.log(ism.call({ ism: \"Vali\" }));\nconst boglangan = ism.bind(user);\nconsole.log(boglangan());",
+        "expectedOutput": [
+          "Ali",
+          "Vali",
+          "Ali"
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"Ali\", \"Vali\", \"Ali\"]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. this chaqirishga bog'liq",
         "text": "Bir xil funksiyani turli usulda chaqirsang this farq qiladi. Obyekt orqali chaqirish this ni shu obyektga bog'laydi. Funksiyani o'zgaruvchiga olib, mustaqil chaqirsang bu bog'lanish yo'qoladi.",
         "code": "const user = {\n  ism: \"Ali\",\n  salom() { return this.ism; }\n};\nconsole.log(user.salom()); // Ali\n\nconst f = user.salom;\n// console.log(f()); // strict mode: TypeError"
       },
       {
-        "title": "2. call, apply va bind",
+        "title": "3. call, apply va bind",
         "text": "call(thisArg, ...args) va apply(thisArg, [args]) funksiyani berilgan this bilan darhol chaqiradi. bind(thisArg, ...args) esa chaqirmaydi, yangi bog'langan funksiya qaytaradi.",
         "code": "function salom() { return this.ism; }\nconsole.log(salom.call({ ism: \"Vali\" })); // Vali\nconsole.log(salom.apply({ ism: \"Hasan\" })); // Hasan\n\nconst bog = salom.bind({ ism: \"Ali\" });\nconsole.log(bog()); // Ali"
       },
       {
-        "title": "3. Arrow this ni meros qilib oladi",
+        "title": "4. Arrow this ni meros qilib oladi",
         "text": "Arrow funksiya yaratilgan paytdagi this ni saqlaydi. Klass va oddiy funksiya ichida callback sifatida ishlatilganda aynan shu xususiyat qulay: this ni saqlash uchun .bind(this) yozish shart emas.",
         "code": "function F() {\n  this.x = 1;\n  const ichki = () => this.x;\n  return ichki;\n}\nconsole.log(new F()()); // 1\n\nconst obyekt = {\n  x: 10,\n  oddiy: function() { return this.x; },\n  arrow: () => this.x // bu yerda this obyekt emas\n};"
+      },
+      {
+        "title": "5. new va constructor chaqirishi",
+        "text": "Oddiy konstruktor new bilan chaqirilganda this yangi obyekt bo‘ladi. Arrow konstruktor emas. Class metodlari strict qoidalarga amal qiladi.",
+        "code": "function User(ism) { this.ism = ism; }\nconsole.log(new User(\"Ali\").ism);",
+        "expectedOutput": [
+          "Ali"
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "6. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Strict rejimdagi mustaqil f() uchun this undefined; eski oddiy scriptda global obyektga aylanishi mumkin. Obyekt literalining o‘zi arrow uchun yangi this scope yaratmaydi. Arrowga call/bind berish uning lexical this ini almashtirmaydi. bind ni qayta bind qilish ham oldingi this ni almashtirmaydi."
+      },
+      {
+        "title": "7. Kichik amaliy loyiha",
+        "text": "Hisob obyektining qiymatini qaytaradigan metodini o‘zgaruvchiga oling. Ajralgan chaqirish xatosini ko‘ring, bind bilan tuzating va boshqa obyekt uchun call/apply ishlating."
       }
     ],
-    "takeaway": "this — chaqirish usuli bilan aniqlanadi (oddiy funksiya).\nobj.method() → this = obj.\ncall/apply darhol chaqiradi, bind yangi funksiya qaytaradi.\nArrow o'z this ga ega emas: yaratilgan joydagi this ni ishlatadi.",
-    "exercise": "1) const f = obj.method; f() qilsa this nima bo'ladi?\n2) call va apply farqi nima?\n3) Nega obyekt metodini arrow bilan yozish xato?"
+    "takeaway": "this — oddiy funksiyada chaqirish usuliga qarab beriladigan qiymat.\nStrict rejimdagi mustaqil f() uchun this undefined; eski oddiy scriptda global obyektga aylanishi mumkin.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Hisob obyektining qiymatini qaytaradigan metodini o‘zgaruvchiga oling. Ajralgan chaqirish xatosini ko‘ring, bind bilan tuzating va boshqa obyekt uchun call/apply ishlating.\n\nQo‘shimcha savollar:\n1) const f = obj.method; f() qilsa this nima bo'ladi?\n2) call va apply farqi nima?\n3) Nega obyekt metodini arrow bilan yozish xato?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "\"use strict\";\nfunction f(a, b) { return this.n + a + b; }\nconst o = { n: 10 };\nconsole.log(f.call(o, 1, 2));\nconsole.log(f.apply(o, [1, 2]));\nconst g = f.bind(o, 1);\nconsole.log(g(3));\nconsole.log(g.call({ n: 99 }, 3));",
+    "exerciseExpected": [
+      13,
+      13,
+      14,
+      14
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 13 — call argumentlarni alohida oladi\n2. 13 — apply massiv oladi\n3. 14 — this va birinchi argument oldindan bog‘landi\n4. 14 — bog‘langan this saqlanadi\n\nLoyihani yechish yo‘li: const alohida = hisob.ol.bind(hisob). call uchun ol.call(boshqa), apply uchun ol.apply(boshqa, args) yozing. Har chaqirishdagi qabul qiluvchini belgilang.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this"
+      }
+    ]
   },
   {
     "id": "array-methods",
     "title": "Array metodlari: map, filter, reduce va boshqalar",
     "question": "map, filter, reduce, sort, find, some, every qanday ishlaydi? Qaysilari massivni o'zgartiradi?",
-    "explanation": "map har elementni yangisiga almashtirib yangi massiv qaytaradi. filter shartga moslarini ajratadi. reduce massivni bitta qiymatga yig'adi. sort, reverse, push, splice esa asl massivni o'zgartiradi (mutating).",
+    "explanation": "Massiv metodi ro‘yxat ustida tayyor ish bajaradi. map har elementdan yangi qiymat yaratadi, filter keraklilarni qoldiradi, reduce bitta yakuniy natija yig‘adi. x => x * 2 qisqa funksiya: x ni qabul qilib ikki baravarini qaytaradi; u callback deyiladi.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. map va filter",
-        "text": "Ikkalasi ham yangi massiv qaytaradi, asl massivni o'zgartirmaydi. map natija massivi uzunligi har doim asl massiv bilan bir xil. filter esa faqat shart true bo'lgan elementlarni oladi.",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "map 10,20,30 uchun 20,40,60 qaytaradi. filter sharti 20 va 30 ga mos. reduce jami=0 dan boshlaydi: 10, 30, 60.",
+        "code": "const narxlar = [10, 20, 30];\nconst yangi = narxlar.map(n => n * 2);\nconsole.log(yangi);\nconsole.log(narxlar.filter(n => n >= 20));\nconsole.log(narxlar.reduce((jami, n) => jami + n, 0));",
+        "expectedOutput": [
+          [
+            20,
+            40,
+            60
+          ],
+          [
+            20,
+            30
+          ],
+          60
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [[20, 40, 60], [20, 30], 60]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. map va filter",
+        "text": "map natijalardan yangi tashqi massiv yaratadi va uzunligini saqlaydi; siyrak joylar uchun callback chaqirilmaydi. filter sharti truthy bo‘lgan mavjud elementlarni yig‘adi. Metodlarning o‘zi asl massivni joyida tahrirlamaydi, ammo callback yozgan mutatsiya tashqarida ko‘rinishi mumkin.",
         "code": "const sonlar = [1, 2, 3];\nconsole.log(sonlar.map(x => x * 2)); // [2, 4, 6]\nconsole.log(sonlar.filter(x => x % 2 === 0)); // [2]\nconsole.log(sonlar); // [1, 2, 3] — o'zgarmadi"
       },
       {
-        "title": "2. reduce",
+        "title": "3. reduce",
         "text": "reduce akkumulyator va joriy element bilan ishlaydi. Ikkinchi argument — boshlang'ich qiymat. Uni bermasang birinchi element boshlang'ich qiymat bo'ladi va iteratsiya 2-elementdan boshlanadi.",
         "code": "console.log([1, 2, 3].reduce((a, b) => a + b, 0)); // 6\nconsole.log([1, 2, 3].reduce((a, b) => a + b)); // 6\nconsole.log([].reduce((a, b) => a + b, 0)); // 0"
       },
       {
-        "title": "3. sort tuzog'i",
+        "title": "4. sort tuzog'i",
         "text": "sort() elementlarni string sifatida, Unicode tartibida solishtiradi. Shuning uchun [10, 2, 1].sort() natijasi [1, 10, 2] bo'ladi. Sonlarni to'g'ri tartiblash uchun solishtirish funksiyasi berish kerak. sort asl massivni o'zgartiradi.",
         "code": "console.log([10, 2, 1].sort()); // [1, 10, 2]\nconsole.log([10, 2, 1].sort((a, b) => a - b)); // [1, 2, 10]\n\nconst a = [3, 1, 2];\na.sort();\nconsole.log(a); // [1, 2, 3] — asl massiv o'zgardi"
       },
       {
-        "title": "4. find, some, every, includes",
+        "title": "5. find, some, every, includes",
         "text": "find mos kelgan birinchi elementni (yoki undefined) qaytaradi. some — hech bo'lmaganda bittasi mos kelsa true. every — hammasi mos kelsa true. includes qiymat borligini tekshiradi.",
         "code": "console.log([1, 2, 3].find(x => x > 1)); // 2\nconsole.log([1, 2, 3].some(x => x > 2)); // true\nconsole.log([1, 2, 3].every(x => x > 0)); // true\nconsole.log([1, 2, 3].includes(2)); // true"
+      },
+      {
+        "title": "6. forEach bilan map farqi",
+        "text": "forEach yon ta’sir uchun, qaytish qiymati undefined. map qaytargan qiymatlardan yangi massiv yaratadi. forEach natijasini yangi ro‘yxat deb olmang.",
+        "code": "const a = [1, 2];\nconsole.log(a.forEach(() => {}));\nconsole.log(a.map(x => { return x * 2; }));",
+        "expectedOutput": [
+          {
+            "$undefined": true
+          },
+          [
+            2,
+            4
+          ]
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "7. Mutatsiyasiz tartiblash va almashtirish",
+        "text": "sort/reverse/splice asl massivni o‘zgartiradi. toSorted/toReversed/toSpliced va with yangisini qaytaradi. Sonli tartib uchun comparator kerak.",
+        "code": "const a = [10, 2, 1];\nconsole.log(a.toSorted((x, y) => x - y));\nconsole.log(a.with(0, 99));\nconsole.log(a);",
+        "expectedOutput": [
+          [
+            1,
+            2,
+            10
+          ],
+          [
+            99,
+            2,
+            1
+          ],
+          [
+            10,
+            2,
+            1
+          ]
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "8. flat, flatMap va qidirish",
+        "text": "flat ichki massivlarni berilgan chuqurlikkacha yoyadi. flatMap map qilib bir qatlam yoyadi. findIndex birinchi indeksni, findLast oxirgi mos qiymatni beradi.",
+        "code": "console.log([[1], [2, 3]].flat());\nconsole.log([1, 2].flatMap(x => [x, x * 10]));\nconsole.log([1, 2, 3].findIndex(x => x > 1));",
+        "expectedOutput": [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            10,
+            2,
+            20
+          ],
+          1
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "9. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "map callbackida { } ishlatsangiz return kerak; aks holda undefined elementlar olinadi. map/filter tashqi massivni yangilamaydi, lekin callback ichida obyekt xususiyatini o‘zgartirsangiz u mutatsiya bo‘ladi. forEach await qilinadigan natijalarni kutmaydi. Bo‘sh massivda every true, some false. reduce boshlang‘ich qiymatsiz bo‘sh massivda xato beradi."
+      },
+      {
+        "title": "10. Kichik amaliy loyiha",
+        "text": "Mahsulotlardan faqat mavjudlarini filter qiling, map bilan nomlarini oling, reduce bilan umumiy summani hisoblang. Natijalarni yangi o‘zgaruvchilarga saqlang."
       }
     ],
-    "takeaway": "map/filter/slice/concat — yangi massiv, asl o'zgarmaydi.\nsort/reverse/push/splice — asl massivni o'zgartiradi.\nsort default bo'yicha string sifatida solishtiradi: (a,b)=>a-b kerak.\nreduce bitta qiymatga yig'adi; find elementni, some/every boolean qaytaradi.",
-    "exercise": "1) [10,2,1].sort() natijasi nima va nega?\n2) map va forEach farqi nima?\n3) [1,2,3].reduce((a,b)=>a+b, 10) natijasi?"
+    "takeaway": "Massiv metodi ro‘yxat ustida tayyor ish bajaradi.\nmap callbackida { } ishlatsangiz return kerak; aks holda undefined elementlar olinadi.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Mahsulotlardan faqat mavjudlarini filter qiling, map bilan nomlarini oling, reduce bilan umumiy summani hisoblang. Natijalarni yangi o‘zgaruvchilarga saqlang.\n\nQo‘shimcha savollar:\n1) [10,2,1].sort() natijasi nima va nega?\n2) map va forEach farqi nima?\n3) [1,2,3].reduce((a,b)=>a+b, 10) natijasi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "console.log([1, 2, 3].map(x => x + 1));\nconsole.log([1, 2, 3].find(x => x > 1));\nconsole.log([].every(x => x > 0));\nconsole.log([].some(x => x > 0));\nconsole.log([1, 2].reduce((s, x) => s + x, 0));",
+    "exerciseExpected": [
+      [
+        2,
+        3,
+        4
+      ],
+      2,
+      true,
+      false,
+      3
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. [2, 3, 4] — har elementga 1 qo‘shildi\n2. 2 — birinchi mos element\n3. true — rad etadigan element yo‘q\n4. false — mos element yo‘q\n5. 3 — 0+1+2\n\nLoyihani yechish yo‘li: products.filter(p => p.mavjud), keyin map(p => p.nom), jami uchun reduce((s,p)=>s+p.narx*p.dona,0). Callback ichida mahsulotlarni o‘zgartirmang.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array"
+      }
+    ]
   },
   {
     "id": "destructuring-spread",
     "title": "Destructuring, spread, optional chaining",
     "question": "const { a } = obj, ...rest, ?. va ?? qanday ishlaydi?",
-    "explanation": "Destructuring obyekt yoki massivdan qiymatlarni olib, o'zgaruvchilarga tarqatadi. Spread ... massiv/obyektni elementlariga tarqatadi. Optional chaining ?. ichki xususiyat yo'q bo'lsa xato o'rniga undefined qaytaradi. Nullish coalescing ?? faqat null/undefined da zaxira qiymat oladi.",
+    "explanation": "Destructuring — obyekt yoki massivdan kerakli qismlarga nom berib olish. Spread ... tayyor to‘plamni yoyadi; rest ... qolgan qiymatlarni yig‘adi. Optional chaining ?. yo‘q bo‘lishi mumkin bo‘lgan qiymatni ehtiyotkor o‘qiydi. Belgilar o‘xshash, vazifasi yozilgan joyga bog‘liq.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Obyekt destructuring va default",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "ism: nom qiymatni nom degan mahalliy o‘zgaruvchiga oladi; obyektning ism maydonini o‘zgartirmaydi. Rest birinchi elementdan qolganini yangi massivga yig‘adi.",
+        "code": "const user = { ism: \"Ali\", yosh: 20 };\nconst { ism: nom, yosh } = user;\nconsole.log(nom);\nconst [bir, ...qolgan] = [1, 2, 3];\nconsole.log(bir);\nconsole.log(qolgan);",
+        "expectedOutput": [
+          "Ali",
+          1,
+          [
+            2,
+            3
+          ]
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"Ali\", 1, [2, 3]]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Obyekt destructuring va default",
         "text": "const { a, b = 2 } = obj: agar b yo'q yoki undefined bo'lsa, 2 ishlatiladi. Yangi nom bilan olish uchun const { a: boshqaNom } = obj yoziladi.",
         "code": "const { a, b = 2 } = { a: 1 };\nconsole.log(a, b); // 1 2\n\nconst { ism: nom } = { ism: \"Ali\" };\nconsole.log(nom); // Ali"
       },
       {
-        "title": "2. Spread",
+        "title": "3. Spread",
         "text": "Massivda [...a, 3] yangi massiv yaratadi. Obyektda { ...a, x: 1 } yangi obyekt yaratadi. E'tibor: bu yuzaki nusxa — ichki obyektlar umumiy qoladi.",
         "code": "const a = [1, 2];\nconst b = [...a, 3];\nconsole.log(a.length, b.length); // 2 3\n\nconst o = { x: 1 };\nconst n = { ...o, y: 2 };\nconsole.log(n); // { x: 1, y: 2 }"
       },
       {
-        "title": "3. Optional chaining va nullish coalescing",
+        "title": "4. Optional chaining va nullish coalescing",
         "text": "user?.ism — user null yoki undefined bo'lsa undefined qaytaradi, xato emas. ?? esa faqat null/undefined da o'ng tomondagi qiymatni oladi. || bilan farqi: || 0, \"\", false ni ham zaxira deb hisoblaydi.",
         "code": "const user = null;\nconsole.log(user?.ism); // undefined\nconsole.log(user?.ism ?? \"yo'q\"); // yo'q\n\nconsole.log(0 ?? 5); // 0\nconsole.log(0 || 5); // 5\nconsole.log(\"\" ?? \"boshqa\"); // \"\""
+      },
+      {
+        "title": "5. Massivda joy tashlash va ichki destructuring",
+        "text": "Massivda pozitsiya, obyektda kalit nomi muhim. Ichki obyekt uchun ham default kerak bo‘lishi mumkin; null bo‘lsa bu default yordam bermaydi.",
+        "code": "const [a, , c] = [10, 20, 30];\nconst { profil: { shahar = \"Yo‘q\" } = {} } = {};\nconsole.log(a);\nconsole.log(c);\nconsole.log(shahar);",
+        "expectedOutput": [
+          10,
+          30,
+          "Yo‘q"
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "6. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Default faqat undefined uchun, null uchun emas. null yoki undefined ni destructure qilish xato. Spread nusxasi yuzaki. ?. e’lon qilinmagan nomni saqlab qolmaydi. user?.f() f mavjud emasligida xato berishi mumkin; kerak bo‘lsa user?.f?.() yozing. Optional chaining orqali qiymat yozib bo‘lmaydi."
+      },
+      {
+        "title": "7. Kichik amaliy loyiha",
+        "text": "API dan kelgan user uchun nom va profil.shahar ni xavfsiz o‘qing. Yo‘q qiymatlarda default bering, lekin ball=0 ni saqlang. Qolgan maydonlarni rest bilan ajrating."
       }
     ],
-    "takeaway": "Destructuring qiymatlarni nomlarga tarqatadi; default faqat undefined da ishlaydi.\nSpread yangi massiv/obyekt yaratadi, lekin yuzaki.\n?. xato o'rniga undefined qaytaradi.\n?? faqat null/undefined ni almashtiradi, || esa barcha falsy ni.",
-    "exercise": "1) const { x = 1 } = { x: null } natijasi nima?\n2) 0 || 5 va 0 ?? 5 farqi?\n3) user?.ism?.first qanday ishlaydi?"
+    "takeaway": "Destructuring — obyekt yoki massivdan kerakli qismlarga nom berib olish.\nDefault faqat undefined uchun, null uchun emas.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: API dan kelgan user uchun nom va profil.shahar ni xavfsiz o‘qing. Yo‘q qiymatlarda default bering, lekin ball=0 ni saqlang. Qolgan maydonlarni rest bilan ajrating.\n\nQo‘shimcha savollar:\n1) const { x = 1 } = { x: null } natijasi nima?\n2) 0 || 5 va 0 ?? 5 farqi?\n3) user?.ism?.first qanday ishlaydi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const { a = 5, b = 6 } = { a: undefined, b: null };\nconsole.log(a);\nconsole.log(b);\nconst user = null;\nconsole.log(user?.ism ?? \"Mehmon\");\nconsole.log(0 ?? 10);",
+    "exerciseExpected": [
+      5,
+      null,
+      "Mehmon",
+      0
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 5 — undefined defaultni yoqadi\n2. null — null saqlanadi\n3. \"Mehmon\" — yo‘q ism zaxira oladi\n4. 0 — 0 saqlanadi\n\nLoyihani yechish yo‘li: const { ism = \"Mehmon\", ...rest } = user ?? {}; ichki qiymatni user?.profil?.shahar ?? \"Noma’lum\" bilan oling. null holati uchun alohida qaror qiling.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring"
+      }
+    ]
   },
   {
     "id": "promises-async",
     "title": "Promise va async/await",
     "question": "Promise holatlari, .then zanjiri, async/await va xatolik qanday ishlaydi?",
-    "explanation": "Promise uch holatda: pending, fulfilled, rejected. .then muvaffaqiyatni, .catch xatoni tutadi. async funksiyalar har doim Promise qaytaradi; await shu Promise bajarilguncha kutadi, lekin butun dasturni to'xtatmaydi.",
+    "explanation": "Promise — kelajakdagi natijaning va’dasini ifodalovchi obyekt. Holati pending, fulfilled yoki rejected bo‘ladi. then/catch natija bilan keyin ishlaydi; async/await shu oqimni o‘qish oson shaklda yozadi. async funksiya qaytargan qiymat har doim Promise orqali beriladi.\n\nAsinxron misollarni alohida ishga tushiring va callback natijalarini kuting. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Promise holatlari",
-        "text": "Yangi Promise yaratilganda pending bo'ladi. resolve chaqirilsa fulfilled, reject chaqirilsa rejected. Bir marta holat o'zgargach qayta o'zgarmaydi.",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "qosh darhol oddiy 5 emas, Promise beradi. await shu Promise bajarilgach 5 ni oladi. Xato tashlansa Promise rad etiladi va await joyida ushlash mumkin.",
+        "code": "(async () => {\n  async function qosh(a, b) { return a + b; }\n  const p = qosh(2, 3);\n  console.log(p instanceof Promise);\n  console.log(await p);\n})();",
+        "expectedOutput": [
+          true,
+          5
+        ],
+        "exampleRuntime": "async",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [true, 5]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Promise holatlari",
+        "text": "Promise pending, fulfilled yoki rejected holatda bo‘ladi. resolve oddiy qiymatni qabul qilsa fulfilled, reject sabab bilan rejected qiladi. resolve boshqa Promise/thenable ni qabul qilsa uning natijasini kuzatadi va hozircha pending qolishi mumkin. Birinchi resolution qarori keyingi resolve/reject urinishlarini e’tiborsiz qoldiradi.",
         "code": "const p = new Promise((resolve, reject) => {\n  resolve(\"tayyor\");\n});\np.then(x => console.log(x)); // tayyor\n\nPromise.reject(\"xato\").catch(e => console.log(e)); // xato"
       },
       {
-        "title": "2. .then zanjiri va tartib",
+        "title": "3. .then zanjiri va tartib",
         "text": ".then callbacklari har doim mikrovazifa sifatida, hozirgi sinxron kod tugagandan keyin bajariladi. Shuning uchun console.log(2) avval chiqadi.",
         "code": "Promise.resolve(1).then(x => console.log(x));\nconsole.log(2);\n// natija: 2, keyin 1"
       },
       {
-        "title": "3. async/await",
-        "text": "async funksiya har doim Promise qaytaradi, hatto oddiy qiymat qaytarsang ham. await faqat async ichida ishlaydi va Promise natijasini oladi. Xatoni try/catch yoki .catch bilan tutish mumkin.",
+        "title": "4. async/await",
+        "text": "async funksiya Promise qaytaradi. await async ichida yoki ES modulning yuqori darajasida mumkin. Rad etilgan Promise await joyida xato sifatida ko‘rinadi; try/catch yoki .catch bilan tuting.",
         "code": "async function f() { return 5; }\nf().then(x => console.log(x)); // 5\nconsole.log(1); // avval 1 chiqadi\n\nasync function xato() {\n  throw new Error(\"buzildi\");\n}\nxato().catch(e => console.log(e.message)); // buzildi"
       },
       {
-        "title": "4. Promise.all va Promise.allSettled",
+        "title": "5. Promise.all va Promise.allSettled",
         "text": "Promise.all barchasi bajarilsa natijalar massivini qaytaradi; bittasi rad etilsa butun zanjir rad etiladi. Promise.allSettled esa hammasini kutib, har birining holatini qaytaradi.",
         "code": "Promise.all([\n  Promise.resolve(1),\n  Promise.resolve(2)\n]).then(r => console.log(r)); // [1, 2]"
+      },
+      {
+        "title": "6. Ketma-ket yoki parallel kutishni tanlash",
+        "text": "Bir ish oldingisiga bog‘liq bo‘lsa await ketma-ket. Mustaqil ishlar oldin boshlanib, keyin birga kutilishi mumkin. finally odatda qiymatni almashtirmay tozalash uchun ishlatiladi.",
+        "code": "(async () => {\n  const a = Promise.resolve(10);\n  const b = Promise.resolve(20);\n  console.log(await Promise.all([a, b]));\n})();",
+        "expectedOutput": [
+          [
+            10,
+            20
+          ]
+        ],
+        "exampleRuntime": "async"
+      },
+      {
+        "title": "7. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "resolve boshqa Promise bilan chaqirilsa, uning yakunini qabul qiladi: resolved degani har doim hozir fulfilled emas. new Promise executor sinxron ishlaydi; then microtask. then ichida keyingi Promise ni return qilmaslik zanjirni uzadi. await faqat async ichida yoki ES modulning yuqori darajasida mumkin. forEach async callbacklarni kutmaydi."
+      },
+      {
+        "title": "8. Kichik amaliy loyiha",
+        "text": "Ikki mustaqil ishni Promise.all bilan parallel boshlang, keyin ularga bog‘liq hisobni bajaring. Bittasi rad etilganda foydalanuvchiga xabar, finally da loading=false holatini bering."
       }
     ],
-    "takeaway": "Promise: pending → fulfilled yoki rejected, bir marta.\n.then/.catch mikrovazifa sifatida sinxron koddan keyin ishlaydi.\nasync har doim Promise qaytaradi; await uni ochadi.\nPromise.all bitta xatoda rad etiladi; allSettled hammasini kutadi.",
-    "exercise": "1) Promise.resolve(1).then(...) va keyingi console.log(2) qaysi avval chiqadi?\n2) async function f(){ return 1 } f() nima qaytaradi?\n3) Promise.all dagi bitta reject nima bo'ladi?"
+    "takeaway": "Promise — kelajakdagi natijaning va’dasini ifodalovchi obyekt.\nresolve boshqa Promise bilan chaqirilsa, uning yakunini qabul qiladi: resolved degani har doim hozir fulfilled emas.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Ikki mustaqil ishni Promise.all bilan parallel boshlang, keyin ularga bog‘liq hisobni bajaring. Bittasi rad etilganda foydalanuvchiga xabar, finally da loading=false holatini bering.\n\nQo‘shimcha savollar:\n1) Promise.resolve(1).then(...) va keyingi console.log(2) qaysi avval chiqadi?\n2) async function f(){ return 1 } f() nima qaytaradi?\n3) Promise.all dagi bitta reject nima bo'ladi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "(async () => {\n  const a = Promise.resolve(2).then(x => x + 1);\n  console.log(await a);\n  try { await Promise.reject(new Error(\"xato\")); }\n  catch (e) { console.log(e.message); }\n  console.log(await Promise.all([Promise.resolve(1), Promise.resolve(2)]));\n})();",
+    "exerciseExpected": [
+      3,
+      "xato",
+      [
+        1,
+        2
+      ]
+    ],
+    "exerciseRuntime": "async",
+    "exerciseAnswer": "1. 3 — then qaytargan qiymat yangi Promise natijasi\n2. \"xato\" — rad etilish catch bilan tutiladi\n3. [1, 2] — natijalar kirish tartibida\n\nLoyihani yechish yo‘li: Har bir ish uchun Promise ni yarating, keyin await Promise.all. try/catch/finally bilan loading holatini yakunlang. Bajarilish va natija tartibi bir xil tushuncha emasligini tekshiring.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises"
+      }
+    ]
   },
   {
     "id": "event-loop",
     "title": "Event loop: microtask va macrotask",
     "question": "setTimeout(0) bilan Promise.then qaysi avval ishlaydi? Nega?",
-    "explanation": "Sinxron kod avval bajariladi. Keyin barcha mikrovazifalar (.then, queueMicrotask) navbat bilan tugatiladi. Faqat undan keyin makrovazifalar (setTimeout, setInterval) olinadi. Shuning uchun Promise.then har doim setTimeout(0) dan oldin chiqadi.",
+    "explanation": "Event loop — bajarilishga tayyor ishlarni navbat bilan tanlash mexanizmi. Call stack hozir ishlayotgan chaqirishlar to‘plami. Promise.then/queueMicrotask microtask, taymer callbacki esa alohida task bo‘ladi. Quyidagi model brauzerdagi boshlang‘ich misollar uchun; Node.js ning qo‘shimcha fazalari bor.\n\nAsinxron misollarni alohida ishga tushiring va callback natijalarini kuting. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Tartib",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "A va D joriy sinxron kodda. Stack bo‘shagach Promise callbacki C ishlaydi. Taymerning B callbacki keyingi task sifatida keladi. 0 kutish uni sinxron qilmaydi.",
+        "code": "(async () => {\n  console.log(\"A\");\n  const tugadi = new Promise(resolve => setTimeout(() => {\n    console.log(\"B\"); resolve();\n  }, 0));\n  Promise.resolve().then(() => console.log(\"C\"));\n  console.log(\"D\");\n  await tugadi;\n})();",
+        "expectedOutput": [
+          "A",
+          "D",
+          "C",
+          "B"
+        ],
+        "exampleRuntime": "async",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"A\", \"D\", \"C\", \"B\"]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Tartib",
         "text": "Call stack bo'shagach, event loop avval microtask queue ni to'liq bo'shatadi, keyin bir makrotask oladi. Bu qoida setTimeout(0) va Promise.then farqini tushuntiradi.",
         "code": "console.log(\"A\");\nsetTimeout(() => console.log(\"B\"), 0);\nPromise.resolve().then(() => console.log(\"C\"));\nconsole.log(\"D\");\n// A, D, C, B"
       },
       {
-        "title": "2. Mikrovazifa ichida yaratilgan mikrovazifa",
+        "title": "3. Mikrovazifa ichida yaratilgan mikrovazifa",
         "text": "Mikrovazifa ichida yangi mikrovazifa qo'shilsa, u ham shu navbatda bajariladi. Event loop keyingi makrotaskka o'tishdan oldin butun mikrovazifa navbatini tugatadi.",
         "code": "Promise.resolve().then(() => {\n  console.log(\"birinchi\");\n  Promise.resolve().then(() => console.log(\"ikkinchi\"));\n});\nsetTimeout(() => console.log(\"uchinchi\"), 0);\n// birinchi, ikkinchi, uchinchi"
       },
       {
-        "title": "3. setTimeout(0) 0 ms degani emas",
+        "title": "4. setTimeout(0) 0 ms degani emas",
         "text": "0 — minimal kutish vaqti, lekin callback darhol bajarilmaydi: u makrovazifa navbatiga qo'yiladi va stack bo'shaganda, mikrovazifalardan keyin olinadi.",
         "code": "setTimeout(() => console.log(1), 0);\nconsole.log(2);\n// 2, keyin 1"
+      },
+      {
+        "title": "5. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Promise constructorining ichki executor qismi sinxron; then callbacki keyin. Microtask ichida yangi microtask qo‘shilsa, navbat davom etadi va juda ko‘payib renderni ushlab qolishi mumkin. Render har bir logdan keyin bo‘lmaydi. Task va animatsiya/Node fazalari uchun bitta sodda qoida barcha muhitlarni to‘liq tasvirlamaydi."
+      },
+      {
+        "title": "6. Kichik amaliy loyiha",
+        "text": "console, Promise.then, queueMicrotask va setTimeout aralashgan 4–6 satr yozing. Natijani stack, microtask va task ustunlariga ajratib bashorat qiling."
       }
     ],
-    "takeaway": "Tartib: sinxron kod → barcha mikrovazifalar → bitta makrotask.\nMicrotask: .then, .catch, queueMicrotask.\nMacrotask: setTimeout, setInterval.\nsetTimeout(0) hech qachon .then dan oldin bajarilmaydi.",
-    "exercise": "1) console.log(\"A\"); setTimeout(()=>console.log(\"B\"),0); Promise.resolve().then(()=>console.log(\"C\")); console.log(\"D\") tartibi?\n2) Nega setTimeout(0) darhol ishlamaydi?"
+    "takeaway": "Event loop — bajarilishga tayyor ishlarni navbat bilan tanlash mexanizmi.\nPromise constructorining ichki executor qismi sinxron; then callbacki keyin.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: console, Promise.then, queueMicrotask va setTimeout aralashgan 4–6 satr yozing. Natijani stack, microtask va task ustunlariga ajratib bashorat qiling.\n\nQo‘shimcha savollar:\n1) console.log(\"A\"); setTimeout(()=>console.log(\"B\"),0); Promise.resolve().then(()=>console.log(\"C\")); console.log(\"D\") tartibi?\n2) Nega setTimeout(0) darhol ishlamaydi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "(async () => {\n  const tayyor = new Promise(resolve => setTimeout(() => { console.log(\"timer\"); resolve(); }, 0));\n  Promise.resolve().then(() => console.log(\"promise\"));\n  queueMicrotask(() => console.log(\"micro\"));\n  console.log(\"sync\");\n  await tayyor;\n})();",
+    "exerciseExpected": [
+      "sync",
+      "promise",
+      "micro",
+      "timer"
+    ],
+    "exerciseRuntime": "async",
+    "exerciseAnswer": "1. \"sync\" — joriy kod birinchi\n2. \"promise\" — birinchi qo‘yilgan microtask\n3. \"micro\" — keyingi microtask\n4. \"timer\" — keyingi task\n\nLoyihani yechish yo‘li: Avval barcha sinxron satrlarni yozing. Ular ishlayotganda navbatga nima qo‘shilganini belgilang. So‘ng microtask larni qo‘shilish tartibida bo‘shating, keyin taymer taskini oling.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Execution_model"
+      }
+    ]
   },
   {
     "id": "dom-basics",
     "title": "DOM asoslari: tanlash, matn va event",
     "question": "querySelector, textContent, innerHTML va addEventListener qanday ishlaydi?",
-    "explanation": "querySelector bitta elementni, querySelectorAll barcha mos elementlarni NodeList sifatida qaytaradi. textContent matn qo'yadi va HTML sifatida pars qilmaydi; innerHTML pars qiladi (xavfsizlik xavfi bor). addEventListener elementga hodisa bog'laydi.",
+    "explanation": "DOM — brauzer HTML dan yaratgan obyektlar daraxti. JavaScript shu daraxtdagi elementni topib uning matni, atributi yoki holatini yangilaydi. querySelector dagi # id ni, . class ni bildiradi. HTML tayyor bo‘lishi uchun tashqi JS ni defer bilan ulang yoki body oxiriga qo‘ying.\n\nBu dars brauzer DOM muhitida bajariladi. HTML va JS deb ajratilgan misollarni tegishli fayllarga yozing; mustaqil DOM misollarini konsolda ham sinash mumkin. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Elementlarni tanlash",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Elementlar hozir xotirada yaratildi. append p ni section ichiga joyladi. Ularni ko‘rish uchun sahifadagi mos konteynerga box ni append qilish kerak; createElement o‘zi ekranga chiqarmaydi.",
+        "code": "const box = document.createElement(\"section\");\nconst p = document.createElement(\"p\");\np.textContent = \"Salom\";\nbox.append(p);\nconsole.log(box.querySelector(\"p\").textContent);\nconsole.log(box.children.length);",
+        "expectedOutput": [
+          "Salom",
+          1
+        ],
+        "exampleRuntime": "browser",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"Salom\", 1]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Elementlarni tanlash",
         "text": "querySelector CSS selektori bo'yicha birinchi mos elementni yoki null qaytaradi. querySelectorAll esa NodeList qaytaradi; u massiv emas, lekin forEach bor.",
         "code": "const el = document.querySelector(\"#ism\");\nif (el) el.textContent = \"Ali\";\n\ndocument.querySelectorAll(\"li\").forEach(li => {\n  console.log(li.textContent);\n});"
       },
       {
-        "title": "2. textContent vs innerHTML",
+        "title": "3. textContent vs innerHTML",
         "text": "textContent faqat matn qo'yadi: <b>Ali</b> yozsang aynan shunday ko'rinadi. innerHTML esa HTML deb pars qiladi va qalin yozuv chiqaradi. Foydalanuvchi kiritgan ma'lumotni innerHTML ga qo'yish XSS xavfiga olib keladi.",
         "code": "el.textContent = \"<b>Ali</b>\"; // matn sifatida ko'rinadi\nel.innerHTML = \"<b>Ali</b>\";   // qalin Ali\n\n// Xavfsiz: foydalanuvchi kiritganini textContent ga qo'y"
       },
       {
-        "title": "3. Event va dataset",
+        "title": "4. Event va dataset",
         "text": "addEventListener(type, callback) hodisa yuz berganda chaqiriladi. data-* atributlari element.dataset orqali o'qiladi (data-user-id → dataset.userId).",
         "code": "const btn = document.querySelector(\"#btn\");\nbtn.addEventListener(\"click\", (e) => {\n  console.log(e.target.dataset.userId);\n});\n// <button id=\"btn\" data-user-id=\"7\">Bos</button>"
+      },
+      {
+        "title": "5. Dars misollari uchun HTML va JS ni ulash",
+        "text": "Quyidagi HTML ni index.html ga joylang. Keyingi tanlash misollari #ism va #btn elementlarini shu sahifadan oladi. JS kodni app.js ga, script esa head ichiga defer bilan qo‘yiladi.",
+        "code": "<p id=\"ism\">Ism</p>\n<button id=\"btn\" data-user-id=\"7\">Bosish</button>\n<ul><li>Olma</li><li>Anor</li></ul>\n<script src=\"app.js\" defer></script>"
+      },
+      {
+        "title": "6. Atribut, property va classList",
+        "text": "data-user-id dataset.userId orqali string sifatida o‘qiladi. classList butun class matnini almashtirmasdan alohida class ni boshqaradi.",
+        "code": "const b = document.createElement(\"button\");\nb.dataset.userId = \"7\";\nb.classList.toggle(\"active\");\nconsole.log(typeof b.dataset.userId);\nconsole.log(b.classList.contains(\"active\"));",
+        "expectedOutput": [
+          "string",
+          true
+        ],
+        "exampleRuntime": "browser"
+      },
+      {
+        "title": "7. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Tanlash natijasi null bo‘lsa .textContent yoki addEventListener chaqirish xato. querySelectorAll static NodeList qaytaradi; HTMLCollection ko‘pincha live. Foydalanuvchi matni uchun textContent tanlang, innerHTML matnni HTML sifatida talqin qiladi. getAttribute va element property har doim aynan bir xil holatni bermaydi."
+      },
+      {
+        "title": "8. Kichik amaliy loyiha",
+        "text": "HTML da sarlavha va button yarating. Tugma bosilganda sarlavha matni va classList dagi active belgisi almashsin. Ikkinchi bosishda oldingi holatga qaytsin."
       }
     ],
-    "takeaway": "querySelector → bitta element yoki null; querySelectorAll → NodeList.\ntextContent matn, innerHTML HTML pars qiladi (XSS xavfi).\naddEventListener hodisa bog'laydi; data-* → element.dataset.",
-    "exercise": "1) querySelector hech narsa topmasa nima qaytaradi?\n2) Foydalanuvchi kiritgan matnni qaysi xususiyat bilan qo'yish xavfsiz?\n3) data-user-id qanday o'qiladi?"
+    "takeaway": "DOM — brauzer HTML dan yaratgan obyektlar daraxti.\nTanlash natijasi null bo‘lsa .textContent yoki addEventListener chaqirish xato.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: HTML da sarlavha va button yarating. Tugma bosilganda sarlavha matni va classList dagi active belgisi almashsin. Ikkinchi bosishda oldingi holatga qaytsin.\n\nQo‘shimcha savollar:\n1) querySelector hech narsa topmasa nima qaytaradi?\n2) Foydalanuvchi kiritgan matnni qaysi xususiyat bilan qo'yish xavfsiz?\n3) data-user-id qanday o'qiladi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const box = document.createElement(\"div\");\nbox.innerHTML = '<p id=\"ism\">Ali</p>';\nconst p = box.querySelector(\"#ism\");\np.textContent = \"Vali\";\np.classList.add(\"active\");\nconsole.log(p.textContent);\nconsole.log(p.classList.contains(\"active\"));\nconsole.log(box.querySelector(\"#yoq\"));",
+    "exerciseExpected": [
+      "Vali",
+      true,
+      null
+    ],
+    "exerciseRuntime": "browser",
+    "exerciseAnswer": "1. \"Vali\" — matn yangilandi\n2. true — class qo‘shildi\n3. null — mos element yo‘q bo‘lsa null\n\nLoyihani yechish yo‘li: const title=document.querySelector(\"h1\"); const btn=document.querySelector(\"button\"); click listenerida classList.toggle qaytargan boolean asosida textContent ni yozing.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction"
+      }
+    ]
   },
   {
     "id": "numbers-math",
@@ -873,1395 +1462,3093 @@ window.lessons = [
   {
     "id": "operators",
     "title": "Operatorlar: noldan",
-    "question": "Arifmetik, taqsimlash, mantiqiy va shart operatorlari qanday ishlaydi?",
-    "explanation": "Operatorlar qiymatlar ustida amal bajaradi. Kod o‘qiyotganda avval operator turini aniqla, keyin qiymatlarning turini tekshir: natija ko‘pincha turga bog‘liq. Mantiqiy operatorlar qiymatni emas, ba’zan operandning o‘zini qaytaradi.",
+    "question": "Arifmetik, qiymat berish, taqqoslash, mantiqiy va shart operatorlari qanday ishlaydi?",
+    "explanation": "Operator — qiymat ustida amal bajaradigan belgi. 2 + 3 misolida + operator, 2 va 3 esa operandlar. Ifoda natija beradi, = esa natijani o‘zgaruvchiga yozadi. Avval qiymatlarning turini, keyin amalni aniqlaymiz.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Arifmetik operatorlar",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Avval narx 10, dona 3. Ko‘paytirish 30 beradi, lekin narx o‘zgarmaydi. narx += 2 o‘zgaruvchini 12 ga yangilaydi. console.log qiymatni ko‘rsatadi.",
+        "code": "let narx = 10;\nconst dona = 3;\nconst jami = narx * dona;\nconsole.log(jami);\nnarx += 2;\nconsole.log(narx);",
+        "expectedOutput": [
+          30,
+          12
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [30, 12]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Arifmetik operatorlar",
         "text": "+ (qo‘shish/birlashtirish), - (ayirish), * (ko‘paytirish), / (bo‘linish), % (qoldiq), ** (daraja). Faqat + ikki xil ishlaydi: sonlar uchun qo‘shadi, string bor bo‘lsa birlashtiradi.",
         "code": "console.log(2 + 3); // 5\nconsole.log(\"2\" + 3); // \"23\"\nconsole.log(10 % 3); // 1\nconsole.log(3 ** 2); // 9"
       },
       {
-        "title": "2. Taqsimlash (assignment)",
+        "title": "3. Qiymat berish (assignment)",
         "text": "= qiymat beradi. +=, -=, *=, /=, %= qisqa yozuv: x += 2 x = x + 2 bilan bir xil. Bu o‘zgaruvchining qiymatini o‘zgartiradi.",
         "code": "let x = 5;\nx += 2; // x = x + 2 → 7\nx *= 3; // x = x * 3 → 21\nconsole.log(x); // 21"
       },
       {
-        "title": "3. Inkrement va dekrement",
+        "title": "4. Inkrement va dekrement",
         "text": "++ qiymatni 1 ga oshiradi, -- kamaytiradi. Prefix (++x) avval oshirib, keyin qiymatni beradi; postfix (x++) avval qiymatni berib, keyin oshiradi. Bu farq kod o‘qishda muhim.",
         "code": "let a = 5;\nconsole.log(a++); // 5 (eski qiymat), keyin a = 6\nconsole.log(a); // 6\n\nlet b = 5;\nconsole.log(++b); // 6 (yangi qiymat)\nconsole.log(b); // 6"
       },
       {
-        "title": "4. Mantiqiy operatorlar",
+        "title": "5. Mantiqiy operatorlar",
         "text": "&& (VA), || (YOKI), ! (INKOR). && va || qisqa baholash (short-circuit) qiladi: && chap qiymat falsy bo‘lsa o‘ngni hisoblamaydi; || chap truthy bo‘lsa o‘ngni hisoblamaydi. Ular boolean emas, operandlardan birini qaytaradi.",
         "code": "console.log(true && false); // false\nconsole.log(true || false); // true\nconsole.log(!0); // true\nconsole.log(\"Ali\" && 5); // 5 (oxirgi truthy)\nconsole.log(0 && 5); // 0 (chap falsy, o‘ng hisoblanmadi)\nconsole.log(\"Ali\" || \"Vali\"); // \"Ali\"",
         "note": "Kod o‘qiyotganda \"qaysi operand qaytadi?\" deb so‘ra: && oxirgi truthy yoki birinchi falsy, || birinchi truthy yoki oxirgi falsy."
       },
       {
-        "title": "5. Shart (ternary) operatori",
+        "title": "6. Shart (ternary) operatori",
         "text": "shart ? ha : yo‘q — if/else ning qisqa shakli. Shart truthy bo‘lsa birinchi, aks holda ikkinchi qiymat qaytadi.",
         "code": "const yosh = 18;\nconsole.log(yosh >= 18 ? \"kattaman\" : \"yoshman\"); // kattaman\n\nconst x = 0;\nconsole.log(x ? \"bor\" : \"yo'q\"); // yo'q"
       },
       {
-        "title": "6. Operator ustunligi",
+        "title": "7. Operator ustunligi",
         "text": "Avval qavs, keyin **, keyin *, /, %, so‘ngra +, -, oxirida taqqoslash va mantiqiy. Qavs qo‘yish eng xavfsiz: hisoblash tartibini eshlash shart emas.",
         "code": "console.log(2 + 3 * 4); // 14 (avval 3*4)\nconsole.log((2 + 3) * 4); // 20\nconsole.log(2 ** 3 ** 2); // 512 (2 ** (3 ** 2))\nconsole.log(1 + 2 + \"3\"); // \"33\" (chapdan o‘ngga)"
       },
       {
-        "title": "7. typeof, void va vergul",
+        "title": "8. typeof, void va vergul",
         "text": "typeof qiymat turini string sifatida beradi. void ifodani bajarib undefined qaytaradi (kamdan kam ishlatiladi). Vergul operatori oxirgi ifodani qaytaradi: (1, 2, 3) → 3.",
         "code": "console.log(typeof 5); // \"number\"\nconsole.log(typeof \"5\"); // \"string\"\nconsole.log(void 5); // undefined\nconsole.log((1, 2, 3)); // 3"
+      },
+      {
+        "title": "9. Taqqoslash va yo‘q qiymat uchun zaxira",
+        "text": ">, >=, <, <= tartibni, === va !== tur o‘zgartirmasdan tenglikni tekshiradi. ?? faqat null/undefined uchun zaxira tanlaydi. Mantiqiy assignment ham qiymatni faqat kerak bo‘lsa yozadi.",
+        "code": "console.log(5 >= 5);\nconsole.log(5 !== \"5\");\nlet ball = 0;\nball ??= 100;\nconsole.log(ball);",
+        "expectedOutput": [
+          true,
+          true,
+          0
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "10. Bitwise belgilarni tanish",
+        "text": "& bitli VA, | bitli YOKI, ^ XOR, ~ bitlarni teskarilash, << va >> siljitishdir. Bular && va || bilan bir xil emas. Number bilan >>> natijani ishorasiz 32-bit ko‘rinishda beradi. BigInt bilan >>> ishlamaydi.",
+        "code": "console.log(5 & 3);\nconsole.log(5 | 3);\nconsole.log(1 << 2);",
+        "expectedOutput": [
+          1,
+          7,
+          4
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "11. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "= bilan === ni aralashtirmang: biri yozadi, biri taqqoslaydi. % foiz emas, qoldiq. && va || doim boolean qaytarmaydi. ?? ni && yoki || bilan qavssiz aralashtirish SyntaxError. Bitwise operatorlar oddiy Number qiymatlarini ko‘pincha 32-bit butun songa keltiradi; ularni oddiy yaxlitlash o‘rniga ko‘r-ko‘rona ishlatmang."
+      },
+      {
+        "title": "12. Kichik amaliy loyiha",
+        "text": "Narx, dona va chegirma foizidan yakuniy summani hisoblang. Dona 0 bo‘lsa uni yo‘q qiymat deb almashtirmang. Hisoblash tartibini qavs bilan ko‘rsating."
       }
     ],
-    "takeaway": "+ sonlarni qo‘shadi, string bo‘lsa birlashtiradi.\n++ va -- prefix/postfix farqi natijani o‘zgartiradi.\n&& va || boolean emas, operand qaytaradi va qisqa baholaydi.\nTernary ? : — if/else qisqa shakli.\nQavs qo‘yish hisoblash tartibini aniq qiladi.\ntur va qiymatni har doim ajratib o‘qish kerak.",
-    "exercise": "1) console.log(\"3\" + 2) natijasi?\n2) let x = 1; console.log(x++); console.log(x) natijalari?\n3) \"Ali\" || \"Vali\" nima qaytaradi?\n4) 0 && 5 nima va nega 5 hisoblanmaydi?\n5) 2 + 3 * 4 natijasi?"
+    "takeaway": "Operator — qiymat ustida amal bajaradigan belgi.\n= bilan === ni aralashtirmang: biri yozadi, biri taqqoslaydi.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Narx, dona va chegirma foizidan yakuniy summani hisoblang. Dona 0 bo‘lsa uni yo‘q qiymat deb almashtirmang. Hisoblash tartibini qavs bilan ko‘rsating.\n\nQo‘shimcha savollar:\n1) console.log(\"3\" + 2) natijasi?\n2) let x = 1; console.log(x++); console.log(x) natijalari?\n3) \"Ali\" || \"Vali\" nima qaytaradi?\n4) 0 && 5 nima va nega 5 hisoblanmaydi?\n5) 2 + 3 * 4 natijasi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "let x = 2;\nconsole.log(x++);\nconsole.log(++x);\nconsole.log(\"3\" + 2);\nconsole.log(0 ?? 10);\nconsole.log(2 + 3 * 4);",
+    "exerciseExpected": [
+      2,
+      4,
+      "32",
+      0,
+      14
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 2 — postfix avval eski 2 ni beradi, x keyin 3\n2. 4 — prefix x ni 4 qilib beradi\n3. \"32\" — string borligi uchun birlashtirish\n4. 0 — 0 null yoki undefined emas\n5. 14 — ko‘paytirish oldin\n\nLoyihani yechish yo‘li: jami = narx * dona; chegirma = jami * foiz / 100; natija = jami - chegirma. Kiritish son ekanini va diapazonlarini tekshiring.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_operators"
+      }
+    ]
   },
   {
     "id": "conditionals",
     "title": "Shart operatorlari: if, else, switch",
     "question": "if/else, else if, switch va ternary qanday ishlaydi? Qaysi holatda qaysi birini tanlash kerak?",
-    "explanation": "Shart operatori kodning qaysi qismi bajarilishini hal qiladi. JavaScript shartni truthy/falsy qoidasi bilan baholaydi: boolean ga o‘zgartiradi. Kod o‘qiyotganda har bir shartni alohida hisoblab, qaysi tarmoq tanlanishini kuzat.",
+    "explanation": "Shart dasturga yo‘l tanlatadi. if ni “agar”, else ni “aks holda” deb o‘qing. Qavs ichidagi ifoda baholanadi; truthy bo‘lsa birinchi blok, falsy bo‘lsa else ishlaydi. Bir xil if/else zanjirida faqat bitta tarmoq tanlanadi.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. if va else",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "17 >= 18 false. Shuning uchun if tanasi o‘tkaziladi, else ichidagi matn chiqadi. Sonni 18 ga o‘zgartirib, natija nega almashganini ayting.",
+        "code": "const yosh = 17;\nif (yosh >= 18) {\n  console.log(\"Kirish mumkin\");\n} else {\n  console.log(\"Hali erta\");\n}",
+        "expectedOutput": [
+          "Hali erta"
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"Hali erta\"]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. if va else",
         "text": "if (shart) truthy bo‘lsa, keyingi block bajariladi. else esa shart falsy bo‘lganda ishlaydi. Faqat bitta tarmoq tanlanadi.",
         "code": "const yosh = 18;\nif (yosh >= 18) {\n  console.log(\"Kattaman\");\n} else {\n  console.log(\"Yoshman\");\n}\n// Natija: Kattaman"
       },
       {
-        "title": "2. else if zanjiri",
+        "title": "3. else if zanjiri",
         "text": "Bir nechta shartni ketma-ket tekshirish uchun else if ishlatiladi. Birinchi mos kelgan tarmoq bajarilib, qolganlari tekshirilmaydi. Shuning uchun shartlar tartibi muhim.",
         "code": "const ball = 85;\nif (ball >= 90) {\n  console.log(\"A\");\n} else if (ball >= 70) {\n  console.log(\"B\");\n} else {\n  console.log(\"C\");\n}\n// Natija: B"
       },
       {
-        "title": "3. Truthy/falsy shart",
-        "text": "Shart boolean bo‘lishi shart emas: har qanday qiymat truthy yoki falsy hisoblanadi. 0, \"\", null, undefined, NaN, false — falsy. Qolgan hammasi, jumladan [] va {} — truthy.",
+        "title": "4. Truthy/falsy shart",
+        "text": "if shartni boolean baholaydi. Oddiy qiymatlardan false, 0, -0, 0n, \"\", null, undefined va NaN falsy. Qolgan oddiy qiymatlar truthy; brauzer document.all tarixiy istisno. Massivda element borligini length bilan alohida tekshiring.",
         "code": "const items = [];\nif (items) {\n  console.log(\"truthy\"); // bu chiqadi\n}\n\nif (items.length > 0) {\n  console.log(\"element bor\"); // bu chiqmaydi\n} else {\n  console.log(\"bo'sh\"); // bu chiqadi\n}",
         "note": "Bo‘sh massiv truthy. Element borligini tekshirish uchun items.length > 0 kerak."
       },
       {
-        "title": "4. switch",
+        "title": "5. switch",
         "text": "switch qiymatni bir nechta holat (case) bilan solishtiradi. Solishtirish === bilan qilinadi (qat’iy tenglik). break bo‘lmasa, keyingi case ga \"tushib qoladi\" (fall-through).",
         "code": "const kun = \"dushanba\";\nswitch (kun) {\n  case \"dushanba\":\n    console.log(\"Birinchi kun\");\n    break;\n  case \"juma\":\n    console.log(\"Oxirgi ish kuni\");\n    break;\n  default:\n    console.log(\"Boshqa kun\");\n}\n// Natija: Birinchi kun"
       },
       {
-        "title": "5. break unutish tuzog‘i",
+        "title": "6. break unutish tuzog‘i",
         "text": "Agar case ichida break yo‘q bo‘lsa, bajarilish keyingi case ga davom etadi. Bu ba’zan foydali, lekin ko‘pincha xato bo‘ladi.",
         "code": "const x = 1;\nswitch (x) {\n  case 1:\n    console.log(\"bir\");\n  case 2:\n    console.log(\"ikki\");\n    break;\n  default:\n    console.log(\"boshqa\");\n}\n// Natija: bir, ikki (break yo'q edi)"
       },
       {
-        "title": "6. Ternary va qisqa baholash",
+        "title": "7. Ternary va qisqa baholash",
         "text": "Oddiy shartni ternary bilan qisqa yozish mumkin. Bir nechta shartni zanjirlab ham yozish mumkin, lekin o‘qilishi qiyinlashadi. && va || ham shart sifatida ishlatiladi.",
         "code": "const yosh = 20;\nconst xabar = yosh >= 18 ? \"katta\" : \"yosh\";\nconsole.log(xabar); // katta\n\n// qisqa baholash bilan:\nconst nom = xabar && xabar.toUpperCase();\nconsole.log(nom); // KATTA"
+      },
+      {
+        "title": "8. Erta qaytish: xato holatini oldin ajratish",
+        "text": "Guard clause keraksiz ichma-ich if larni kamaytiradi. Funksiya ichidagi return shu funksiyani tugatadi.",
+        "code": "function kirish(yosh) {\n  if (!Number.isFinite(yosh) || yosh < 0) return \"Xato\";\n  if (yosh < 18) return \"Hali erta\";\n  return \"Marhamat\";\n}\nconsole.log(kirish(20));",
+        "expectedOutput": [
+          "Marhamat"
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "9. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "if (x = 5) qiymat yozadi; taqqoslash uchun === kerak. if dan keyin ortiqcha ; blokni shartdan ajratib yuboradi. switch \"1\" va 1 ni teng deb olmaydi. Bir nechta case bir scope ni bo‘lishishi mumkin; let/const uchun case tanasini { } bilan ajrating."
+      },
+      {
+        "title": "10. Kichik amaliy loyiha",
+        "text": "0–100 ball uchun A/B/C baho chiqaring. Noto‘g‘ri tur, NaN yoki diapazondan tashqaridagi qiymatga alohida xabar yozing. Yuqori chegaralarni oldin tekshiring."
       }
     ],
-    "takeaway": "if/else — ikki tarmoq; else if — ko‘p tarmoq, birinchi mos kelsa to‘xtaydi.\nShart truthy/falsy qoidasi bilan baholanadi.\n[] va {} truthy, bo‘shligi muhim emas.\nswitch === bilan solishtiradi, break bo‘lmasa keyingi case ga o‘tadi.\nTernary oddiy shart uchun qisqa yozuv.",
-    "exercise": "1) const x = 0; if (x) ... qaysi tarmoq?\n2) switch da break unutilsa nima bo‘ladi?\n3) [] truthy mi? Element borligini qanday tekshirasiz?\n4) ball = 85 bo‘lsa, yuqoridagi else if zanjirida nima chiqadi?"
+    "takeaway": "Shart dasturga yo‘l tanlatadi.\nif (x = 5) qiymat yozadi; taqqoslash uchun === kerak.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: 0–100 ball uchun A/B/C baho chiqaring. Noto‘g‘ri tur, NaN yoki diapazondan tashqaridagi qiymatga alohida xabar yozing. Yuqori chegaralarni oldin tekshiring.\n\nQo‘shimcha savollar:\n1) const x = 0; if (x) ... qaysi tarmoq?\n2) switch da break unutilsa nima bo‘ladi?\n3) [] truthy mi? Element borligini qanday tekshirasiz?\n4) ball = 85 bo‘lsa, yuqoridagi else if zanjirida nima chiqadi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const ball = 85;\nconsole.log(ball >= 90 ? \"A\" : ball >= 70 ? \"B\" : \"C\");\nconsole.log(0 ?? 10);\nswitch (\"1\") {\n  case 1: console.log(\"son\"); break;\n  default: console.log(\"matn\");\n}",
+    "exerciseExpected": [
+      "B",
+      0,
+      "matn"
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. \"B\" — 90 sharti false, 70 sharti true\n2. 0 — 0 yo‘q qiymat emas\n3. \"matn\" — switch qat’iy tenglikdan foydalanadi\n\nLoyihani yechish yo‘li: Avval Number.isFinite(ball), 0 <= ball va ball <= 100 ni tekshiring. Keyin >=90, >=70, qolgan holat tartibida if/else yozing.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Control_flow_and_error_handling"
+      }
+    ]
   },
   {
     "id": "loops",
     "title": "Tsikllar: for, while, for...of, for...in",
     "question": "Tsikllar qanday ishlaydi? for, while, for...of va for...in farqi nima? break/continue nima qiladi?",
-    "explanation": "Tsikl bir amalni bir necha marta takrorlaydi. Kod o‘qiyotganda uch narsani kuzat: boshlang‘ich qiymat, to‘xtash sharti va har qadamda o‘zgarish. noto‘g‘ri shart cheksiz tsiklga olib keladi.",
+    "explanation": "Tsikl — bir ishni takrorlash. Uch savolni aniqlang: qayerdan boshlanadi, qachongacha ishlaydi, har qadamda nima o‘zgaradi? Indekslar odatda 0 dan boshlanadi. for...of qiymatlarni, for...in esa sanab o‘tiladigan string kalitlarni beradi.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Oddiy for",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "i avval 1: jami 1. Keyin i=2: jami 3. Keyin i=3: jami 6. i=4 bo‘lganda shart false va tsikl tugaydi.",
+        "code": "let jami = 0;\nfor (let i = 1; i <= 3; i++) {\n  jami += i;\n}\nconsole.log(jami);",
+        "expectedOutput": [
+          6
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [6]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Oddiy for",
         "text": "for (boshlash; shart; o‘zgartirish) tuzilmasiga ega. Har takrorlashda avval shart tekshiriladi, so‘ng block bajariladi, keyin o‘zgartirish amalga oshiriladi.",
         "code": "for (let i = 0; i < 3; i++) {\n  console.log(i);\n}\n// Natija: 0, 1, 2\n\nfor (let i = 3; i > 0; i--) {\n  console.log(i);\n}\n// Natija: 3, 2, 1"
       },
       {
-        "title": "2. while va do...while",
+        "title": "3. while va do...while",
         "text": "while shart truthy ekan takrorlaydi. do...while esa blockni kamida bir marta bajaradi, keyin shartni tekshiradi.",
         "code": "let i = 0;\nwhile (i < 3) {\n  console.log(i);\n  i++;\n}\n// 0, 1, 2\n\nlet j = 10;\ndo {\n  console.log(j); // kamida bir marta bajariladi\n} while (j < 3);\n// 10"
       },
       {
-        "title": "3. break va continue",
+        "title": "4. break va continue",
         "text": "break tsiklni to‘liq to‘xtatadi. continue faqat joriy takrorlashni o‘tkazib, keyingisiga o‘tadi.",
         "code": "for (let i = 0; i < 5; i++) {\n  if (i === 2) continue; // 2 ni o'tkazamiz\n  if (i === 4) break;    // 4 da to'xtaymiz\n  console.log(i);\n}\n// Natija: 0, 1, 3"
       },
       {
-        "title": "4. for...of — qiymatlar bo‘yicha",
+        "title": "5. for...of — qiymatlar bo‘yicha",
         "text": "for...of massiv, string, Map, Set kabi iteratsiya qilinadigan obyektlarning qiymatlarini beradi. Massiv indeksini emas, elementni oladi.",
         "code": "const sonlar = [10, 20, 30];\nfor (const son of sonlar) {\n  console.log(son); // 10, 20, 30\n}\n\nfor (const harf of \"Ali\") {\n  console.log(harf); // A, l, i\n}"
       },
       {
-        "title": "5. for...in — kalitlar bo‘yicha",
+        "title": "6. for...in — kalitlar bo‘yicha",
         "text": "for...in obyektning o‘z va meros qilingan sanab o‘tiladigan (enumerable) kalitlarini beradi. Massivda ham ishlaydi, lekin indekslarni string sifatida beradi. Massiv uchun for...of yaxshiroq.",
         "code": "const user = { ism: \"Ali\", yosh: 20 };\nfor (const kalit in user) {\n  console.log(kalit, user[kalit]);\n}\n// ism Ali, yosh 20\n\nconst arr = [10, 20];\nfor (const i in arr) {\n  console.log(typeof i); // \"string\" — indeks string!\n}"
       },
       {
-        "title": "6. Har qadamda yangi scope",
+        "title": "7. Har qadamda yangi scope",
         "text": "for (let i = ...) da har bir takrorlash uchun alohida i yaratiladi. Shuning uchun ichida yaratilgan funksiyalar har xil i ni eslaydi. var bilan esa hammasi bitta i ni ko‘radi.",
         "code": "for (let i = 0; i < 3; i++) {\n  setTimeout(() => console.log(i), 0);\n}\n// 0, 1, 2 (let)\n\nfor (var j = 0; j < 3; j++) {\n  setTimeout(() => console.log(j), 0);\n}\n// 3, 3, 3 (var — bitta j)"
       },
       {
-        "title": "7. Cheksiz tsikl tuzog‘i",
+        "title": "8. Cheksiz tsikl tuzog‘i",
         "text": "Agar o‘zgartirish qismi yo‘q bo‘lsa yoki shart hech qachon falsy bo‘lmasa, tsikl to‘xtamaydi. Kod o‘qiyotganda \"bu tsikl qachon to‘xtaydi?\" degan savolga javob topish shart.",
         "code": "// let i = 0;\n// while (i < 3) {\n//   console.log(i); // i o'zgarmaydi → cheksiz\n// }\n\nlet k = 0;\nwhile (k < 3) {\n  console.log(k);\n  k += 1; // to'g'ri: har qadam oshadi\n}"
+      },
+      {
+        "title": "9. Ichma-ich tsikl va keraksiz takrorlash",
+        "text": "Ichki tsikl tashqi tsiklning har qadamida qayta ishlaydi. 2 va 3 qadamli ikki tsikl jami 6 juftlik beradi. Katta ro‘yxatlar uchun takrorlash sonini hisoblang.",
+        "code": "let sanoq = 0;\nfor (let i = 0; i < 2; i++) {\n  for (let j = 0; j < 3; j++) sanoq++;\n}\nconsole.log(sanoq);",
+        "expectedOutput": [
+          6
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "10. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "i <= list.length oxirida mavjud bo‘lmagan indeksga boradi: odatda i < list.length kerak. while ichida shartni o‘zgartiradigan qadam qolmasa cheksiz tsikl bo‘ladi. for...in meros kalitlarini ham olishi mumkin; kerak bo‘lsa Object.hasOwn bilan cheklang. forEach ichida return tashqi funksiyani yoki tsiklni break qilmaydi."
+      },
+      {
+        "title": "11. Kichik amaliy loyiha",
+        "text": "1 dan n gacha sonlar yig‘indisini va faqat juftlarini hisoblang. Keyin bir xil ro‘yxatni for va for...of bilan o‘qib natijalarni solishtiring."
       }
     ],
-    "takeaway": "for: boshlash/shart/o‘zgartirish; shart avval tekshiriladi.\nwhile shart truthy ekan, do...while kamida bir marta bajaradi.\nbreak to‘xtatadi, continue keyingi qadamga o‘tadi.\nfor...of qiymat, for...in kalit (string) beradi.\nlet har takrorlashda yangi scope yaratadi, var esa bitta.\nHar tsiklda \"qachon to‘xtaydi?\" deb so‘ra.",
-    "exercise": "1) for (let i=0; i<3; i++) necha marta bajariladi va qanday qiymatlar chiqadi?\n2) break va continue farqi?\n3) for...of va for...in farqi nima?\n4) let o‘rniga var ishlatilsa setTimeout misolida nima chiqadi?"
+    "takeaway": "Tsikl — bir ishni takrorlash.\ni <= list.length oxirida mavjud bo‘lmagan indeksga boradi: odatda i < list.length kerak.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: 1 dan n gacha sonlar yig‘indisini va faqat juftlarini hisoblang. Keyin bir xil ro‘yxatni for va for...of bilan o‘qib natijalarni solishtiring.\n\nQo‘shimcha savollar:\n1) for (let i=0; i<3; i++) necha marta bajariladi va qanday qiymatlar chiqadi?\n2) break va continue farqi?\n3) for...of va for...in farqi nima?\n4) let o‘rniga var ishlatilsa setTimeout misolida nima chiqadi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const natija = [];\nfor (let i = 0; i < 4; i++) {\n  if (i === 2) continue;\n  natija.push(i);\n}\nconsole.log(natija);\nlet n = 5;\ndo { n++; } while (n < 3);\nconsole.log(n);\nconsole.log(Object.keys({ a: 1, b: 2 }));",
+    "exerciseExpected": [
+      [
+        0,
+        1,
+        3
+      ],
+      6,
+      [
+        "a",
+        "b"
+      ]
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. [0, 1, 3] — continue 2 ni o‘tkazadi\n2. 6 — do tanasi shartdan oldin bir marta ishlaydi\n3. [\"a\", \"b\"] — obyektning o‘z enumerable string kalitlari\n\nLoyihani yechish yo‘li: jami va juftJami ni 0 dan boshlang. for i=1; i<=n; i++ ichida jami ga qo‘shing, i%2===0 bo‘lsa juftJami ga ham qo‘shing.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Loops_and_iteration"
+      }
+    ]
   },
   {
     "id": "objects-basics",
     "title": "Obyektlar: noldan",
     "question": "Obyekt nima? Kalit-qiymat, nuqta va kvadrat notatsiya, ichki obyektlar.",
-    "explanation": "Obyekt — kalit (property) va qiymatlar to‘plami. U ko‘p ma’lumotni bitta nom ostida saqlash uchun ishlatiladi. Kod o‘qiyotganda avval “bu obyektning qaysi kaliti o‘qilyapti?” degan savolni ber. Kalit har doim string (yoki symbol), qiymat esa ixtiyoriy tur bo‘lishi mumkin.",
+    "explanation": "Obyekt — bir narsaga tegishli ma’lumotlarni nomlar bilan birlashtirish. user ichida ism, yosh va manzil bo‘lishi mumkin. Har bir nom xususiyat kaliti, o‘ngdagi narsa qiymat. Nuqta bilan oldindan ma’lum nom, [] bilan hisoblangan nom o‘qiladi.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Obyekt yaratish",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Obyekt bir marta yaratildi. kalit o‘zgaruvchisining \"yosh\" qiymati [] ichida ishlatiladi. += shu obyektning yosh xususiyatini yangilaydi.",
+        "code": "const user = { ism: \"Ali\", yosh: 20 };\nconst kalit = \"yosh\";\nconsole.log(user.ism);\nconsole.log(user[kalit]);\nuser.yosh += 1;\nconsole.log(user.yosh);",
+        "expectedOutput": [
+          "Ali",
+          20,
+          21
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"Ali\", 20, 21]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Obyekt yaratish",
         "text": "Eng keng tarqalgan usul — { } ichida kalit: qiymat yozish. Kalitlarni o‘qish uchun nuqta (obj.kalit) yoki kvadrat (obj[\"kalit\"]) notatsiya ishlatiladi.",
         "code": "const user = {\n  ism: \"Ali\",\n  yosh: 20,\n  shahar: \"Toshkent\"\n};\nconsole.log(user.ism); // Ali\nconsole.log(user[\"yosh\"]); // 20"
       },
       {
-        "title": "2. Nuqta va kvadrat notatsiya farqi",
+        "title": "3. Nuqta va kvadrat notatsiya farqi",
         "text": "Nuqta notatsiyasida kalit o‘zgarmas nom bo‘ladi. Kvadrat notatsiyada kalit ifoda bo‘lishi mumkin: o‘zgaruvchi yoki hisoblash natijasi. Kalit nomida bo‘shliq yoki chiziqcha bo‘lsa, faqat kvadrat notatsiya ishlaydi.",
         "code": "const user = { \"ism-familya\": \"Ali\", yosh: 20 };\n// console.log(user.ism-familya); // xato (ayirish deb o‘qiladi)\nconsole.log(user[\"ism-familya\"]); // Ali\n\nconst kalit = \"yosh\";\nconsole.log(user[kalit]); // 20"
       },
       {
-        "title": "3. Qiymat qo‘shish va o‘zgartirish",
+        "title": "4. Qiymat qo‘shish va o‘zgartirish",
         "text": "Yo‘q kalitga qiymat yozilsa, u yaratiladi. Bor kalitga yangi qiymat yozilsa, eskisi almashtiriladi. O‘chirish uchun delete ishlatiladi.",
         "code": "const user = { ism: \"Ali\" };\nuser.yosh = 20; // yangi kalit\nuser.ism = \"Vali\"; // o'zgartirish\nconsole.log(user); // { ism: \"Vali\", yosh: 20 }\n\ndelete user.yosh;\nconsole.log(user.yosh); // undefined"
       },
       {
-        "title": "4. Ichki obyektlar va ierarxiya",
+        "title": "5. Ichki obyektlar va ierarxiya",
         "text": "Obyekt qiymati sifatida boshqa obyekt bo‘lishi mumkin. Bunday tuzilmada bir necha nuqta bilan chuqurroq o‘qish mumkin: user.manzil.shahar.",
         "code": "const user = {\n  ism: \"Ali\",\n  manzil: {\n    shahar: \"Toshkent\",\n    kocha: \"Navoiy\"\n  }\n};\nconsole.log(user.manzil.shahar); // Toshkent\nconsole.log(user.manzil.kocha); // Navoiy",
         "note": "Agar oraliq obyekt yo‘q bo‘lsa, user.manzil.shahar xato beradi. Optional chaining bilan xavfsiz: user.manzil?.shahar."
       },
       {
-        "title": "5. Kalitlar va qiymatlar ro‘yxati",
+        "title": "6. Kalitlar va qiymatlar ro‘yxati",
         "text": "Object.keys obyekt kalitlari massivini, Object.values qiymatlar massivini, Object.entries esa [kalit, qiymat] juftliklari massivini qaytaradi.",
         "code": "const user = { ism: \"Ali\", yosh: 20 };\nconsole.log(Object.keys(user)); // [\"ism\", \"yosh\"]\nconsole.log(Object.values(user)); // [\"Ali\", 20]\nconsole.log(Object.entries(user)); // [[\"ism\",\"Ali\"],[\"yosh\",20]]"
       },
       {
-        "title": "6. Kalit borligini tekshirish",
+        "title": "7. Kalit borligini tekshirish",
         "text": "obj.kalit !== undefined degan tekshirish xato bo‘lishi mumkin: kalit bor, lekin qiymati undefined bo‘lsa. To‘g‘ri usul — \"kalit\" in obj yoki Object.hasOwn(obj, \"kalit\").",
         "code": "const o = { x: undefined };\nconsole.log(o.x !== undefined); // false (noto'g'ri xulosa)\nconsole.log(\"x\" in o); // true\nconsole.log(Object.hasOwn(o, \"x\")); // true\nconsole.log(\"y\" in o); // false"
       },
       {
-        "title": "7. Obyekt ichida metod",
-        "text": "Obyekt xususiyati sifatida funksiya saqlash mumkin. Bunday funksiyaga metod deyiladi. Ichida this obyektni ko‘rsatadi.",
+        "title": "8. Obyekt ichida metod",
+        "text": "Obyekt xususiyati sifatida funksiya saqlash mumkin: bu metod. user.salom() kabi obyekt orqali chaqirilganda oddiy metodning this qiymati user bo‘ladi. Mustaqil chaqirishda bu bog‘lanish saqlanmasligi mumkin.",
         "code": "const user = {\n  ism: \"Ali\",\n  salom() {\n    return \"Salom, \" + this.ism;\n  }\n};\nconsole.log(user.salom()); // Salom, Ali"
+      },
+      {
+        "title": "9. Qisqa yozuv va hisoblangan kalit",
+        "text": "O‘zgaruvchi nomi bilan kalit bir xil bo‘lsa { ism } yoziladi. [ifoda] esa obyekt yaratish paytida kalitni hisoblaydi.",
+        "code": "const ism = \"Ali\";\nconst maydon = \"ball\";\nconst o = { ism, [maydon]: 100 };\nconsole.log(o.ism);\nconsole.log(o.ball);",
+        "expectedOutput": [
+          "Ali",
+          100
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "10. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "user.kalit literal “kalit” nomini qidiradi; user[kalit] o‘zgaruvchi qiymatini oladi. in meros xususiyatlarini ham ko‘radi, Object.hasOwn faqat o‘zini. Object.keys/values/entries symbol va sanab o‘tilmaydigan xususiyatlarni kiritmaydi. Metoddagi this obyekt orqali chaqirishga bog‘liq, uni ko‘chirib mustaqil chaqirish bu bog‘lanishni yo‘qotadi."
+      },
+      {
+        "title": "11. Kichik amaliy loyiha",
+        "text": "Mahsulot obyektini nom, narx, dona bilan yarating. Qiymatni yangilang, jami narxni hisoblaydigan metod yozing va kerakli kalit borligini tekshiring."
       }
     ],
-    "takeaway": "Obyekt — kalit: qiymat to‘plami.\nNuqta notatsiya o‘zgarmas kalit, kvadrat notatsiya ifoda qabul qiladi.\nYo‘q kalitga yozish uni yaratadi; delete o‘chiradi.\nIchki obyektlarni nuqta zanjiri bilan o‘qish mumkin.\nObject.keys/values/entries kalit va qiymatlarni massiv qiladi.\nKalit borligini \"x\" in obj yoki Object.hasOwn bilan tekshir.",
-    "exercise": "1) const o = {a:1}; o.b = 2; o.a = 3; natijada o nima?\n2) \"x\" in o va o.x !== undefined farqi nima?\n3) user.manzil.shahar qachon xato beradi?\n4) Object.keys({a:1,b:2}) nima qaytaradi?"
+    "takeaway": "Obyekt — bir narsaga tegishli ma’lumotlarni nomlar bilan birlashtirish.\nuser.kalit literal “kalit” nomini qidiradi; user[kalit] o‘zgaruvchi qiymatini oladi.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Mahsulot obyektini nom, narx, dona bilan yarating. Qiymatni yangilang, jami narxni hisoblaydigan metod yozing va kerakli kalit borligini tekshiring.\n\nQo‘shimcha savollar:\n1) const o = {a:1}; o.b = 2; o.a = 3; natijada o nima?\n2) \"x\" in o va o.x !== undefined farqi nima?\n3) user.manzil.shahar qachon xato beradi?\n4) Object.keys({a:1,b:2}) nima qaytaradi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const p = { nom: \"Kitob\", narx: 10 };\np.dona = 2;\nconsole.log(p.narx * p.dona);\nconsole.log(Object.hasOwn(p, \"nom\"));\nconsole.log(p.yoq);\nconsole.log(Object.keys(p).length);",
+    "exerciseExpected": [
+      20,
+      true,
+      {
+        "$undefined": true
+      },
+      3
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 20 — narx va dona ko‘paytiriladi\n2. true — nom o‘ziga tegishli\n3. undefined — yo‘q xususiyat undefined\n4. 3 — uchta o‘z kaliti bor\n\nLoyihani yechish yo‘li: jami() { return this.narx * this.dona; } metodini qo‘shing. Metodni mahsulot.jami() shaklida chaqiring; Object.hasOwn bilan maydonlarni tekshiring.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_objects"
+      }
+    ]
   },
   {
     "id": "arrays-basics",
     "title": "Massivlar: noldan",
     "question": "Massiv nima? Indeks, length, qo‘shish/o‘chirish va ko‘p uchraydigan metodlar.",
-    "explanation": "Massiv — tartiblangan qiymatlar ro‘yxati. Har elementning indeksi bor (0 dan boshlanadi). Massiv ham obyekt, lekin uning maxsus xususiyati — length. Kod o‘qiyotganda indeks va uzunlikni kuzat: ko‘p xatolar shular bilan bog‘liq.",
+    "explanation": "Massiv — qiymatlarning tartibli ro‘yxati. [] yangi massiv yaratadi, elementlar vergul bilan ajratiladi. Indeks 0 dan boshlanadi; length elementlar uchun ajratilgan uzunlikni bildiradi. Oddiy zich massivdan boshlaymiz, siyrak massivdagi farqni keyin ko‘ramiz.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Yaratish va o‘qish",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Birinchi element 0-indeksda. push massiv oxiriga yangi qiymat qo‘shadi. length 2 dan 3 ga chiqadi, at(-1) oxirgi elementni oladi.",
+        "code": "const mevalar = [\"olma\", \"anor\"];\nconsole.log(mevalar[0]);\nmevalar.push(\"uzum\");\nconsole.log(mevalar.length);\nconsole.log(mevalar.at(-1));",
+        "expectedOutput": [
+          "olma",
+          3,
+          "uzum"
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"olma\", 3, \"uzum\"]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Yaratish va o‘qish",
         "text": "Massiv [ ] ichida elementlar bilan yaratiladi. Elementga indeks orqali murojaat qilinadi: arr[0] birinchi, arr[arr.length - 1] oxirgi element.",
         "code": "const sonlar = [10, 20, 30];\nconsole.log(sonlar[0]); // 10\nconsole.log(sonlar[1]); // 20\nconsole.log(sonlar.length); // 3\nconsole.log(sonlar[sonlar.length - 1]); // 30 (oxirgi)"
       },
       {
-        "title": "2. Yo‘q indeksga murojaat",
+        "title": "3. Yo‘q indeksga murojaat",
         "text": "Massivda yo‘q indeksni o‘qish undefined qaytaradi, xato emas. Bu obyektlarga o‘xshash: massiv ham obyekt.",
         "code": "const a = [1, 2];\nconsole.log(a[5]); // undefined\nconsole.log(a[-1]); // undefined"
       },
       {
-        "title": "3. Qo‘shish va o‘chirish",
+        "title": "4. Qo‘shish va o‘chirish",
         "text": "push oxiriga qo‘shadi, pop oxirgisini olib tashlaydi, unshift boshiga qo‘shadi, shift birinchi elementni olib tashlaydi. Barchasi asl massivni o‘zgartiradi.",
         "code": "const a = [1, 2];\na.push(3); // [1,2,3]\na.pop();   // [1,2]\na.unshift(0); // [0,1,2]\na.shift(); // [1,2]\nconsole.log(a); // [1,2]"
       },
       {
-        "title": "4. splice — istalgan joyga qo‘shish/o‘chirish",
+        "title": "5. splice — istalgan joyga qo‘shish/o‘chirish",
         "text": "splice(start, deleteCount, ...elements) berilgan joydan boshlab elementlarni o‘chiradi va yangilarini qo‘shadi. Asl massivni o‘zgartiradi va o‘chirilgan elementlarni qaytaradi.",
         "code": "const a = [1, 2, 3, 4];\nconsole.log(a.splice(1, 2)); // [2,3] o'chirildi\nconsole.log(a); // [1,4]\n\na.splice(1, 0, 9); // 1-indeksga 9 qo'shamiz\nconsole.log(a); // [1,9,4]"
       },
       {
-        "title": "5. slice — qismni nusxalash",
+        "title": "6. slice — qismni nusxalash",
         "text": "slice(start, end) berilgan oraliqdagi elementlardan yangi massiv yaratadi. Asl massiv o‘zgartirilmaydi. end indeksi kiritilmaydi.",
         "code": "const a = [1, 2, 3, 4];\nconsole.log(a.slice(1, 3)); // [2,3]\nconsole.log(a.slice(2)); // [3,4]\nconsole.log(a); // [1,2,3,4] — o'zgarmadi"
       },
       {
-        "title": "6. indexOf, includes, join",
+        "title": "7. indexOf, includes, join",
         "text": "indexOf element indeksini (topmasa -1), includes bor-yo‘qligini (true/false), join esa elementlarni stringga birlashtiradi.",
         "code": "const a = [10, 20, 30];\nconsole.log(a.indexOf(20)); // 1\nconsole.log(a.indexOf(99)); // -1\nconsole.log(a.includes(30)); // true\nconsole.log(a.join(\", \")); // \"10, 20, 30\""
       },
       {
-        "title": "7. Massiv va obyekt farqi",
+        "title": "8. Massiv va obyekt farqi",
         "text": "Massiv — tartibli ro‘yxat, uzunligi bor. Obyekt — kalitlar to‘plami. Lekin massiv ham obyekt: uning indekslari kalit, length xususiyati bor. Shuning uchun typeof [] === \"object\" bo‘ladi.",
         "code": "console.log(typeof []); // \"object\"\nconsole.log(Array.isArray([])); // true — to'g'ri tekshirish\nconsole.log(Array.isArray({})); // false"
+      },
+      {
+        "title": "9. Teshik bilan undefined bir xil tuzilma emas",
+        "text": "[,,] yoki katta indeksga yozish siyrak massiv yaratishi mumkin. length mavjud elementlar soni bilan teng bo‘lishi shart emas. includes undefined sifatida ko‘rishi mumkin, map esa bo‘sh joyni tashlab ketadi.",
+        "code": "const a = new Array(3);\nconsole.log(a.length);\nconsole.log(0 in a);\nconsole.log(a.includes(undefined));",
+        "expectedOutput": [
+          3,
+          false,
+          true
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "10. Yangi nusxa bilan ishlash",
+        "text": "Spread, Array.from va slice yangi tashqi massiv beradi. toReversed va toSorted asl massivni o‘zgartirmaydigan zamonaviy usullardir.",
+        "code": "const a = [3, 1, 2];\nconsole.log(a.toSorted((x, y) => x - y));\nconsole.log(a);",
+        "expectedOutput": [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            3,
+            1,
+            2
+          ]
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "11. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "const massivning ichini muzlatmaydi. delete list[0] element o‘rnida teshik qoldiradi, uzunlikni kamaytirmaydi; odatda splice ishlating. push yangi uzunlikni, pop olib tashlangan elementni qaytaradi. slice nusxasi yuzaki: ichki obyektlar birga qoladi."
+      },
+      {
+        "title": "12. Kichik amaliy loyiha",
+        "text": "Vazifalar ro‘yxati yarating. Oxiriga qo‘shish, boshidan olib tashlash va bir qismini nusxalashni bajaring; asl ro‘yxat qachon o‘zgarganini yozing."
       }
     ],
-    "takeaway": "Indeks 0 dan boshlanadi; oxirgi element arr[arr.length-1].\nYo‘q indeks undefined qaytaradi, xato emas.\npush/pop/unshift/shift/splice aslni o‘zgartiradi.\nslice yangi massiv qaytaradi, aslni saqlaydi.\nindexOf topmasa -1, includes true/false qaytaradi.\nMassiv turini Array.isArray bilan tekshir.",
-    "exercise": "1) [1,2,3][5] nima?\n2) push va unshift farqi?\n3) splice va slice farqi nima?\n4) [10,20].indexOf(99) nima?\n5) typeof [] nima va to‘g‘ri tekshirish qanday?"
+    "takeaway": "Massiv — qiymatlarning tartibli ro‘yxati.\nconst massivning ichini muzlatmaydi.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Vazifalar ro‘yxati yarating. Oxiriga qo‘shish, boshidan olib tashlash va bir qismini nusxalashni bajaring; asl ro‘yxat qachon o‘zgarganini yozing.\n\nQo‘shimcha savollar:\n1) [1,2,3][5] nima?\n2) push va unshift farqi?\n3) splice va slice farqi nima?\n4) [10,20].indexOf(99) nima?\n5) typeof [] nima va to‘g‘ri tekshirish qanday?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const a = [10, 20];\nconsole.log(a.push(30));\nconsole.log(a.pop());\nconsole.log(a.length);\nconsole.log(a.slice(0, 1));\nconsole.log(a.at(-1));",
+    "exerciseExpected": [
+      3,
+      30,
+      2,
+      [
+        10
+      ],
+      20
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 3 — push yangi uzunlikni qaytaradi\n2. 30 — pop oxirgi 30 ni olib tashlaydi\n3. 2 — ikki element qoldi\n4. [10] — oxirgi indeks kirmaydi\n5. 20 — oxirgi qiymat 20\n\nLoyihani yechish yo‘li: push qaytargan qiymatni ro‘yxat deb qabul qilmang. shift() birinchi vazifani oladi, slice(0,2) ikki elementli yangi tashqi nusxa beradi.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array"
+      }
+    ]
   },
   {
     "id": "json-basics",
     "title": "JSON: noldan",
     "question": "JSON nima? JSON.stringify va JSON.parse qanday ishlaydi? Nima yo‘qoladi?",
-    "explanation": "JSON (JavaScript Object Notation) — ma’lumot almashish uchun matn formati. U JavaScript obyektiga o‘xshaydi, lekin faqat ma’lumot: funksiya, undefined, Symbol bo‘lmaydi. Kod o‘qiyotganda stringify/parse juftligini ko‘rsang, “tur o‘zgarishini” kuzat.",
+    "explanation": "JSON — ma’lumot almashish uchun matn formati. JavaScript obyekti bilan JSON matni bir narsa emas. JSON da kalitlar ikki qo‘shtirnoqda, izoh va oxirgi ortiqcha vergul yo‘q. stringify matn yaratadi, parse esa shu formatni qiymatga aylantiradi.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. JSON nima?",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Obyekt matnga aylantirildi. JSON.parse yangi obyekt yaratdi. Format to‘g‘ri bo‘lishi ma’lumotdagi yosh haqiqatan yaroqli ekanini kafolatlamaydi.",
+        "code": "const user = { ism: \"Ali\", yosh: 20 };\nconst matn = JSON.stringify(user);\nconsole.log(typeof matn);\nconsole.log(matn);\nconst qaytdi = JSON.parse(matn);\nconsole.log(qaytdi.ism);",
+        "expectedOutput": [
+          "string",
+          "{\"ism\":\"Ali\",\"yosh\":20}",
+          "Ali"
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"string\", \"{\\\"ism\\\":\\\"Ali\\\",\\\"yosh\\\":20}\", \"Ali\"]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. JSON nima?",
         "text": "JSON — matn. Obyektni matnga aylantirish uchun JSON.stringify, matnni obyektga qaytarish uchun JSON.parse ishlatiladi. Bu ikki funksiya teskari amal qiladi.",
         "code": "const user = { ism: \"Ali\", yosh: 20 };\nconst matn = JSON.stringify(user);\nconsole.log(matn); // '{\"ism\":\"Ali\",\"yosh\":20}'\nconsole.log(typeof matn); // \"string\"\nconsole.log(JSON.parse(matn)); // obyekt qaytdi"
       },
       {
-        "title": "2. Qaysi qiymatlar yo‘qoladi?",
+        "title": "3. Qaysi qiymatlar yo‘qoladi?",
         "text": "JSON.stringify obyektdagi funksiya, undefined va Symbol xususiyatlarini tashlab yuboradi. NaN va Infinity null ga aylanadi. Date esa ISO string ga aylanadi.",
         "code": "const o = {\n  a: 1,\n  b: undefined,\n  f: () => 2,\n  c: NaN\n};\nconsole.log(JSON.stringify(o)); // {\"a\":1,\"c\":null}\nconsole.log(JSON.stringify(new Date(\"2026-01-01\"))); // \"2026-01-01T00:00:00.000Z\""
       },
       {
-        "title": "3. JSON.parse xatolari",
+        "title": "4. JSON.parse xatolari",
         "text": "Noto‘g‘ri formatdagi matnni parse qilsang, SyntaxError chiqadi. Shuning uchun tashqi manbadan kelgan ma’lumotni try/catch bilan o‘qish kerak.",
         "code": "// JSON.parse(\"{noto'g'ri}\"); // SyntaxError\ntry {\n  JSON.parse(\"{noto'g'ri}\");\n} catch (e) {\n  console.log(\"Xato:\", e.message);\n}"
       },
       {
-        "title": "4. Chuqur nusxa olish usuli sifatida",
+        "title": "5. Chuqur nusxa olish usuli sifatida",
         "text": "JSON.parse(JSON.stringify(obj)) chuqur nusxa yaratadi, lekin universal emas: funksiya, undefined, Symbol yo‘qoladi; Date stringga aylanadi; tsiklik bog‘lanish xato beradi. structuredClone ko‘p hollarda yaxshiroq.",
         "code": "const a = { x: 1, ichki: { y: 2 } };\nconst b = JSON.parse(JSON.stringify(a));\nb.ichki.y = 9;\nconsole.log(a.ichki.y); // 2 — asl saqlangan\n\nconst c = structuredClone(a); // zamonaviy usul"
       },
       {
-        "title": "5. 3-argument va replacer",
+        "title": "6. 3-argument va replacer",
         "text": "JSON.stringify(obj, replacer, space) uchinchi argument bilan chiroyli formatlanadi. Ikkinchi argument sifatida funksiya yoki massiv berib, qaysi kalitlarni kiritishni boshqarish mumkin.",
         "code": "const o = { ism: \"Ali\", yosh: 20 };\nconsole.log(JSON.stringify(o, null, 2));\n// {\n//   \"ism\": \"Ali\",\n//   \"yosh\": 20\n// }\nconsole.log(JSON.stringify(o, [\"ism\"])); // {\"ism\":\"Ali\"}"
+      },
+      {
+        "title": "7. Format bilan mazmunni alohida tekshirish",
+        "text": "JSON.parse null, massiv yoki son ham qaytarishi mumkin. Obyekt kutayotgan bo‘lsangiz turini, null emasligini va kerakli maydonlarni tekshiring.",
+        "code": "const q = JSON.parse(\"{\\\"theme\\\":\\\"dark\\\"}\");\nconsole.log(q !== null && !Array.isArray(q) && typeof q === \"object\");\nconsole.log([\"light\", \"dark\"].includes(q.theme));",
+        "expectedOutput": [
+          true,
+          true
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "8. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "JSON.parse uchun eval ishlatmang. Parse faqat sintaksisni tekshiradi, ma’lumot sxemasini emas. Obyektdagi undefined tushib qoladi, massivda esa null bo‘lishi mumkin. BigInt va sikl odatda stringify xatosi beradi. JSON klonlash barcha turlarni saqlamaydi."
+      },
+      {
+        "title": "9. Kichik amaliy loyiha",
+        "text": "JSON sozlamalar matnini o‘qing. Buzilgan JSON ga xato xabar bering; muvaffaqiyatli o‘qilganda theme faqat light yoki dark ekanini tekshiring."
       }
     ],
-    "takeaway": "JSON matn; stringify obyekt→matn, parse matn→obyekt.\nfunksiya/undefined/Symbol yo‘qoladi; NaN/Infinity → null.\nNoto‘g‘ri matn parse qilinsa SyntaxError.\nJSON.parse(JSON.stringify()) chuqur nusxa, lekin universal emas.\nstructuredClone zamonaviy va xavfsizroq.",
-    "exercise": "1) JSON.stringify({a: undefined, b: NaN}) nima beradi?\n2) JSON.parse(\"xato\") nima qiladi?\n3) Nega JSON usuli bilan chuqur nusxa olish har doim ham yaxshi emas?"
+    "takeaway": "JSON — ma’lumot almashish uchun matn formati.\nJSON.parse uchun eval ishlatmang.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: JSON sozlamalar matnini o‘qing. Buzilgan JSON ga xato xabar bering; muvaffaqiyatli o‘qilganda theme faqat light yoki dark ekanini tekshiring.\n\nQo‘shimcha savollar:\n1) JSON.stringify({a: undefined, b: NaN}) nima beradi?\n2) JSON.parse(\"xato\") nima qiladi?\n3) Nega JSON usuli bilan chuqur nusxa olish har doim ham yaxshi emas?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "console.log(JSON.stringify({ a: undefined, b: 1 }));\nconsole.log(JSON.stringify([undefined, NaN]));\nconsole.log(JSON.parse(\"{\\\"x\\\":2}\").x);\nconsole.log(typeof JSON.parse(\"20\"));",
+    "exerciseExpected": [
+      "{\"b\":1}",
+      "[null,null]",
+      2,
+      "number"
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. \"{\\\"b\\\":1}\" — obyektda undefined maydon yo‘qoladi\n2. \"[null,null]\" — massivdagi mos qiymatlar null bo‘ladi\n3. 2 — to‘g‘ri JSON o‘qildi\n4. \"number\" — JSON faqat obyekt emas, son ham bo‘lishi mumkin\n\nLoyihani yechish yo‘li: try/catch ichida parse qiling. Natija oddiy obyektga mosligini, so‘ng theme ruxsat etilgan qiymatlardan biriligini tekshiring; format xatosi bilan nomaqbul sozlamani farqlang.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON"
+      }
+    ]
   },
   {
     "id": "errors-try-catch",
     "title": "Xatolar: try/catch, throw, finally",
     "question": "Xato qanday yuz beradi? try/catch/finally va throw qanday ishlaydi?",
-    "explanation": "Xato — kod bajarilishini to‘xtatadigan hodisa. try ichida xato yuz bersa, bajarilish catch ga o‘tadi. finally esa har qanday holatda bajariladi. Kod o‘qiyotganda “bu yer xato berishi mumkinmi?” deb so‘ra.",
+    "explanation": "Xato — kod kutilgan ishni bajara olmayotgan holat. throw boshqaruvni eng yaqin mos catch ga o‘tkazadi. try ichida xatodan keyingi satrlar o‘tkaziladi. finally resursni tozalash kabi yakunlovchi ish uchun, natijani almashtirish uchun emas.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Xato turlari",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "bol xato tashlagani uchun uning natijasi log qilinmaydi va keyingi satr ham ishlamaydi. catch xabarni chiqaradi, finally keyin ishlaydi.",
+        "code": "function bol(a, b) {\n  if (b === 0) throw new Error(\"Nolga bo‘lmang\");\n  return a / b;\n}\ntry {\n  console.log(bol(4, 0));\n  console.log(\"bu chiqmaydi\");\n} catch (e) { console.log(e.message); }\nfinally { console.log(\"yakun\"); }",
+        "expectedOutput": [
+          "Nolga bo‘lmang",
+          "yakun"
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"Nolga bo‘lmang\", \"yakun\"]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Xato turlari",
         "text": "Keng tarqalgan xatolar: ReferenceError (nom yo‘q), TypeError (noto‘g‘ri tur bilan amal), SyntaxError (noto‘g‘ri kod), RangeError (chegaradan oshish). Xato obyektining message va name xususiyati bor.",
         "code": "// nomTopilmadi; // ReferenceError\n// null.ism; // TypeError\n// JSON.parse(\"xato\"); // SyntaxError\n\ntry {\n  null.ism;\n} catch (e) {\n  console.log(e.name); // TypeError\n  console.log(e.message);\n}"
       },
       {
-        "title": "2. try/catch",
+        "title": "3. try/catch",
         "text": "try ichidagi kod xato bersa, qolgan satrlar bajarilmaydi va to‘g‘ridan-to‘g‘ri catch ga o‘tadi. catch ichida xato obyekti olinadi.",
         "code": "try {\n  console.log(\"boshlandi\");\n  JSON.parse(\"noto'g'ri\");\n  console.log(\"bu satr bajarilmaydi\");\n} catch (e) {\n  console.log(\"tutildi:\", e.name);\n}\nconsole.log(\"davom etadi\");"
       },
       {
-        "title": "3. finally",
+        "title": "4. finally",
         "text": "finally bloki xato bo‘lsa ham, bo‘lmasa ham bajariladi. Resurslarni tozalash uchun ishlatiladi. catch bo‘lmasa ham finally yozish mumkin.",
         "code": "try {\n  console.log(\"ish\");\n} catch (e) {\n  console.log(\"xato\");\n} finally {\n  console.log(\"har doim bajariladi\");\n}"
       },
       {
-        "title": "4. throw — o‘z xatoni yaratish",
+        "title": "5. throw — o‘z xatoni yaratish",
         "text": "throw bilan ixtiyoriy qiymatni xato sifatida tashlash mumkin. Ko‘pincha Error obyekti ishlatiladi. Xato tashlansa, u tutulmaguncha yuqoriga tarqaladi.",
         "code": "function bolish(a, b) {\n  if (b === 0) throw new Error(\"Nolga bo'lib bo'lmaydi\");\n  return a / b;\n}\n\ntry {\n  bolish(5, 0);\n} catch (e) {\n  console.log(e.message); // Nolga bo'lib bo'lmaydi\n}"
       },
       {
-        "title": "5. Xatoni yutmaslik",
+        "title": "6. Xatoni yutmaslik",
         "text": "Bo‘sh catch bloki xatoni yashiradi: muammo borligini bilmay qolasan. Kamida log qil yoki qayta tashla (throw e).",
         "code": "// Yomon:\ntry { JSON.parse(\"xato\"); } catch (e) {}\n\n// Yaxshi:\ntry { JSON.parse(\"xato\"); }\ncatch (e) { console.error(e); }\n\n// Qayta tashlash:\ntry { JSON.parse(\"xato\"); }\ncatch (e) { throw e; }"
+      },
+      {
+        "title": "7. Asinxron xatoni await bilan ushlash",
+        "text": "Promise rad etilganda await uni throw kabi ko‘rsatadi. await qilinmagan va keyin rad etilgan Promise sinxron try dan tashqarida qoladi.",
+        "code": "(async () => {\n  try { await Promise.reject(new Error(\"Tarmoq\")); }\n  catch (e) { console.log(e.message); }\n})();",
+        "expectedOutput": [
+          "Tarmoq"
+        ],
+        "exampleRuntime": "async"
+      },
+      {
+        "title": "8. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Shu faylni pars qilishdagi SyntaxError ni o‘sha fayldagi try bilan tutib bo‘lmaydi; JSON.parse kabi bajarilishdagi parse xatosi tutiladi. finally ichidagi return yoki throw oldingi natija/xatoni almashtiradi. Asinxron xatoni await yoki Promise.catch bilan tuting. Bo‘sh catch muammoni yashiradi; noma’lum xatoni qayta tashlash mumkin."
+      },
+      {
+        "title": "9. Kichik amaliy loyiha",
+        "text": "JSON qabul qiladigan funksiya yozing: noto‘g‘ri JSON va noto‘g‘ri yosh maydonini alohida xabar bilan rad etsin. Muvaffaqiyat va xato holatlarini test qiling."
       }
     ],
-    "takeaway": "Xato bajarilishni to‘xtatadi; catch uni tutadi.\nReferenceError, TypeError, SyntaxError eng ko‘p uchraydi.\nfinally har qanday holatda bajariladi.\nthrow new Error(...) bilan o‘z xatongni yaratasan.\nBo‘sh catch xatoni yashiradi — yomon odat.",
-    "exercise": "1) null.ism qanday xato beradi?\n2) try ichida xato bo‘lsa, keyingi satr bajariladimi?\n3) finally qachon bajariladi?\n4) Nega bo‘sh catch yomon?"
+    "takeaway": "Xato — kod kutilgan ishni bajara olmayotgan holat.\nShu faylni pars qilishdagi SyntaxError ni o‘sha fayldagi try bilan tutib bo‘lmaydi; JSON.parse kabi bajarilishdagi parse xatosi tutiladi.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: JSON qabul qiladigan funksiya yozing: noto‘g‘ri JSON va noto‘g‘ri yosh maydonini alohida xabar bilan rad etsin. Muvaffaqiyat va xato holatlarini test qiling.\n\nQo‘shimcha savollar:\n1) null.ism qanday xato beradi?\n2) try ichida xato bo‘lsa, keyingi satr bajariladimi?\n3) finally qachon bajariladi?\n4) Nega bo‘sh catch yomon?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "try { JSON.parse(\"xato\"); } catch (e) { console.log(e.name); }\ntry { throw new TypeError(\"Noto‘g‘ri tur\"); }\ncatch (e) { console.log(e instanceof Error); console.log(e.message); }\nfinally { console.log(\"tozalash\"); }",
+    "exerciseExpected": [
+      "SyntaxError",
+      true,
+      "Noto‘g‘ri tur",
+      "tozalash"
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. \"SyntaxError\" — JSON noto‘g‘ri\n2. true — TypeError Error oilasiga kiradi\n3. \"Noto‘g‘ri tur\" — xabar saqlanadi\n4. \"tozalash\" — catch dan keyin finally\n\nLoyihani yechish yo‘li: parse ichidagi SyntaxError ni ajrating; keyin natija null emas, obyekt va yosh Number.isFinite bilan to‘g‘ri ekanini tekshiring. Foydalanuvchi xabari bilan dasturchi diagnostikasini maqsadga mos ajrating.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/try...catch"
+      }
+    ]
   },
   {
     "id": "modules",
     "title": "Modullar: import/export",
     "question": "ES modullari qanday ishlaydi? import, export, default va named farqi?",
-    "explanation": "Modul — alohida fayl. U o‘z o‘zgaruvchilarini yashiradi va faqat eksport qilinganlarini boshqa faylga beradi. Kod o‘qiyotganda import satridan boshla: qayerdan nima olinayotganini bilish butun faylni tushunishga yordam beradi.",
+    "explanation": "Modul — o‘z chegarasi bo‘lgan fayl. export tashqariga beriladigan nomlarni, import boshqa fayldan olinadigan nomlarni bildiradi. Har bir kod bo‘lagidagi fayl nomiga qarang: ikki faylni bir kod blokiga ko‘r-ko‘rona qo‘shib bajarmang. Brauzerda type=\"module\" va mahalliy HTTP server, Node.js da .mjs ishlatish mumkin.\n\nModul misollarini nomi ko‘rsatilgan alohida fayllarga yozing. Ularni bitta konsol satriga qo‘shib bajarmang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Named export",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "math.mjs faqat qosh ni eksport qiladi. main.mjs uni nomi bilan oladi. Terminalda node main.mjs bajarilganda 5 chiqadi. Brauzer uchun shu importlar va <script type=\"module\" src=\"main.mjs\"> ishlatiladi.",
+        "code": "// math.mjs\nexport function qosh(a, b) { return a + b; }\n\n// main.mjs — boshqa fayl:\nimport { qosh } from \"./math.mjs\";\nconsole.log(qosh(2, 3));"
+      },
+      {
+        "title": "2. Named export",
         "text": "export const yoki export function bilan bir nechta nom eksport qilinadi. Import qilishda nomlar qavs ichida yoziladi va nomlar mos bo‘lishi shart.",
         "code": "// math.js\nexport const PI = 3.14;\nexport function yig(a, b) { return a + b; }\n\n// app.js\nimport { PI, yig } from \"./math.js\";\nconsole.log(yig(1, 2), PI);",
         "note": "Brauzerda modul ulash uchun <script type=\"module\" src=\"app.js\"></script> kerak."
       },
       {
-        "title": "2. Default export",
-        "text": "Har bir modulda bitta default eksport bo‘ladi. Uni import qilishda ixtiyoriy nom berish mumkin.",
+        "title": "3. Default export",
+        "text": "Modulda default eksport bo‘lishi shart emas; bo‘lsa ko‘pi bilan bitta. Default importga mahalliy ixtiyoriy nom berish mumkin. Named eksportlar esa bir nechta bo‘lishi mumkin.",
         "code": "// user.js\nexport default function salom(ism) {\n  return \"Salom, \" + ism;\n}\n\n// app.js\nimport salomlashish from \"./user.js\";\nconsole.log(salomlashish(\"Ali\"));"
       },
       {
-        "title": "3. Nomlarni o‘zgartirish",
+        "title": "4. Nomlarni o‘zgartirish",
         "text": "as dan keyin import qilingan nomga yangi nom berish mumkin. Eksport qilishda ham as ishlatiladi.",
         "code": "import { yig as qoshuvchi } from \"./math.js\";\nconsole.log(qoshuvchi(2, 3)); // 5\n\n// export { ichkiNom as tashqiNom };"
       },
       {
-        "title": "4. Hamma narsani import qilish",
+        "title": "5. Hamma narsani import qilish",
         "text": "import * as nom barcha eksportlarni obyekt sifatida beradi. Bu ko‘p eksport bor bo‘lganda qulay.",
         "code": "import * as math from \"./math.js\";\nconsole.log(math.PI);\nconsole.log(math.yig(1, 2));"
       },
       {
-        "title": "5. Modul scope’i",
+        "title": "6. Modul scope’i",
         "text": "Moduldagi yuqori darajadagi o‘zgaruvchilar global bo‘lmaydi: faqat shu modul ichida ko‘rinadi. Eksport qilinmagan narsa tashqaridan ko‘rinmaydi.",
         "code": "// counter.js\nlet hisob = 0; // faqat modul ichida\nexport function oshir() { return ++hisob; }\n\n// app.js\nimport { oshir } from \"./counter.js\";\nconsole.log(oshir()); // 1\n// console.log(hisob); // ReferenceError: ko'rinmaydi"
       },
       {
-        "title": "6. import hoisting va yon ta’sir",
-        "text": "Importlar fayl boshida turadi va boshqa kodlardan oldin bajariladi. Faqat eksport uchun emas, modulni yuklash uchun ham import qilish mumkin: import \"./styles.js\".",
+        "title": "7. import hoisting va yon ta’sir",
+        "text": "Static import modulning yuqori darajasida e’lon qilinadi, lekin faylning aynan birinchi satrida turishi shart emas. Bog‘liqliklar linking/evaluation jarayonida olinadi; oddiy siklsiz misolda import qilingan modul tanasi import qiluvchining tanasidan oldin baholanadi. Yon ta’sir uchun import \"./init.mjs\" yozish mumkin.",
         "code": "import \"./init.js\"; // yon ta'sir uchun (masalan, sozlash)\nconsole.log(\"asosiy kod\");\n// init.js avval bajariladi"
+      },
+      {
+        "title": "8. Live binding va siklik import",
+        "text": "Import ko‘pincha eksportning live binding ini ko‘radi, oddiy snapshot emas. Siklik importda hali initialization bo‘lmagan nomni o‘qish TDZ xatosi berishi mumkin. O‘zaro bog‘liqlikni kichik umumiy modulga ajratish ko‘pincha tushunarliroq.",
+        "code": "// counter.mjs\nexport let n = 0;\nexport function oshir() { n++; }\n\n// main.mjs\nimport { n, oshir } from \"./counter.mjs\";\noshir();\nconsole.log(n); // 1"
+      },
+      {
+        "title": "9. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Static import faqat modulning yuqori darajasida yoziladi; u shart ichida ishlamaydi. Uni faylning birinchi satriga yozish shart emas, lekin odatda shu yerga jamlanadi. Named exportda nomlar mos, default importda mahalliy nom erkin. Modul strict rejimda; yuqori darajadagi this undefined. Bir yo‘lga resolving qilingan modul odatda bir marta baholanadi."
+      },
+      {
+        "title": "10. Kichik amaliy loyiha",
+        "text": "Narx hisoblashni math.mjs ga, mahsulotlarni data.mjs ga, natijani ko‘rsatishni main.mjs ga ajrating. Named, default va as bilan import qilishni sinang."
       }
     ],
-    "takeaway": "Modul o‘z nomlarini yashiradi; faqat eksport qilinganlar ko‘rinadi.\nnamed export: import { nom }; default: import nom.\nas bilan nomni o‘zgartirish mumkin.\nimport * as nom barcha eksportlarni obyekt qiladi.\nImportlar kod boshlanishidan oldin bajariladi.",
-    "exercise": "1) Named va default export farqi nima?\n2) import { yig as q } nima qiladi?\n3) Eksport qilinmagan o‘zgaruvchi boshqa faylda ko‘rinadimi?\n4) import * as math nima beradi?"
+    "takeaway": "Modul — o‘z chegarasi bo‘lgan fayl.\nStatic import faqat modulning yuqori darajasida yoziladi; u shart ichida ishlamaydi.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Narx hisoblashni math.mjs ga, mahsulotlarni data.mjs ga, natijani ko‘rsatishni main.mjs ga ajrating. Named, default va as bilan import qilishni sinang.\n\nQo‘shimcha savollar:\n1) Named va default export farqi nima?\n2) import { yig as q } nima qiladi?\n3) Eksport qilinmagan o‘zgaruvchi boshqa faylda ko‘rinadimi?\n4) import * as math nima beradi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "// Quyidagini bitta demo.mjs fayli sifatida node demo.mjs bilan sinang.\nexport const son = 3;\nexport default function ikki(x) { return x * 2; }\nconsole.log(ikki(son));\nconsole.log(this);",
+    "exerciseExpected": [
+      6,
+      {
+        "$undefined": true
+      }
+    ],
+    "exerciseRuntime": "module",
+    "exerciseAnswer": "1. 6 — 3 ikki baravar qilindi\n2. undefined — ES modul yuqori darajasida this undefined\n\nLoyihani yechish yo‘li: Fayllar nomi va ./ nisbiy yo‘lini tekshiring. main.mjs ni ishga tushiring. Import qilingan bindingga qayta qiymat yozmang; eksport qilingan funksiya orqali holatni yangilang.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules"
+      }
+    ]
   },
   {
     "id": "closures",
     "title": "Closure: noldan",
     "question": "Closure nima? Funksiya nega o‘z yaratilgan joyidagi o‘zgaruvchilarni eslaydi?",
-    "explanation": "Closure — funksiya va uning atrofidagi o‘zgaruvchilarning birgalikda saqlanishi. Funksiya boshqa joyda chaqirilsa ham, yaratilgan paytdagi scope’ga murojaat qila oladi. Bu ko‘p intervyu savollarining asosi.",
+    "explanation": "Closure — funksiya va u yaratilgan tashqi lexical muhit bilan bog‘lanish. Ichki funksiya tashqi o‘zgaruvchini keyin ham ishlata oladi. Bu o‘zgaruvchining muzlatilgan suratini olish emas: binding yangilansa, keyingi chaqirish yangi qiymatni ko‘rishi mumkin.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Eng oddiy closure",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Hisoblagich har chaqirilganda alohida n yaratadi. a ning ikkala chaqirishi bir n ni yangilaydi, b esa o‘zining n=0 holatidan boshlaydi.",
+        "code": "function hisoblagich() {\n  let n = 0;\n  return () => ++n;\n}\nconst a = hisoblagich();\nconst b = hisoblagich();\nconsole.log(a());\nconsole.log(a());\nconsole.log(b());",
+        "expectedOutput": [
+          1,
+          2,
+          1
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [1, 2, 1]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Eng oddiy closure",
         "text": "Ichki funksiya tashqi funksiyaning o‘zgaruvchisiga murojaat qilsa, tashqi funksiya tugagach ham u o‘zgaruvchi saqlanib qoladi.",
         "code": "function tashqi() {\n  const x = 10;\n  return function ichki() {\n    console.log(x); // tashqi x ni eslaydi\n  };\n}\nconst f = tashqi();\nf(); // 10",
         "note": "tashqi() tugadi, lekin x yo‘qolmadi: ichki funksiya uni ushlab turibdi."
       },
       {
-        "title": "2. Har chaqirishda yangi scope",
+        "title": "3. Har chaqirishda yangi scope",
         "text": "Tashqi funksiya har chaqirilganda yangi x yaratiladi. Shuning uchun ikki funksiya bir-biridan mustaqil hisoblagich bo‘ladi.",
         "code": "function hisoblagich() {\n  let son = 0;\n  return () => ++son;\n}\nconst a = hisoblagich();\nconst b = hisoblagich();\nconsole.log(a()); // 1\nconsole.log(a()); // 2\nconsole.log(b()); // 1 (mustaqil)"
       },
       {
-        "title": "3. Closure va tsikl",
+        "title": "4. Closure va tsikl",
         "text": "for (let i = ...) da har takrorlash uchun alohida i yaratiladi. Shuning uchun ichida yaratilgan funksiyalar har xil i ni eslaydi. var bilan esa hammasi bitta i ni ko‘radi.",
         "code": "for (let i = 0; i < 3; i++) {\n  setTimeout(() => console.log(i), 0);\n}\n// 0, 1, 2\n\nfor (var j = 0; j < 3; j++) {\n  setTimeout(() => console.log(j), 0);\n}\n// 3, 3, 3"
       },
       {
-        "title": "4. Ma’lumotni yashirish",
+        "title": "5. Ma’lumotni yashirish",
         "text": "Closure bilan tashqaridan o‘zgartirib bo‘lmaydigan holat yaratish mumkin. Faqat qaytarilgan metodlar orqali murojaat qilinadi.",
         "code": "function yarat() {\n  let hisob = 0;\n  return {\n    oshir() { return ++hisob; },\n    qiymat() { return hisob; }\n  };\n}\nconst o = yarat();\no.oshir();\nconsole.log(o.qiymat()); // 1\n// o.hisob — yo'q, tashqaridan ko'rinmaydi"
       },
       {
-        "title": "5. Keng tarqalgan xato",
+        "title": "6. Keng tarqalgan xato",
         "text": "Tsikl ichida var bilan yaratilgan funksiyalar oxirgi qiymatni ko‘radi. Bu closure tufayli, lekin noto‘g‘ri ko‘rinadi. Yechim: let ishlatish yoki IIFE bilan yangi scope yaratish.",
         "code": "// Eski usul (IIFE):\nfor (var i = 0; i < 3; i++) {\n  (function (n) {\n    setTimeout(() => console.log(n), 0);\n  })(i);\n}\n// 0, 1, 2"
+      },
+      {
+        "title": "7. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Closure faqat ichki funksiya return qilinganda paydo bo‘lmaydi: funksiya o‘z lexical muhitiga bog‘liq. var tsiklida umumiy binding oxirgi qiymatga keladi, let da har iteratsiya uchun alohida. Closure katta obyektlarni uzoq saqlashi mumkin; endi kerak bo‘lmagan callback va listener reference larini tozalang."
+      },
+      {
+        "title": "8. Kichik amaliy loyiha",
+        "text": "Hisoblagichni oshir, kamaytir, qiymat metodlari bilan yarating. Ikki nusxasi mustaqil ishlasin va hisob o‘zgaruvchisi tashqaridan bevosita ko‘rinmasin."
       }
     ],
-    "takeaway": "Closure — funksiya + yaratilgan joyidagi o‘zgaruvchilar.\nTashqi funksiya tugasa ham, ichki funksiya uning o‘zgaruvchisini ushlab turadi.\nHar chaqirishda yangi scope → mustaqil holat.\nlet tsiklda har qadam uchun alohida o‘zgaruvchi yaratadi.\nClosure bilan ma’lumotni yashirish mumkin.",
-    "exercise": "1) function f(){ let x=1; return ()=>x; } f()() nima beradi?\n2) Ikki hisoblagich mustaqil bo‘lishi nega?\n3) var bilan tsiklda 3,3,3 chiqishi nega?\n4) Closure bilan ma’lumotni qanday yashirasiz?"
+    "takeaway": "Closure — funksiya va u yaratilgan tashqi lexical muhit bilan bog‘lanish.\nClosure faqat ichki funksiya return qilinganda paydo bo‘lmaydi: funksiya o‘z lexical muhitiga bog‘liq.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Hisoblagichni oshir, kamaytir, qiymat metodlari bilan yarating. Ikki nusxasi mustaqil ishlasin va hisob o‘zgaruvchisi tashqaridan bevosita ko‘rinmasin.\n\nQo‘shimcha savollar:\n1) function f(){ let x=1; return ()=>x; } f()() nima beradi?\n2) Ikki hisoblagich mustaqil bo‘lishi nega?\n3) var bilan tsiklda 3,3,3 chiqishi nega?\n4) Closure bilan ma’lumotni qanday yashirasiz?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "function yarat() { let n = 0; return () => ++n; }\nconst a = yarat(); const b = yarat();\nconsole.log(a());\nconsole.log(b());\nconsole.log(a());\nlet x = 1;\nconst oqi = () => x;\nx = 9;\nconsole.log(oqi());",
+    "exerciseExpected": [
+      1,
+      1,
+      2,
+      9
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 1 — a ning birinchi holati\n2. 1 — b mustaqil\n3. 2 — a o‘z holatini esladi\n4. 9 — binding yangilangan qiymatni ko‘radi\n\nLoyihani yechish yo‘li: Tashqi funksiya ichida let n saqlang. Ob’yekt metodlari n ni o‘qisin va yangilasin. Har yarat() chaqiruvi yangi lexical muhit beradi.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures"
+      }
+    ]
   },
   {
     "id": "prototypes",
     "title": "Prototype va prototip zanjiri: noldan",
     "question": "Har bir obyekt qayerdan metod oladi? __proto__, prototype va prototip zanjiri nima?",
-    "explanation": "JavaScript’da har bir obyekt boshqa obyektdan xususiyat meros qilib oladi. Bu mexanizm prototip zanjiri deb ataladi. Kod o‘qiyotganda obyektda kalit topilmasa, qidiruv yuqoriga — prototipga davom etadi.",
+    "explanation": "Prototype — obyekt o‘zida topmagan xususiyatni qidiradigan keyingi obyekt. Bu kodni va metodlarni ulashish mexanizmi. [[Prototype]] ichki bog‘lanish, konstruktorning .prototype xususiyati esa boshqa tushuncha; new ularni bog‘laydi.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Prototip zanjiri",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "bola o‘zida salom topmaydi va ota dan oladi. Metod meros bo‘lgani uchun hasOwn false, prototip bog‘lanishi esa ota ga teng.",
+        "code": "const ota = { salom() { return \"Salom\"; } };\nconst bola = Object.create(ota);\nconsole.log(bola.salom());\nconsole.log(Object.hasOwn(bola, \"salom\"));\nconsole.log(Object.getPrototypeOf(bola) === ota);",
+        "expectedOutput": [
+          "Salom",
+          false,
+          true
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"Salom\", false, true]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Prototip zanjiri",
         "text": "Obyektda xususiyat topilmasa, JavaScript uning prototipida qidiradi, u yerda yo‘q bo‘lsa yana yuqoriga chiqadi. Zanjir oxirida null turadi. Shuning uchun oddiy obyekt toString metodiga ega bo‘ladi.",
-        "code": "const o = {};\nconsole.log(o.toString()); // [object Object]\nconsole.log(o.__proto__ === Object.prototype); // true\nconsole.log(Object.prototype.__proto__); // null",
+        "code": "const o = {};\nconsole.log(o.toString()); // \"[object Object]\"\nconsole.log(Object.getPrototypeOf(o) === Object.prototype); // true\nconsole.log(Object.getPrototypeOf(Object.prototype)); // null",
         "note": "__proto__ eski usul; zamonaviy kodda Object.getPrototypeOf(o) ishlatiladi."
       },
       {
-        "title": "2. Funksiya va prototype",
-        "text": "Har bir funksiyada prototype xususiyati bor. new bilan obyekt yaratilganda, uning prototipi shu funksiyaning prototype obyektiga bog‘lanadi.",
+        "title": "3. Funksiya va prototype",
+        "text": "Oddiy konstruktor function F() o‘z prototype obyektiga ega. new F yaratgan instance odatda shu obyektga bog‘lanadi. Ammo hamma funksiyada .prototype yoki new imkoniyati bor degani emas: arrow konstruktor emas.",
         "code": "function F() {}\nconst o = new F();\nconsole.log(Object.getPrototypeOf(o) === F.prototype); // true"
       },
       {
-        "title": "3. Metodlarni prototype ga qo‘yish",
+        "title": "4. Metodlarni prototype ga qo‘yish",
         "text": "Agar metodni har bir obyekt ichiga yozsak, har biri uchun alohida nusxa yaratiladi. Prototype ga qo‘ysak, barcha obyektlar bitta metodni ulashadi.",
         "code": "function User(ism) {\n  this.ism = ism;\n}\nUser.prototype.salom = function () {\n  return \"Salom, \" + this.ism;\n};\n\nconst a = new User(\"Ali\");\nconst b = new User(\"Vali\");\nconsole.log(a.salom()); // Salom, Ali\nconsole.log(a.salom === b.salom); // true (bitta metod)"
       },
       {
-        "title": "4. new operatori qanday ishlaydi",
+        "title": "5. new operatori qanday ishlaydi",
         "text": "new F() to‘rt ish qiladi: yangi bo‘sh obyekt yaratadi; uning prototipini F.prototype ga bog‘laydi; F ni this bilan chaqiradi; agar F obyekt qaytarmasa, yangi obyektni qaytaradi.",
         "code": "function F(x) {\n  this.x = x;\n}\nconst o = new F(5);\nconsole.log(o.x); // 5\nconsole.log(o instanceof F); // true",
         "note": "instanceof obyekt prototip zanjirida F.prototype borligini tekshiradi."
       },
       {
-        "title": "5. Xususiyat yozish va prototip",
-        "text": "Obyektga yangi xususiyat yozilsa, u har doim obyektning o‘ziga qo‘yiladi, prototipga emas. Prototipdagi xususiyat soyada qoladi (shadowing).",
+        "title": "6. Xususiyat yozish va prototip",
+        "text": "Quyidagi oddiy writable data property misolida o.x=2 o‘z propertysini yaratib, meros x ni soyada qoldiradi. Umumiy holatda meros setter, non-writable descriptor yoki Proxy yozish xulqiga ta’sir qilishi mumkin.",
         "code": "function F() {}\nF.prototype.x = 1;\nconst o = new F();\nconsole.log(o.x); // 1 (prototipdan)\no.x = 2;\nconsole.log(o.x); // 2 (o‘ziga yozildi)\nconsole.log(F.prototype.x); // 1 (prototip o‘zgarmadi)"
       },
       {
-        "title": "6. hasOwn va zanjir",
+        "title": "7. hasOwn va zanjir",
         "text": "in operatori ham o‘z, ham prototip xususiyatlarini topadi. Object.hasOwn faqat obyektning o‘zidagini tekshiradi.",
         "code": "function F() {}\nF.prototype.x = 1;\nconst o = new F();\nconsole.log(\"x\" in o); // true\nconsole.log(Object.hasOwn(o, \"x\")); // false\nconsole.log(Object.hasOwn(o, \"toString\")); // false"
+      },
+      {
+        "title": "8. Prototype metodi ichidagi this",
+        "text": "Metod prototipdan topilgan bo‘lsa ham this uni chaqirayotgan qabul qiluvchi bo‘ladi. this doim prototip degani emas.",
+        "code": "const ota = { ism() { return this.nom; } };\nconst bola = Object.create(ota);\nbola.nom = \"Ali\";\nconsole.log(bola.ism());",
+        "expectedOutput": [
+          "Ali"
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "9. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Hamma funksiyada o‘z .prototype maydoni bo‘lmaydi: arrow odatda konstruktor emas. __proto__ o‘rniga Object.getPrototypeOf/Object.create ni o‘rganing. Yozish har doim oddiy own property yaratmaydi: meros setter, non-writable descriptor yoki Proxy ta’sir qilishi mumkin. Ichki built-in prototype larni o‘zgartirish umumiy kodga ta’sir qiladi."
+      },
+      {
+        "title": "10. Kichik amaliy loyiha",
+        "text": "Bir salom metodini ikki User obyektiga prototype orqali ulashing. Metod reference i bir xil, ism qiymatlari esa mustaqil ekanini test qiling."
       }
     ],
-    "takeaway": "Qidiruv obyektdan prototipga, oxirida null gacha davom etadi.\nF.prototype — new bilan yaratilgan obyektlarning prototipi.\nMetodlarga prototype orqali bitta nusxa berish yaxshi.\nnew: obyekt yaratadi, prototip bog‘laydi, this bilan chaqiradi.\nYozish har doim obyektning o‘ziga bo‘ladi.\nin zanjirni, Object.hasOwn faqat o‘zini tekshiradi.",
-    "exercise": "1) o.toString() qayerdan keldi?\n2) new F() qanday 4 ish qiladi?\n3) \"x\" in o va Object.hasOwn(o,\"x\") farqi?\n4) Prototype ga metod qo‘yish nega yaxshi?"
+    "takeaway": "Prototype — obyekt o‘zida topmagan xususiyatni qidiradigan keyingi obyekt.\nHamma funksiyada o‘z .prototype maydoni bo‘lmaydi: arrow odatda konstruktor emas.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Bir salom metodini ikki User obyektiga prototype orqali ulashing. Metod reference i bir xil, ism qiymatlari esa mustaqil ekanini test qiling.\n\nQo‘shimcha savollar:\n1) o.toString() qayerdan keldi?\n2) new F() qanday 4 ish qiladi?\n3) \"x\" in o va Object.hasOwn(o,\"x\") farqi?\n4) Prototype ga metod qo‘yish nega yaxshi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const ota = { x: 1 };\nconst bola = Object.create(ota);\nconsole.log(bola.x);\nconsole.log(Object.hasOwn(bola, \"x\"));\nbola.x = 2;\nconsole.log(bola.x);\nconsole.log(ota.x);",
+    "exerciseExpected": [
+      1,
+      false,
+      2,
+      1
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 1 — qidiruv prototipga chiqdi\n2. false — hali own maydon yo‘q\n3. 2 — oddiy writable misolda own maydon yaratildi\n4. 1 — ota o‘zgarmadi\n\nLoyihani yechish yo‘li: User.prototype.salom ni bir marta yarating, new User bilan ikki instance oling. a.salom === b.salom true, a.ism va b.ism o‘zgarishi esa mustaqil bo‘lsin.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain"
+      }
+    ]
   },
   {
     "id": "classes",
     "title": "Class va meros: noldan",
     "question": "class nima? constructor, metodlar, extends va super qanday ishlaydi?",
-    "explanation": "class — prototype mexanizmining qulay yozuv shakli. U yangi tur yaratmaydi, balki funksiya va prototip ustiga qurilgan sintaksis shakaridir. Kod o‘qiyotganda constructor va super chaqiruvlarini kuzat.",
+    "explanation": "Class obyektlar yaratish va umumiy metodlarni tartiblash sintaksisi. constructor yangi instance ni boshlang‘ich holatga keltiradi. new User(\"Ali\") yangi obyekt yaratib, this ni shu obyektga bog‘laydi. Class prototype mexanizmi ustida ishlaydi, lekin qo‘shimcha qoidalari bor.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Oddiy class",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "constructor har instance uchun ism yaratadi. salom instance prototype ida turadi va ikki obyekt bitta metodni ulashadi. Oddiy maydonlar har instance uchun alohida.",
+        "code": "class User {\n  constructor(ism) { this.ism = ism; }\n  salom() { return \"Salom, \" + this.ism; }\n}\nconst a = new User(\"Ali\");\nconst b = new User(\"Vali\");\nconsole.log(a.salom());\nconsole.log(a.salom === b.salom);",
+        "expectedOutput": [
+          "Salom, Ali",
+          true
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"Salom, Ali\", true]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Oddiy class",
         "text": "class ichida constructor yoziladi: u new bilan obyekt yaratilganda chaqiriladi. this yangi obyektni ko‘rsatadi. Metodlar class ichida yozilsa, avtomatik prototype ga qo‘yiladi.",
         "code": "class User {\n  constructor(ism) {\n    this.ism = ism;\n  }\n  salom() {\n    return \"Salom, \" + this.ism;\n  }\n}\nconst u = new User(\"Ali\");\nconsole.log(u.salom()); // Salom, Ali\nconsole.log(typeof User); // \"function\""
       },
       {
-        "title": "2. new bo‘lmasa xato",
+        "title": "3. new bo‘lmasa xato",
         "text": "Class funksiyalardan farqli ravishda new bo‘lmasa chaqirilmaydi: TypeError chiqadi. Bu xatolardan saqlaydi.",
         "code": "class F {}\n// F(); // TypeError: Class constructor cannot be invoked without \"new\"\nconsole.log(new F() instanceof F); // true"
       },
       {
-        "title": "3. extends va super",
-        "text": "extends bilan boshqa classdan meros olinadi.Constructor ichida super() chaqirilishi shart: u ota class constructorini bajaradi va this ni yaratadi.",
+        "title": "4. extends va super",
+        "text": "extends ota class bilan prototype zanjirini bog‘laydi. Derived classda o‘z constructoringizni yozsangiz, this dan foydalanishdan oldin super(...) kerak. Constructor yozilmasa standart forwarding constructor ishlaydi.",
         "code": "class Hayvon {\n  constructor(ism) { this.ism = ism; }\n  ovoz() { return \"...\"; }\n}\nclass It extends Hayvon {\n  constructor(ism) {\n    super(ism); // ota constructor chaqiruvi\n  }\n  ovoz() { return \"Hav-hav\"; }\n}\nconst it = new It(\"Rex\");\nconsole.log(it.ovoz()); // Hav-hav\nconsole.log(it.ism); // Rex"
       },
       {
-        "title": "4. Metodni qayta yozish (override)",
+        "title": "5. Metodni qayta yozish (override)",
         "text": "Bola classdagi metod ota classdagi metodni soyada qoldiradi. Ota metodini chaqirish uchun super.ovoz() ishlatiladi.",
-        "code": "class Bola extends Ota {\n  salom() {\n    return super.salom() + \" va bola\";\n  }\n}"
+        "code": "class Ota { salom() { return \"Ota\"; } }\nclass Bola extends Ota {\n  salom() { return super.salom() + \" va bola\"; }\n}\nconsole.log(new Bola().salom()); // \"Ota va bola\""
       },
       {
-        "title": "5. Static metodlar",
+        "title": "6. Static metodlar",
         "text": "static bilan e’lon qilingan metod obyektga emas, classning o‘ziga tegishli. new bilan yaratilgan obyektda ko‘rinmaydi.",
         "code": "class F {\n  static yarat() { return new F(); }\n}\nconst o = F.yarat();\n// o.yarat(); // TypeError: metod yo'q"
       },
       {
-        "title": "6. Getter va setter",
+        "title": "7. Getter va setter",
         "text": "get/set bilan xususiyatga murojaat qilishda funksiya chaqiriladi. get qiymat qaytaradi, set esa qiymat oladi. Tashqaridan oddiy xususiyat kabi ko‘rinadi.",
         "code": "class User {\n  constructor(ism) { this._ism = ism; }\n  get ism() { return this._ism.toUpperCase(); }\n  set ism(v) { this._ism = v; }\n}\nconst u = new User(\"ali\");\nconsole.log(u.ism); // ALI\nu.ism = \"vali\";\nconsole.log(u.ism); // VALI"
+      },
+      {
+        "title": "8. Instance field bilan prototype metod farqi",
+        "text": "Class tanasidagi x = 1 instance maydoni. method() prototype ga qo‘yiladi. arrow field har instance uchun funksiya yaratadi va lexical this ni instance bilan ushlab turishi mumkin.",
+        "code": "class C {\n  x = 1;\n  method() { return this.x; }\n  arrow = () => this.x;\n}\nconst a = new C(), b = new C();\nconsole.log(a.method === b.method);\nconsole.log(a.arrow === b.arrow);",
+        "expectedOutput": [
+          true,
+          false
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "9. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Classni new siz chaqirib bo‘lmaydi. extends ichida o‘z constructoringiz bo‘lsa this dan oldin super kerak; constructor yozilmasa standart konstruktor bor. Static metod instance ga emas classga tegishli. Class metodini ajratib chaqirish this ni yo‘qotishi mumkin. Meros har bir muammoga yechim emas: obyektlarni kompozitsiya qilish ham mumkin."
+      },
+      {
+        "title": "10. Kichik amaliy loyiha",
+        "text": "Mahsulot classidan ChegirmaliMahsulot yarating. Ota constructor nom va narxni saqlasin, bola foizni tekshirsin va yakuniy narx metodini override qilsin."
       }
     ],
-    "takeaway": "class — prototype ustiga qurilgan sintaksis; typeof class = \"function\".\nconstructor new bilan chaqiriladi; this yangi obyekt.\nextends meros, super() ota constructorini chaqiradi.\nMetod override qilinganda super.metod() bilan ota metodiga murojaat.\nstatic metod classga tegishli, obyektga emas.\nget/set xususiyat kabi ko‘rinib, funksiya chaqiradi.",
-    "exercise": "1) class ni new bo‘lmasa chaqirsang nima bo‘ladi?\n2) super() nega shart?\n3) static metod obyektda ko‘rinadimi?\n4) get ism() qanday chaqiriladi?"
+    "takeaway": "Class obyektlar yaratish va umumiy metodlarni tartiblash sintaksisi.\nClassni new siz chaqirib bo‘lmaydi.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Mahsulot classidan ChegirmaliMahsulot yarating. Ota constructor nom va narxni saqlasin, bola foizni tekshirsin va yakuniy narx metodini override qilsin.\n\nQo‘shimcha savollar:\n1) class ni new bo‘lmasa chaqirsang nima bo‘ladi?\n2) super() nega shart?\n3) static metod obyektda ko‘rinadimi?\n4) get ism() qanday chaqiriladi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "class A { constructor(n) { this.n = n; } qiymat() { return this.n; } }\nclass B extends A { qiymat() { return super.qiymat() * 2; } }\nconst b = new B(3);\nconsole.log(b.qiymat());\nconsole.log(b instanceof A);\nconsole.log(b instanceof B);\nconsole.log(typeof A);",
+    "exerciseExpected": [
+      6,
+      true,
+      true,
+      "function"
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 6 — super ota metodini chaqirdi\n2. true — prototype zanjirida A bor\n3. true — B instance\n4. \"function\" — class konstruktor funksiya turida\n\nLoyihani yechish yo‘li: super(nom,narx) chaqiring, foiz uchun 0–100 chegarani tekshiring, narx() ichida ota qiymatini olib foizni qo‘llang. Ruxsat etilgan kirish va chegaralarni test qiling.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes"
+      }
+    ]
   },
   {
     "id": "callbacks",
     "title": "Callback va yuqori darajali funksiyalar: noldan",
     "question": "Callback nima? Funksiyani boshqa funksiyaga argument qilib berish qanday ishlaydi?",
-    "explanation": "Callback — keyincha chaqirish uchun boshqa funksiyaga berilgan funksiya. JavaScript’da funksiyalar birinchi darajali qiymat: ularni o‘zgaruvchiga saqlash, argument qilish va qaytarish mumkin. Bu ko‘p metodlarning (map, filter, setTimeout) asosi.",
+    "explanation": "Funksiya ham qiymat: uni argument sifatida uzatish mumkin. Callback — boshqa funksiya kerakli paytda chaqiradigan funksiya. Yuqori darajali funksiya boshqa funksiyani qabul qiladi yoki qaytaradi. Callbackning o‘zi avtomatik ravishda asinxron degani emas.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Funksiya — qiymat",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "bajar 3 va funksiya reference ini oladi. amal(son) callbackni shu yerda chaqiradi. Bir xil bajar funksiyasiga boshqa qoida berib boshqa natija oldik.",
+        "code": "function bajar(son, amal) {\n  return amal(son);\n}\nfunction ikki(x) { return x * 2; }\nconsole.log(bajar(3, ikki));\nconsole.log(bajar(3, x => x + 1));",
+        "expectedOutput": [
+          6,
+          4
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [6, 4]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Funksiya — qiymat",
         "text": "Funksiyani o‘zgaruvchiga saqlash mumkin. Uni chaqirish uchun nomi bilan () qo‘yiladi. Funksiya qaytarish ham mumkin.",
         "code": "const salom = function () { return \"Salom\"; };\nconsole.log(salom()); // Salom\n\nfunction tashqi() {\n  return function () { return \"ichki\"; };\n}\nconsole.log(tashqi()()); // ichki"
       },
       {
-        "title": "2. Callback sifatida berish",
+        "title": "3. Callback sifatida berish",
         "text": "Funksiyani boshqa funksiyaga argument qilib berish mumkin. Qabul qiluvchi funksiya uni kerak paytda chaqiradi.",
         "code": "function ishla(callback) {\n  console.log(\"boshlandi\");\n  callback();\n  console.log(\"tugadi\");\n}\nishla(() => console.log(\"callback ishladi\"));\n// boshlandi, callback ishladi, tugadi"
       },
       {
-        "title": "3. setTimeout bilan callback",
-        "text": "setTimeout ikkinchi argument sifatida funksiya oladi va uni keyincha chaqiradi. Funksiyani darhol chaqirib yubormaslik kerak: setTimeout(fn, 0) to‘g‘ri, setTimeout(fn(), 0) noto‘g‘ri.",
+        "title": "4. setTimeout bilan callback",
+        "text": "setTimeout birinchi argument sifatida callback, keyingi argument sifatida minimal kutish muddatini oladi. Funksiyani darhol chaqirib yubormang: setTimeout(fn,0) bilan setTimeout(fn(),0) boshqa ishlar.",
         "code": "const fn = () => console.log(\"keyin\");\nsetTimeout(fn, 1000); // to'g'ri: funksiya berildi\n// setTimeout(fn(), 1000); // noto'g'ri: natijasi berildi",
         "note": "fn() yozilsa funksiya darhol bajarilib, uning natijasi (undefined) setTimeout ga beriladi."
       },
       {
-        "title": "4. Array metodlarida callback",
+        "title": "5. Array metodlarida callback",
         "text": "map, filter, reduce, forEach callback oladi. Callback har element uchun chaqiriladi. uning qaytargan qiymati metod natijasiga ta’sir qiladi.",
         "code": "const a = [1, 2, 3];\na.forEach(x => console.log(x)); // yon ta'sir\nconst b = a.map(x => x * 2); // qaytargan qiymat ishlatiladi\nconsole.log(b); // [2,4,6]"
       },
       {
-        "title": "5. Callback tartibi va this",
+        "title": "6. Callback tartibi va this",
         "text": "Oddiy funksiya callback sifatida berilsa, ichidagi this yo‘qolishi mumkin. Arrow funksiya yaratilgan joydagi this ni saqlaydi, shuning uchun ko‘pincha qulay.",
-        "code": "const o = {\n  x: 10,\n  ishla() {\n    [1].forEach(function () { console.log(this); }); // undefined (strict)\n    [1].forEach(() => console.log(this.x)); // 10\n  }\n};\no.ishla();"
+        "code": "\"use strict\";\nconst o = {\n  x: 10,\n  ishla() {\n    [1].forEach(function () { console.log(this); }); // undefined (strict)\n    [1].forEach(() => console.log(this.x)); // 10\n  }\n};\no.ishla();"
       },
       {
-        "title": "6. Callback hell",
+        "title": "7. Callback hell",
         "text": "Bir nechta callback ichma-ich yozilsa, kod o‘qish qiyinlashadi (callback hell). Buning o‘rniga Promise va async/await ishlatiladi.",
         "code": "// qiyin o'qiladi:\nsetTimeout(() => {\n  setTimeout(() => {\n    setTimeout(() => console.log(\"tugadi\"), 100);\n  }, 100);\n}, 100);\n\n// zamonaviy:\nasync function ketma() {\n  await new Promise(r => setTimeout(r, 100));\n  console.log(\"tugadi\");\n}"
+      },
+      {
+        "title": "8. Synchronous callback va asinxron callback",
+        "text": "Array.map callbackni shu chaqirish ichida bajaradi. setTimeout esa keyinroq rejalashtiradi. Callback qachon bajarilishini uni qabul qilayotgan API belgilaydi.",
+        "code": "const natija = [1, 2].map(x => x + 1);\nconsole.log(natija);",
+        "expectedOutput": [
+          [
+            2,
+            3
+          ]
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "9. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Callback o‘rniga callback() yuborsangiz funksiya hozir ishlaydi va natijasi uzatiladi. map callbackining qaytish qiymatini ishlatadi, forEach esa ishlatmaydi. Asinxron callbackdagi throw tashqi sinxron try/catch bilan ushlanmaydi. Oddiy callback this ni yo‘qotishi mumkin; kerak bo‘lsa bind yoki lexical arrowdan foydalaning."
+      },
+      {
+        "title": "10. Kichik amaliy loyiha",
+        "text": "filtrlash(ro‘yxat, qoida) funksiya yozing. U qoida(x) true qaytargan qiymatlarni yangi massivga yig‘sin. Uni juft son va musbat son qoidalari bilan sinang."
       }
     ],
-    "takeaway": "Funksiya — oddiy qiymat: saqlash, berish, qaytarish mumkin.\nCallback keyincha chaqirish uchun beriladi.\nsetTimeout(fn, 0) to‘g‘ri; setTimeout(fn(), 0) noto‘g‘ri.\nmap/filter/forEach callback qaytargan qiymatni turli ishlatadi.\nArrow callback this ni saqlaydi.\nIchma-ich callback o‘rniga Promise/async yaxshi.",
-    "exercise": "1) setTimeout(fn, 0) va setTimeout(fn(), 0) farqi?\n2) map va forEach callback natijasini qanday ishlatadi?\n3) Nega arrow callback this ni saqlaydi?\n4) Callback hell nima va unga yechim?"
+    "takeaway": "Funksiya ham qiymat: uni argument sifatida uzatish mumkin.\nCallback o‘rniga callback() yuborsangiz funksiya hozir ishlaydi va natijasi uzatiladi.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: filtrlash(ro‘yxat, qoida) funksiya yozing. U qoida(x) true qaytargan qiymatlarni yangi massivga yig‘sin. Uni juft son va musbat son qoidalari bilan sinang.\n\nQo‘shimcha savollar:\n1) setTimeout(fn, 0) va setTimeout(fn(), 0) farqi?\n2) map va forEach callback natijasini qanday ishlatadi?\n3) Nega arrow callback this ni saqlaydi?\n4) Callback hell nima va unga yechim?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "function bajar(x, fn) { return fn(x); }\nconsole.log(bajar(5, x => x * 2));\nconsole.log([1, 2, 3].filter(x => x > 1));\nconsole.log(typeof (x => x));\nconsole.log([1].forEach(() => 99));",
+    "exerciseExpected": [
+      10,
+      [
+        2,
+        3
+      ],
+      "function",
+      {
+        "$undefined": true
+      }
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 10 — callback shu joyda chaqirildi\n2. [2, 3] — shartga mos qiymatlar\n3. \"function\" — arrow funksiya qiymati\n4. undefined — forEach qaytish natijalarni yig‘maydi\n\nLoyihani yechish yo‘li: for...of bilan aylaning; if (qoida(x)) yangi massivga push qiling va oxirida uni return qiling. Asl ro‘yxatni o‘zgartirmang.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Glossary/Callback_function"
+      }
+    ]
   },
   {
     "id": "iterators-generators",
     "title": "Iterator va generator: noldan",
     "question": "for...of qanday ishlaydi? Symbol.iterator, next() va function* nima?",
-    "explanation": "for...of faqat iteratsiya qilinadigan obyektlarda ishlaydi. Bunday obyektning Symbol.iterator metodi bor: u iterator qaytaradi, iterator esa next() bilan ketma-ket qiymatlar beradi. Generator shu mexanizmni oson yozish usulidir.",
+    "explanation": "Iterable — qiymatlari aylanishi mumkin bo‘lgan obyekt; u Symbol.iterator metodini beradi. Iterator next() bilan {value,done} qaytaradi. Generator function* iterator yaratishni yengillashtiradi: yield da to‘xtab, keyingi next da davom etadi.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Iterator qanday ishlaydi",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Birinchi next 10 ni oldi. Spread iteratorni qolganidan davom ettirdi va 20 ni oldi. return 99 tugash qiymati bo‘lib, for...of/spread elementlar ro‘yxatiga kirmaydi.",
+        "code": "function* g() { yield 10; yield 20; return 99; }\nconst it = g();\nconsole.log(it.next().value);\nconsole.log([...it]);",
+        "expectedOutput": [
+          10,
+          [
+            20
+          ]
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [10, [20]]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Iterator qanday ishlaydi",
         "text": "Iterator next() metodi bilan { value, done } qaytaradi. done true bo‘lganda tugagan hisoblanadi. for...of aynan shu metodlarni chaqiradi.",
         "code": "const a = [10, 20];\nconst it = a[Symbol.iterator]();\nconsole.log(it.next()); // { value: 10, done: false }\nconsole.log(it.next()); // { value: 20, done: false }\nconsole.log(it.next()); // { value: undefined, done: true }"
       },
       {
-        "title": "2. Qaysi obyektlar iteratsiya qilinadi?",
+        "title": "3. Qaysi obyektlar iteratsiya qilinadi?",
         "text": "Massiv, string, Map, Set iteratsiya qilinadi. Oddiy obyekt esa yo‘q: for...in bilan kalitlarni olish mumkin, lekin for...of ishlamaydi.",
         "code": "// for (const x of { a: 1 }) {} // TypeError\nfor (const x of \"Ali\") console.log(x); // A, l, i\nfor (const x of new Set([1, 2])) console.log(x); // 1, 2"
       },
       {
-        "title": "3. Generator",
+        "title": "4. Generator",
         "text": "function* va yield bilan o‘zi iterator yaratish mumkin. Generator chaqirilganda darhol bajarilmaydi: next() chaqirilganda yield gacha bajarilib to‘xtaydi.",
         "code": "function* sonlar() {\n  yield 1;\n  yield 2;\n  yield 3;\n}\nconst g = sonlar();\nconsole.log(g.next()); // { value: 1, done: false }\nconsole.log([...g]); // [2, 3] — qolganlari"
       },
       {
-        "title": "4. Cheksiz ketma-ketlik",
+        "title": "5. Cheksiz ketma-ketlik",
         "text": "Generator bilan cheksiz ketma-ketlik yaratish mumkin: faqat kerakli qiymatlar olinadi. Lekin [...g] cheksiz bo‘lsa, hech tugamaydi — ehtiyot bo‘lish kerak.",
         "code": "function* cheksiz() {\n  let i = 1;\n  while (true) yield i++;\n}\nconst g = cheksiz();\nconsole.log(g.next().value); // 1\nconsole.log(g.next().value); // 2\n// console.log([...g]); // cheksiz — hech qachon tugamaydi"
       },
       {
-        "title": "5. yield bilan ma’lumot olish",
+        "title": "6. yield bilan ma’lumot olish",
         "text": "next(argument) berilgan qiymat oxirgi yield natijasiga aylanadi. Bu generatorga tashqaridan ma’lumot yuborish imkonini beradi.",
         "code": "function* suhbat() {\n  const ism = yield \"Ismingiz?\";\n  return \"Salom, \" + ism;\n}\nconst g = suhbat();\nconsole.log(g.next().value); // Ismingiz?\nconsole.log(g.next(\"Ali\").value); // Salom, Ali"
+      },
+      {
+        "title": "7. yield* va finally bilan tozalash",
+        "text": "yield* boshqa iterable qiymatlarini uzatadi. Generator try/finally si iterator erta yopilganda ham kerakli tozalashni bajarishi mumkin.",
+        "code": "function* g() {\n  try { yield* [1, 2]; }\n  finally { console.log(\"yopildi\"); }\n}\nfor (const n of g()) { console.log(n); break; }",
+        "expectedOutput": [
+          1,
+          "yopildi"
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "8. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Generator chaqirilganda tana darhol ishlamaydi. Iterator sarflansa qayta boshidan o‘zi boshlanmaydi; yangi generator oling. Cheksiz generatorni to‘liq spread qilish tugamaydi. Birinchi next(argument) argumenti hali yield yo‘qligi sabab qiymat sifatida olinmaydi. break resurs tozalash uchun return() yo‘lini chaqirishi mumkin."
+      },
+      {
+        "title": "9. Kichik amaliy loyiha",
+        "text": "1 dan n gacha sonlar beradigan generator yozing. Birinchi qiymatni next bilan olib, qolganini for...of bilan yig‘ing. Generatorni qayta ishlatish uchun yangisini yarating."
       }
     ],
-    "takeaway": "for...of Symbol.iterator va next() asosida ishlaydi.\nnext() { value, done } qaytaradi.\nMassiv/string/Map/Set iteratsiya qilinadi, oddiy obyekt yo‘q.\nfunction* + yield generator yaratadi; u next() bilan qadam-baqadam ishlaydi.\nCheksiz generator bilan ehtiyot bo‘l.",
-    "exercise": "1) [1][Symbol.iterator]().next() nima qaytaradi?\n2) Nega for...of oddiy obyektda ishlamaydi?\n3) Generator chaqirilganda darhol bajariladimi?\n4) yield nima qiladi?"
+    "takeaway": "Iterable — qiymatlari aylanishi mumkin bo‘lgan obyekt; u Symbol.iterator metodini beradi.\nGenerator chaqirilganda tana darhol ishlamaydi.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: 1 dan n gacha sonlar beradigan generator yozing. Birinchi qiymatni next bilan olib, qolganini for...of bilan yig‘ing. Generatorni qayta ishlatish uchun yangisini yarating.\n\nQo‘shimcha savollar:\n1) [1][Symbol.iterator]().next() nima qaytaradi?\n2) Nega for...of oddiy obyektda ishlamaydi?\n3) Generator chaqirilganda darhol bajariladimi?\n4) yield nima qiladi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "function* g() { yield 1; yield 2; return 3; }\nconst it = g();\nconsole.log(it.next().value);\nconsole.log(it.next().value);\nconst oxir = it.next();\nconsole.log(oxir.value);\nconsole.log(oxir.done);",
+    "exerciseExpected": [
+      1,
+      2,
+      3,
+      true
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 1 — birinchi yield\n2. 2 — ikkinchi yield\n3. 3 — return tugash qiymati\n4. true — generator tugadi\n\nLoyihani yechish yo‘li: function* oraliq(n) { for(let i=1;i<=n;i++) yield i; }. G=oraliq(3) ni bir marta o‘qing va ikkinchi to‘liq aylanish uchun oraliq(3) ni qayta chaqiring.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_generators"
+      }
+    ]
   },
   {
     "id": "map-set",
     "title": "Map va Set: noldan",
     "question": "Map va Set nima? Oddiy obyekt va massivdan farqi nima?",
-    "explanation": "Map — ixtiyoriy turdagi kalitlarga ega kalit-qiymat to‘plami. Set — noyob qiymatlar to‘plami. Ularning oddiy obyekt va massivdan farqi: kalit turi, tartib va qidirish tezligi.",
+    "explanation": "Map — kalit va qiymat juftliklari, Set — noyob qiymatlar to‘plami. Oddiy obyektga qaraganda Map kalit sifatida obyektni ham saqlaydi. Set bir qiymatning takrorlarini kamaytiradi. Ikkalasi kiritilish tartibida aylaniladi.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Map asoslari",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Map ga nom kaliti bilan ball yozildi. get qiymatni, size yozuvlar sonini beradi. Set ikkinchi 1 ni qo‘shmaydi, spread uni massivga yoyadi.",
+        "code": "const ballar = new Map();\nballar.set(\"Ali\", 90);\nconsole.log(ballar.get(\"Ali\"));\nconsole.log(ballar.size);\nconst noyob = new Set([1, 1, 2]);\nconsole.log([...noyob]);",
+        "expectedOutput": [
+          90,
+          1,
+          [
+            1,
+            2
+          ]
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [90, 1, [1, 2]]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Map asoslari",
         "text": "new Map() bilan yaratiladi. set(kalit, qiymat) qo‘shadi, get(kalit) oladi, has(kalit) tekshiradi, delete o‘chiradi. Kalit ixtiyoriy tur bo‘lishi mumkin: obyekt ham.",
         "code": "const m = new Map();\nm.set(\"ism\", \"Ali\");\nm.set(1, \"son\");\nconsole.log(m.get(\"ism\")); // Ali\nconsole.log(m.has(1)); // true\nconsole.log(m.size); // 2"
       },
       {
-        "title": "2. Map vs obyekt",
+        "title": "3. Map vs obyekt",
         "text": "Obyekt kalitlari faqat string/symbol bo‘ladi. Map da ixtiyoriy kalit bo‘ladi. Map tartibni saqlaydi va size xususiyatiga ega. Obyekt esa kalitlarni prototip zanjiri bilan aralashtirishi mumkin.",
         "code": "const k = { id: 1 };\nconst m = new Map();\nm.set(k, \"foydalanuvchi\");\nconsole.log(m.get(k)); // ishlaydi — obyekt kalit\n\nconst o = {};\no[k] = \"foydalanuvchi\";\nconsole.log(o[\"[object Object]\"]); // obyekt stringga aylandi"
       },
       {
-        "title": "3. Set asoslari",
+        "title": "4. Set asoslari",
         "text": "Set faqat noyob qiymatlar saqlaydi. Bir xil qiymat ikkinchi marta qo‘shilsa, e’tiborga olinmaydi. Takrorlarni olib tashlash uchun juda qulay.",
         "code": "const s = new Set([1, 2, 2, 3]);\nconsole.log(s); // Set { 1, 2, 3 }\nconsole.log(s.size); // 3\ns.add(4);\nconsole.log(s.has(3)); // true"
       },
       {
-        "title": "4. Takrorlarni olib tashlash",
+        "title": "5. Takrorlarni olib tashlash",
         "text": "Massivdagi takrorlarni [...new Set(arr)] bilan olib tashlash mumkin. E’tibor: obyektlar reference bo‘yicha solishtiriladi, shuning uchun tarkibi bir xil ikki obyekt ikki xil hisoblanadi.",
         "code": "console.log([...new Set([1, 2, 2, 3])]); // [1,2,3]\nconsole.log(new Set([{ a: 1 }, { a: 1 }]).size); // 2"
       },
       {
-        "title": "5. Iteratsiya",
+        "title": "6. Iteratsiya",
         "text": "Map va Set for...of bilan ishlaydi. Map har bir qadamda [kalit, qiymat] juftligini beradi. Shuningdek, forEach metodi ham bor.",
         "code": "const m = new Map([[\"a\", 1], [\"b\", 2]]);\nfor (const [k, v] of m) console.log(k, v);\n\nconst s = new Set([1, 2]);\nfor (const v of s) console.log(v);"
       },
       {
-        "title": "6. Qachon nima tanlash?",
+        "title": "7. Qachon nima tanlash?",
         "text": "Kalit-qiymat va ixtiyoriy kalit kerak bo‘lsa Map. Faqat noyob qiymatlar kerak bo‘lsa Set. Oddiy ma’lumot va kalitlar string bo‘lsa, obyekt yetarli.",
         "code": "// oddiy sozlamalar — obyekt yetarli\nconst sozlamalar = { til: \"uz\", mavzu: \"qorong'u\" };\n// tez-tez qo'shish/o'chirish va obyekt kalit — Map\nconst keshlash = new Map();"
+      },
+      {
+        "title": "8. Tenglik va ro‘yxatga aylantirish",
+        "text": "Map/Set SameValueZero tengligidan foydalanadi: NaN o‘ziga teng hisoblanadi, +0 va -0 bitta. Obyektlar reference bo‘yicha. entries ni massiv qilib serializatsiya qilish mumkin.",
+        "code": "const m = new Map([[\"a\", 1], [\"b\", 2]]);\nconsole.log([...m.keys()]);\nconsole.log(JSON.stringify([...m]));",
+        "expectedOutput": [
+          [
+            "a",
+            "b"
+          ],
+          "[[\"a\",1],[\"b\",2]]"
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "9. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Map uchun m[kalit] yozish set/get o‘rnini bosmaydi. Set ichidagi ikki alohida obyekt tarkibi bir xil bo‘lsa ham ikki qiymat hisoblanadi. get undefined qaytarsa kalit yo‘q yoki qiymat undefined bo‘lishi mumkin: has bilan ajrating. Map/Set ni JSON.stringify qilish ularning yozuvlarini odatda bermaydi."
+      },
+      {
+        "title": "10. Kichik amaliy loyiha",
+        "text": "Ismlar ro‘yxatidan noyob ismlarni Set bilan oling. Map yordamida har bir ism necha marta qatnashganini sanang."
       }
     ],
-    "takeaway": "Map — ixtiyoriy kalitli kalit-qiymat to‘plami, size bor.\nSet — noyob qiymatlar to‘plami.\n[...new Set(arr)] takrorlarni olib tashlaydi.\nMap/Set for...of bilan iteratsiya qilinadi.\nObyektlar Set da reference bo‘yicha solishtiriladi.",
-    "exercise": "1) Map va obyekt farqi nima?\n2) new Set([1,2,2]).size nima?\n3) new Set([{a:1},{a:1}]).size nima va nega?\n4) Takrorlarni qanday olib tashlaysiz?"
+    "takeaway": "Map — kalit va qiymat juftliklari, Set — noyob qiymatlar to‘plami.\nMap uchun m[kalit] yozish set/get o‘rnini bosmaydi.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Ismlar ro‘yxatidan noyob ismlarni Set bilan oling. Map yordamida har bir ism necha marta qatnashganini sanang.\n\nQo‘shimcha savollar:\n1) Map va obyekt farqi nima?\n2) new Set([1,2,2]).size nima?\n3) new Set([{a:1},{a:1}]).size nima va nega?\n4) Takrorlarni qanday olib tashlaysiz?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const m = new Map([[\"a\", 1]]);\nm.set(\"a\", 2);\nconsole.log(m.size);\nconsole.log(m.get(\"a\"));\nconsole.log(new Set([NaN, NaN]).size);\nconsole.log(new Set([{}, {}]).size);",
+    "exerciseExpected": [
+      1,
+      2,
+      1,
+      2
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 1 — mavjud kalitning qiymati yangilanadi\n2. 2 — oxirgi yozilgan qiymat\n3. 1 — Set NaN larni bir qiymat deb biladi\n4. 2 — ikkita alohida obyekt\n\nLoyihani yechish yo‘li: const counts = new Map(); for (const ism of ismlar) counts.set(ism,(counts.get(ism) ?? 0)+1). Noyob nomlar uchun [...counts.keys()] yoki [...new Set(ismlar)] oling.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map"
+      }
+    ]
   },
   {
     "id": "regex-basics",
     "title": "Regex: noldan",
     "question": "Regex nima? test, match, replace va asosiy naqsh belgilari.",
-    "explanation": "Regex (regular expression) — matn ichida naqsh qidirish uchun maxsus til. Kod o‘qiyotganda /.../ ichidagi belgilarni kichik qismlarga ajratib o‘qish kerak. Bu murakkab ko‘rinadi, lekin asosiy belgilarni bilsang tushunish oson.",
+    "explanation": "Regex — matndan naqsh qidirish qoidasi. /raqamlar/ yozuvi naqsh obyektini yaratadi, .test(matn) moslik borligini boolean qaytaradi. Avval “biror joyida bormi?” bilan “butun matn shu formatdami?” farqini o‘rganamiz.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Yaratish va test",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Birinchi naqsh istalgan joydagi bitta ASCII raqamni topadi. ^ bosh, $ oxir, + kamida bitta takrorni bildiradi; shu sabab ikkinchisi butun satr faqat raqam bo‘lishini talab qiladi.",
+        "code": "console.log(/\\d/.test(\"abc1\"));\nconsole.log(/^\\d+$/.test(\"abc1\"));\nconsole.log(/^\\d+$/.test(\"123\"));",
+        "expectedOutput": [
+          true,
+          false,
+          true
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [true, false, true]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Yaratish va test",
         "text": "Regex /naqsh/ bilan yoki new RegExp(\"naqsh\") bilan yaratiladi. .test(string) mos kelishini true/false qaytaradi.",
         "code": "const r = /Ali/;\nconsole.log(r.test(\"Salom Ali\")); // true\nconsole.log(r.test(\"Salom Vali\")); // false"
       },
       {
-        "title": "2. Asosiy belgilar",
-        "text": ". — ixtiyoriy bitta belgi; \\d — raqam; \\w — harf/raqam/_; \\s — bo‘shliq; ^ — satr boshi; $ — satr oxiri; + — bir yoki undan ko‘p; * — nol yoki undan ko‘p; ? — nol yoki bitta.",
+        "title": "3. Asosiy belgilar",
+        "text": ". odatda yangi satrdan tashqari bitta birlikka mos; s flag dotAll qiladi. \\d ASCII raqam, \\w odatda ASCII harf/raqam/_, \\s whitespace. ^ bosh, $ oxir, + kamida bir, * nol yoki ko‘p, ? nol yoki bir takrorni bildiradi. Unicode holatlari uchun u va property escape qoidalarini o‘rganing.",
         "code": "console.log(/\\d/.test(\"abc1\")); // true (raqam bor)\nconsole.log(/^Ali/.test(\"Ali vali\")); // true (boshida)\nconsole.log(/ali$/i.test(\"Salom Ali\")); // true (oxiri, i — kichik katta harf farqini yo'q qiladi)\nconsole.log(/a+/.test(\"aaa\")); // true"
       },
       {
-        "title": "3. Kvadrat qavs va oraliq",
+        "title": "4. Kvadrat qavs va oraliq",
         "text": "[abc] — a, b yoki c; [0-9] — raqam; [a-z] — kichik harf; [^0-9] — raqam bo‘lmagan. {3} — aynan 3 marta, {2,5} — 2 dan 5 gacha.",
         "code": "console.log(/[0-9]{3}/.test(\"a123b\")); // true\nconsole.log(/^[a-z]+$/.test(\"salom\")); // true (faqat kichik harflar)\nconsole.log(/[^0-9]/.test(\"123\")); // false"
       },
       {
-        "title": "4. match va replace",
+        "title": "5. match va replace",
         "text": "string.match(regex) mosliklarni qaytaradi (g flag bo‘lsa hammasini). string.replace(regex, yangi) moslarni almashtiradi.",
-        "code": "console.log(\"a1 b2 c3\".match(/\\d/g)); // [\"1\",\"2\",\"3\"]\nconsole.log(\"ali vali\".replace(/ali/gi, \"Ali\")); // \"Ali Vali\"\nconsole.log(\"a,b,c\".replace(/,/g, \";\")); // \"a;b;c\""
+        "code": "console.log(\"a1 b2 c3\".match(/\\d/g)); // [\"1\",\"2\",\"3\"]\nconsole.log(\"ali vali\".replace(/ali/gi, \"Ali\")); // \"Ali vAli\"\nconsole.log(\"a,b,c\".replace(/,/g, \";\")); // \"a;b;c\""
       },
       {
-        "title": "5. Guruhlar",
+        "title": "6. Guruhlar",
         "text": "Qavs (...) guruh yaratadi. Ular match natijasida alohida ko‘rinadi va replace da $1, $2 bilan ishlatiladi.",
         "code": "const m = \"2026-11-21\".match(/(\\d{4})-(\\d{2})-(\\d{2})/);\nconsole.log(m[1], m[2], m[3]); // 2026 11 21\nconsole.log(\"Ali Vali\".replace(/(\\w+) (\\w+)/, \"$2 $1\")); // \"Vali Ali\""
       },
       {
-        "title": "6. Ehtiyot bo‘lish",
+        "title": "7. Ehtiyot bo‘lish",
         "text": "Regex kuchli, lekin o‘qish qiyin. Oddiy tekshirish uchun includes, startsWith kabi metodlar yetarli. Foydalanuvchi kiritgan matndan regex yaratishda ehtiyot bo‘lish kerak.",
         "code": "// oddiy holatda regex kerak emas:\nconsole.log(\"salom\".includes(\"sal\")); // true\nconsole.log(\"fayl.txt\".endsWith(\".txt\")); // true"
+      },
+      {
+        "title": "8. Literal va RegExp konstruktorida escape farqi",
+        "text": "JavaScript stringi ichida regexga beriladigan backslash ni yana escape qilasiz. Oddiy literal /\\d/ bilan RegExp(\"\\\\d\") bir naqshni beradi.",
+        "code": "console.log(new RegExp(\"\\\\d+\").test(\"x12\"));\nconsole.log(/^\\p{L}+$/u.test(\"Salom\"));",
+        "expectedOutput": [
+          true,
+          true
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "9. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Nuqta odatda yangi satrni olmaydi, s flag bilan oladi. \\w barcha dunyo harflari emas, odatda ASCII harf/raqam/_; Unicode uchun \\p{L} va u kabi qoidalarni o‘rganing. g/y regex test ishlatganda lastIndex o‘zgaradi. Murakkab naqsh noto‘g‘ri kirishda sekinlashishi mumkin; oddiy qidiruv uchun includes yetarli."
+      },
+      {
+        "title": "10. Kichik amaliy loyiha",
+        "text": "3–5 ta ASCII raqamdan iborat kodni tekshiring. Bo‘sh, qisqa, uzun va ichida harf bor holatlarni test qiling. Sana regexi kalendar to‘g‘riligini alohida tekshirishga muhtoj ekanini ayting."
       }
     ],
-    "takeaway": "/naqsh/ va .test() moslikni tekshiradi.\n\\d raqam, \\w harf/raqam, ^ bosh, $ oxir, + bir yoki ko‘p.\n[0-9] raqam, {3} aynan 3 marta, i flag katta-kichikni farqlamaydi.\nmatch mosliklarni, replace almashtiradi; g — barcha mosliklar.\nQavs guruh yaratadi: $1, $2 bilan ishlatiladi.",
-    "exercise": "1) /\\d/.test(\"abc\") nima?\n2) ^ va $ nima anglatadi?\n3) \"a1b2\".match(/\\d/g) natijasi?\n4) g flag nima qiladi?"
+    "takeaway": "Regex — matndan naqsh qidirish qoidasi.\nNuqta odatda yangi satrni olmaydi, s flag bilan oladi.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: 3–5 ta ASCII raqamdan iborat kodni tekshiring. Bo‘sh, qisqa, uzun va ichida harf bor holatlarni test qiling. Sana regexi kalendar to‘g‘riligini alohida tekshirishga muhtoj ekanini ayting.\n\nQo‘shimcha savollar:\n1) /\\d/.test(\"abc\") nima?\n2) ^ va $ nima anglatadi?\n3) \"a1b2\".match(/\\d/g) natijasi?\n4) g flag nima qiladi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "console.log(/^\\d{3,5}$/.test(\"1234\"));\nconsole.log(/^\\d{3,5}$/.test(\"a123\"));\nconst r = /a/g;\nconsole.log(r.test(\"a\"));\nconsole.log(r.test(\"a\"));",
+    "exerciseExpected": [
+      true,
+      false,
+      true,
+      false
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. true — uzunlik va tarkib mos\n2. false — boshida harf bor\n3. true — birinchi test lastIndex ni 1 qiladi\n4. false — ikkinchisi oxiridan boshlaydi, topmaydi\n\nLoyihani yechish yo‘li: const qoida=/^\\d{3,5}$/; bilan testlar yozing. g flag bu oddiy validatorga kerak emas. Regex formatni tekshiradi, foydalanuvchi haqiqatan kimligini tasdiqlamaydi.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions"
+      }
+    ]
   },
   {
     "id": "dates",
     "title": "Date va vaqt bilan ishlash: noldan",
     "question": "Date obyekti qanday yaratiladi? Timestamp, ISO va formatlash qanday ishlaydi?",
-    "explanation": "Date — sana va vaqtni saqlaydigan obyekt. Ichida 1970-yil 1-yanvardan (Unix epoch) o‘tgan millisekundlar saqlanadi. Vaqt bilan ishlashda eng ko‘p xato — vaqt zonalari bilan bog‘liq. Kod o‘qiyotganda “bu mahalliy vaqtmi yoki UTCmi?” deb so‘ra.",
+    "explanation": "Date vaqt lahzasini timestamp — 1970-01-01 UTC dan millisekund soni bilan ifodalaydi. Sana ko‘rinishi esa vaqt zonasi va formatga bog‘liq. Sana bilan vaqt lahzasi bir savol emas: tug‘ilgan kun va onlayn uchrashuv uchun bir xil model har doim mos kelmaydi.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Date yaratish",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Z UTC ni bildiradi. Oy indeksi 0 dan: 10 — noyabr. toISOString doim UTC ko‘rinishini beradi, kompyuter mahalliy zonasiga bog‘lanmaydi.",
+        "code": "const d = new Date(\"2026-11-22T10:00:00Z\");\nconsole.log(d.getUTCFullYear());\nconsole.log(d.getUTCMonth());\nconsole.log(d.toISOString());",
+        "expectedOutput": [
+          2026,
+          10,
+          "2026-11-22T10:00:00.000Z"
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [2026, 10, \"2026-11-22T10:00:00.000Z\"]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Date yaratish",
         "text": "new Date() hozirgi vaqtni beradi. new Date(\"2026-11-21\") satrdan, new Date(2026, 10, 21) esa yil/oy/kun beradi. Oylar 0 dan boshlanadi: 0 — yanvar, 10 — noyabr.",
         "code": "const hozir = new Date();\nconsole.log(hozir);\nconst sana = new Date(\"2026-11-21\");\nconst sana2 = new Date(2026, 10, 21); // noyabr\nconsole.log(sana.getFullYear()); // 2026\nconsole.log(sana.getMonth()); // 10 (noyabr, 0 dan boshlanadi)"
       },
       {
-        "title": "2. Timestamp",
+        "title": "3. Timestamp",
         "text": "Date.getTime() millisekundlarni qaytaradi. Date.now() ham hozirgi vaqtni millisekund sifatida beradi. Bu sonlar bilan vaqt farqini hisoblash qulay.",
         "code": "console.log(Date.now()); // masalan 1763700000000\nconst a = new Date(\"2026-01-01\");\nconst b = new Date(\"2026-01-03\");\nconsole.log((b - a) / (1000 * 60 * 60)); // 48 (soatlar)",
         "note": "Ikki Date ni ayirsang, millisekundlar farqi chiqadi: 2 kun = 172800000 ms."
       },
       {
-        "title": "3. Mahalliy vaqt va UTC",
+        "title": "4. Mahalliy vaqt va UTC",
         "text": "getFullYear/getMonth/getDate mahalliy vaqt bo‘yicha, getUTCFullYear/getUTCMonth/getUTCDate esa UTC bo‘yicha qiymatlar beradi. \"2026-11-21\" satri UTC sifatida talqin qilinadi, shuning uchun mahalliy vaqtda boshqa kun bo‘lishi mumkin.",
         "code": "const d = new Date(\"2026-11-21\");\nconsole.log(d.getUTCDate()); // 21\nconsole.log(d.getDate()); // sening zonangga qarab 20 yoki 21 bo'lishi mumkin"
       },
       {
-        "title": "4. Formatlash",
+        "title": "5. Formatlash",
         "text": "toISOString() standart ISO satr qaytaradi. toLocaleDateString() esa foydalanuvchi tiliga mos format beradi.",
         "code": "const d = new Date(\"2026-11-21T10:30:00Z\");\nconsole.log(d.toISOString()); // 2026-11-21T10:30:00.000Z\nconsole.log(d.toLocaleDateString(\"uz-UZ\")); // 21.11.2026 kabi"
       },
       {
-        "title": "5. O‘zgartirish",
+        "title": "6. O‘zgartirish",
         "text": "setFullYear, setMonth, setDate kabi metodlar obyektni o‘zgartiradi (mutating). Kun qo‘shish uchun avval nusxa olib, keyin o‘zgartirish yaxshi.",
-        "code": "const d = new Date(\"2026-11-21\");\nd.setDate(d.getDate() + 7);\nconsole.log(d.toISOString().slice(0, 10)); // 2026-11-28\n\nconst nusxa = new Date(d); // nusxa olish"
+        "code": "const d = new Date(\"2026-11-21T00:00:00Z\");\nd.setUTCDate(d.getUTCDate() + 7);\nconsole.log(d.toISOString().slice(0, 10)); // 2026-11-28\nconst nusxa = new Date(d.getTime());"
       },
       {
-        "title": "6. Amaliy: kunlar farqi",
-        "text": "Ikki sana orasidagi kunlar sonini topish uchun millisekund farini bir kunlik millisekundga bo‘ling.",
+        "title": "7. Amaliy: kunlar farqi",
+        "text": "Ikki UTC vaqt lahzasi orasidagi 24-soatlik oraliqlar uchun millisekund farqni 86400000 ga bo‘lish mumkin. Mahalliy kalendar kunlari DST sabab doim 24 soat bo‘lavermaydi; biznesdagi kunlar hisobini alohida belgilang.",
         "code": "const kun = 24 * 60 * 60 * 1000;\nconst bosh = new Date(\"2026-01-01\");\nconst oxir = new Date(\"2026-01-10\");\nconsole.log((oxir - bosh) / kun); // 9"
+      },
+      {
+        "title": "8. Sanani nusxalash va o‘zgartirish",
+        "text": "set metodlari mavjud Date ni o‘zgartiradi. new Date(old.getTime()) mustaqil nusxa. UTC misolda kun qo‘shish uchun setUTCDate ishlatamiz.",
+        "code": "const a = new Date(\"2026-01-01T00:00:00Z\");\nconst b = new Date(a.getTime());\nb.setUTCDate(b.getUTCDate() + 7);\nconsole.log(a.toISOString().slice(0, 10));\nconsole.log(b.toISOString().slice(0, 10));",
+        "expectedOutput": [
+          "2026-01-01",
+          "2026-01-08"
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "9. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "getDay hafta kuni, getDate oy kuni. Raqamli konstruktorda oy 0 dan boshlanadi. Invalid Date ni Number.isNaN(d.getTime()) bilan tekshiring. Mahalliy kunlar orasidagi masofa DST sabab doim 24 soat emas. Sana satriga vaqt zonasi kiritilmasa turlicha talqin bo‘lishi mumkin; formatni aniq belgilang."
+      },
+      {
+        "title": "10. Kichik amaliy loyiha",
+        "text": "Ikki UTC sana orasidagi soatlarni toping. Keyin bir vaqtni Intl.DateTimeFormat bilan Asia/Samarkand va UTC zonalarida ko‘rsating. Natijada timestamp emas ko‘rinish o‘zgarishini tekshiring."
       }
     ],
-    "takeaway": "Date ichida millisekund saqlaydi (1970-yildan).\nOylar 0 dan boshlanadi: 10 — noyabr.\ngetTime()/Date.now() timestamp beradi; farini hisoblash qulay.\nMahalliy vaqt va UTC farqini bilish kerak.\ntoISOString() standart format beradi.\nset* metodlar obyektni o‘zgartiradi — nusxa olib ishlash yaxshi.",
-    "exercise": "1) new Date(2026, 0, 1) qaysi oy?\n2) Ikki Date ni ayirsak nima chiqadi?\n3) getDate va getUTCDate farqi nima?\n4) 2 kun necha millisekund?"
+    "takeaway": "Date vaqt lahzasini timestamp — 1970-01-01 UTC dan millisekund soni bilan ifodalaydi.\ngetDay hafta kuni, getDate oy kuni.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Ikki UTC sana orasidagi soatlarni toping. Keyin bir vaqtni Intl.DateTimeFormat bilan Asia/Samarkand va UTC zonalarida ko‘rsating. Natijada timestamp emas ko‘rinish o‘zgarishini tekshiring.\n\nQo‘shimcha savollar:\n1) new Date(2026, 0, 1) qaysi oy?\n2) Ikki Date ni ayirsak nima chiqadi?\n3) getDate va getUTCDate farqi nima?\n4) 2 kun necha millisekund?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const a = new Date(\"2026-01-01T00:00:00Z\");\nconst b = new Date(\"2026-01-03T00:00:00Z\");\nconsole.log((b - a) / 3600000);\nconsole.log(a.getUTCMonth());\nconsole.log(a.getUTCDate());\nconsole.log(Number.isNaN(new Date(\"noto‘g‘ri\").getTime()));",
+    "exerciseExpected": [
+      48,
+      0,
+      1,
+      true
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 48 — ikki to‘liq UTC kun\n2. 0 — yanvar indeksi 0\n3. 1 — oyning birinchi kuni\n4. true — noto‘g‘ri sana timestampi NaN\n\nLoyihani yechish yo‘li: ISO satrlarni Z bilan yarating, getTime farqini 3600000 ga bo‘ling. Formatda {timeZone:\"Asia/Samarkand\"} ni aniq yozing. Har doim foydalanuvchi talabi sana yoki vaqt lahzasi ekanini aniqlang.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date"
+      }
+    ]
   },
   {
     "id": "fetch-api",
     "title": "Fetch API: noldan",
     "question": "fetch qanday ishlaydi? Response, json(), async/await va xatoliklar.",
-    "explanation": "fetch — tarmoq orqali ma’lumot olish uchun zamonaviy API. U har doim Promise qaytaradi. Muhim: fetch faqat tarmoq xatosida rad etiladi, 404/500 statusda emas — ularni response.ok bilan tekshirish kerak.",
+    "explanation": "fetch — HTTP so‘rov yuborish API si. Natija ikki bosqichda olinadi: avval Response, keyin uning tanasi. response.json() ham Promise qaytaradi. HTTP 404/500 kelishi tarmoq xatosi bilan bir xil emas: ok/status ni o‘zingiz tekshirasiz.\n\nAsinxron misollarni alohida ishga tushiring va callback natijalarini kuting. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Oddiy fetch",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Bu boshlang‘ich misol internetga so‘rov yubormaydi, Response obyektini o‘zimiz yaratdik. Haqiqiy fetch ham shunday obyekt beradi. json matnni parse qilib ma’lumot qaytaradi.",
+        "code": "(async () => {\n  // Tarmoqqa chiqmasdan Response bilan mashq:\n  const r = new Response(JSON.stringify({ ism: \"Ali\" }), {\n    status: 200, headers: { \"Content-Type\": \"application/json\" }\n  });\n  console.log(r.ok);\n  const user = await r.json();\n  console.log(user.ism);\n})();",
+        "expectedOutput": [
+          true,
+          "Ali"
+        ],
+        "exampleRuntime": "async",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [true, \"Ali\"]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Oddiy fetch",
         "text": "fetch(url) Promise qaytaradi. Birinchi .then Response obyektini beradi. response.json() ham Promise qaytaradi, shuning uchun ikkinchi .then kerak.",
         "code": "fetch(\"https://api.example.com/user\")\n  .then(response => response.json())\n  .then(data => console.log(data))\n  .catch(e => console.error(\"Xato:\", e));"
       },
       {
-        "title": "2. async/await bilan",
+        "title": "3. async/await bilan",
         "text": "async funksiya ichida await bilan kutish o‘qish osonroq. try/catch xatolarni tutadi.",
         "code": "async function olish() {\n  try {\n    const response = await fetch(\"/api/user\");\n    const data = await response.json();\n    console.log(data);\n  } catch (e) {\n    console.error(\"Xato:\", e);\n  }\n}\nolish();"
       },
       {
-        "title": "3. Status tekshirish",
+        "title": "4. Status tekshirish",
         "text": "fetch 404 yoki 500 qaytarsa ham rad etilmaydi. response.ok — status 200-299 bo‘lsa true. Shuning uchun har doim tekshirish kerak.",
         "code": "const response = await fetch(\"/api/user\");\nconsole.log(response.status); // 404 bo'lishi mumkin\nconsole.log(response.ok); // false\nif (!response.ok) {\n  throw new Error(\"HTTP xato: \" + response.status);\n}"
       },
       {
-        "title": "4. POST va sozlamalar",
+        "title": "5. POST va sozlamalar",
         "text": "Ikkinchi argument bilan method, headers va body berish mumkin. JSON yuborish uchun Content-Type header va JSON.stringify kerak.",
         "code": "const response = await fetch(\"/api/user\", {\n  method: \"POST\",\n  headers: { \"Content-Type\": \"application/json\" },\n  body: JSON.stringify({ ism: \"Ali\" })\n});\nconst natija = await response.json();"
       },
       {
-        "title": "5. response.json() bir marta ishlaydi",
+        "title": "6. response.json() bir marta ishlaydi",
         "text": "Response tanasi faqat bir marta o‘qiladi. Ikkinchi marta response.json() chaqirsang xato beradi. Shuning uchun natijani o‘zgaruvchiga saqlash kerak.",
         "code": "const response = await fetch(\"/api/user\");\nconst data = await response.json();\nconsole.log(data);\n// await response.json(); // xato: tanasi allaqachon o'qilgan"
       },
       {
-        "title": "6. CORS tushunchasi",
+        "title": "7. CORS tushunchasi",
         "text": "Brauzer boshqa domenga fetch qilganda CORS qoidasi ishlaydi. Server mos Access-Control-Allow-Origin header bermasa, javob o‘qilmaydi. Bu fetch xatosi emas, brauzer xavfsizligi.",
         "code": "// Boshqa domenga so'rov:\n// fetch(\"https://boshqa-sayt.com/api\") — CORS xatosi bo'lishi mumkin\n// Yechim: server ruxsat berishi kerak"
+      },
+      {
+        "title": "8. To‘liq so‘rovda status va bekor qilish",
+        "text": "Bu funksiya uchun URL ni o‘zingizdagi ishlaydigan API bilan bering. AbortSignal so‘rov yoki javob tanasini o‘qishni bekor qilishi mumkin; serverda bajarilib bo‘lgan ishni orqaga qaytarmaydi.",
+        "code": "async function olish(url, signal) {\n  const r = await fetch(url, { signal });\n  if (!r.ok) throw new Error(`HTTP ${r.status}`);\n  if (r.status === 204) return null;\n  return r.json();\n}\n// const c = new AbortController();\n// olish(\"/api/user\", c.signal).then(console.log).catch(console.error);\n// c.abort();"
+      },
+      {
+        "title": "9. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "404 va 500 odatda fetch ni reject qilmaydi. JSON bo‘lmagan yoki bo‘sh 204 javobda .json() xato berishi mumkin. Tana bir marta o‘qiladi; kerak bo‘lsa o‘qishdan oldin clone qiling. mode:\"no-cors\" server ruxsatini ochib bermaydi: javob opaque bo‘lib, tanasini o‘qiy olmaysiz. Maxfiy xizmat kalitini umumiy brauzer kodiga tikmang."
+      },
+      {
+        "title": "10. Kichik amaliy loyiha",
+        "text": "O‘zingiz nazorat qiladigan JSON endpointdan ro‘yxat oling. Loading, muvaffaqiyat, bo‘sh ro‘yxat, HTTP xato, JSON xato va bekor qilish holatlarini ko‘rsating."
       }
     ],
-    "takeaway": "fetch har doim Promise qaytaradi.\nresponse.json() ham Promise — ikki bosqichli o‘qish.\n404/500 fetch ni rad etmaydi: response.ok ni tekshir.\nPOST uchun method/headers/body beriladi.\nResponse tanasi faqat bir marta o‘qiladi.\nCORS — brauzer xavfsizligi, server ruxsati kerak.",
-    "exercise": "1) fetch 404 qaytarsa rad etiladimi?\n2) Nega ikki .then kerak?\n3) response.json() ni ikki marta chaqirsang nima?\n4) CORS nima?"
+    "takeaway": "fetch — HTTP so‘rov yuborish API si.\n404 va 500 odatda fetch ni reject qilmaydi.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: O‘zingiz nazorat qiladigan JSON endpointdan ro‘yxat oling. Loading, muvaffaqiyat, bo‘sh ro‘yxat, HTTP xato, JSON xato va bekor qilish holatlarini ko‘rsating.\n\nQo‘shimcha savollar:\n1) fetch 404 qaytarsa rad etiladimi?\n2) Nega ikki .then kerak?\n3) response.json() ni ikki marta chaqirsang nima?\n4) CORS nima?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "(async () => {\n  const r = new Response(\"{\\\"xabar\\\":\\\"Topilmadi\\\"}\", { status: 404 });\n  console.log(r.ok);\n  console.log(r.status);\n  const data = await r.json();\n  console.log(data.xabar);\n  console.log(r.bodyUsed);\n})();",
+    "exerciseExpected": [
+      false,
+      404,
+      "Topilmadi",
+      true
+    ],
+    "exerciseRuntime": "async",
+    "exerciseAnswer": "1. false — 404 ok emas\n2. 404 — HTTP statusi\n3. \"Topilmadi\" — xato javobi tanasini ham o‘qish mumkin\n4. true — tana o‘qib bo‘lingan\n\nLoyihani yechish yo‘li: try ichida fetch, ok tekshiruvi, 204 holati va json ni ajrating. catch da AbortError ni oddiy server xatosidan farqlang. Haqiqiy endpoint bo‘lmasa Response bilan mashq qiling.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch"
+      }
+    ]
   },
   {
     "id": "events-advanced",
     "title": "Eventlar: chuqurroq",
     "question": "addEventListener, event obyekti, bubbling, capturing va delegatsiya nima?",
-    "explanation": "Event — foydalanuvchi yoki brauzer harakati (click, input, submit). Hodisa elementdan yuqoriga tarqaladi (bubbling). Event delegatsiya shu xususiyatdan foydalanib, bitta listener bilan ko‘p elementlarni boshqaradi.",
+    "explanation": "Event — bosish, yozish, yuborish kabi hodisa. Listener — hodisa bo‘lganda ishlaydigan funksiya. addEventListener uni ro‘yxatga oladi, hozirning o‘zida bajarmaydi. Callbackga kelgan event target, currentTarget va boshqa ma’lumotlarni beradi.\n\nBu dars brauzer DOM muhitida bajariladi. HTML va JS deb ajratilgan misollarni tegishli fayllarga yozing; mustaqil DOM misollarini konsolda ham sinash mumkin. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. addEventListener",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Listener bog‘langanda sanoq hali 0. click() hodisani chiqargach callback ishlaydi va 1 bo‘ladi. Foydalanuvchi tugmani bosishi ham hodisa chiqaradi.",
+        "code": "const button = document.createElement(\"button\");\nlet sanoq = 0;\nbutton.addEventListener(\"click\", () => { sanoq++; });\nconsole.log(sanoq);\nbutton.click();\nconsole.log(sanoq);",
+        "expectedOutput": [
+          0,
+          1
+        ],
+        "exampleRuntime": "browser",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [0, 1]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. addEventListener",
         "text": "element.addEventListener(\"click\", fn) hodisa yuz berganda fn ni chaqiradi. Bir elementga bir nechta listener qo‘shish mumkin. removeEventListener bilan olib tashlash uchun aynan shu funksiya kerak.",
         "code": "const btn = document.querySelector(\"button\");\nconst fn = () => console.log(\"bosildi\");\nbtn.addEventListener(\"click\", fn);\n// btn.removeEventListener(\"click\", fn); // aynan fn kerak"
       },
       {
-        "title": "2. Event obyekti",
+        "title": "3. Event obyekti",
         "text": "Callback event obyektini oladi: target (hodisa kelgan element), currentTarget (listener bog‘langan element), type, key (klaviatura), preventDefault() va stopPropagation().",
         "code": "btn.addEventListener(\"click\", (e) => {\n  console.log(e.target); // bosilgan element\n  console.log(e.currentTarget); // listener bog'langan element\n  console.log(e.type); // \"click\"\n});"
       },
       {
-        "title": "3. preventDefault",
+        "title": "4. preventDefault",
         "text": "Ba’zi elementlarning standart harakati bor: form yuborish, havola ochish. preventDefault() uni to‘xtatadi.",
         "code": "document.querySelector(\"form\").addEventListener(\"submit\", (e) => {\n  e.preventDefault(); // sahifa yangilanmaydi\n  console.log(\"forma yuborildi\");\n});"
       },
       {
-        "title": "4. Bubbling va capturing",
+        "title": "5. Bubbling va capturing",
         "text": "Hodisa avval yuqoridan pastga (capturing), keyin pastdan yuqoriga (bubbling) tarqaladi. addEventListener ning uchinchi argumenti true bo‘lsa, capturing bosqichida ishlaydi.",
         "code": "document.addEventListener(\"click\", () => console.log(\"document\"));\ndocument.querySelector(\"button\").addEventListener(\"click\", () => console.log(\"button\"));\n// bosilsa: button, keyin document (bubbling)"
       },
       {
-        "title": "5. stopPropagation",
-        "text": "stopPropagation() hodisaning keyingi elementlarga tarqalishini to‘xtatadi. Ehtiyot bilan ishlatish kerak: yuqori listenerlarni o‘chirib qo‘yadi.",
+        "title": "6. stopPropagation",
+        "text": "stopPropagation shu hodisaning keyingi elementlarga tarqalishini to‘xtatadi. Listenerlarni ro‘yxatdan o‘chirmaydi va shu elementdagi barcha boshqa listenerlarni to‘xtatmaydi. stopImmediatePropagation boshqa qoida.",
         "code": "btn.addEventListener(\"click\", (e) => {\n  e.stopPropagation(); // document listener ishlamaydi\n});"
       },
       {
-        "title": "6. Event delegatsiya",
+        "title": "7. Event delegatsiya",
         "text": "Ko‘p elementlarga alohida listener qo‘yish o‘rniga, ularning umumiy ota elementiga bitta listener qo‘yish mumkin. e.target orqali qaysi element bosilganini aniqlash mumkin. Yangi elementlar qo‘shilsa ham ishlaydi.",
         "code": "document.querySelector(\"#list\").addEventListener(\"click\", (e) => {\n  const li = e.target.closest(\"li\");\n  if (li) console.log(li.dataset.id);\n});"
+      },
+      {
+        "title": "8. Listenerni abort qilish va event yo‘li",
+        "text": "AbortController signal bilan bir nechta listenerni birga olib tashlash mumkin. capture yuqoridan nishonga, bubble nishondan yuqoriga boradi; target fazasi ham bor. Shadow DOM da composedPath kabi xususiyatlar ahamiyatli.",
+        "code": "const b = document.createElement(\"button\");\nconst c = new AbortController();\nlet n = 0;\nb.addEventListener(\"click\", () => n++, { signal: c.signal });\nc.abort(); b.click();\nconsole.log(n);",
+        "expectedOutput": [
+          0
+        ],
+        "exampleRuntime": "browser"
+      },
+      {
+        "title": "9. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "preventDefault standart harakatni bekor qiladi, tarqalishni emas. stopPropagation tarqalishni to‘xtatadi, shu elementdagi barcha boshqa listenerlarni avtomatik to‘xtatmaydi. Passive listenerda preventDefault ishlamaydi. removeEventListener uchun ayni funksiya va capture mos bo‘lishi kerak; yangi () => {} oldingisi emas."
+      },
+      {
+        "title": "10. Kichik amaliy loyiha",
+        "text": "Ro‘yxatga bitta click listener qo‘ying. Yangi qo‘shilgan tugmalar ham delegation bilan ishlasin. Ichidagi span bosilganda ham tegishli button topilsin."
       }
     ],
-    "takeaway": "addEventListener bilan hodisa bog‘lanadi; olib tashlash uchun aynan funksiya kerak.\ne.target — kelgan element, currentTarget — listener bog‘langan element.\npreventDefault standart harakatni to‘xtatadi.\nBubbling: pastdan yuqoriga; capturing: yuqoridan pastga.\nstopPropagation tarqalishni to‘xtatadi.\nDelegatsiya bitta listener bilan ko‘p elementni boshqaradi.",
-    "exercise": "1) target va currentTarget farqi nima?\n2) preventDefault nima qiladi?\n3) Bubbling qaysi yo‘nalishda?\n4) Event delegatsiya nega foydali?"
+    "takeaway": "Event — bosish, yozish, yuborish kabi hodisa.\npreventDefault standart harakatni bekor qiladi, tarqalishni emas.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Ro‘yxatga bitta click listener qo‘ying. Yangi qo‘shilgan tugmalar ham delegation bilan ishlasin. Ichidagi span bosilganda ham tegishli button topilsin.\n\nQo‘shimcha savollar:\n1) target va currentTarget farqi nima?\n2) preventDefault nima qiladi?\n3) Bubbling qaysi yo‘nalishda?\n4) Event delegatsiya nega foydali?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const b = document.createElement(\"button\");\nlet n = 0;\nconst fn = () => n++;\nb.addEventListener(\"click\", fn, { once: true });\nb.click(); b.click();\nconsole.log(n);\nb.addEventListener(\"click\", fn);\nb.removeEventListener(\"click\", fn);\nb.click();\nconsole.log(n);",
+    "exerciseExpected": [
+      1,
+      1
+    ],
+    "exerciseRuntime": "browser",
+    "exerciseAnswer": "1. 1 — once sabab faqat bir marta\n2. 1 — listener olib tashlangan\n\nLoyihani yechish yo‘li: Ota listenerda event.target.closest(\"button[data-id]\") ni toping. Topilgan tugma ota elementga tegishliligini contains bilan tekshiring; dataset dan identifikator oling.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/Event_bubbling"
+      }
+    ]
   },
   {
     "id": "storage",
     "title": "localStorage va sessionStorage: noldan",
     "question": "Brauzerda ma’lumot qanday saqlanadi? localStorage, sessionStorage va cookie farqi?",
-    "explanation": "localStorage va sessionStorage brauzerda kalit-qiymat ko‘rinishida ma’lumot saqlaydi. Faqat string saqlanadi, shuning uchun obyekt uchun JSON kerak. localStorage doimiy, sessionStorage faqat tab ochikligida.",
+    "explanation": "localStorage va sessionStorage brauzerda kichik kalit-qiymat ma’lumot saqlaydi. Qiymatlar string bo‘ladi. localStorage odatda brauzer qayta ochilganda qoladi; sessionStorage tab sessiyasiga tegishli. Saqlash origin — protokol, host va port bo‘yicha ajratiladi.\n\nBu dars brauzer DOM muhitida bajariladi. HTML va JS deb ajratilgan misollarni tegishli fayllarga yozing; mustaqil DOM misollarini konsolda ham sinash mumkin. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Asosiy metodlar",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "setItem matn yozadi. getItem string qaytaradi, kalit yo‘q bo‘lsa null. removeItem faqat ko‘rsatilgan kalitni olib tashlaydi. Mashq uchun alohida nom ishlatdik.",
+        "code": "const k = \"js-dars-storage-mashq\";\nlocalStorage.setItem(k, \"Ali\");\nconsole.log(localStorage.getItem(k));\nconsole.log(typeof localStorage.getItem(k));\nlocalStorage.removeItem(k);\nconsole.log(localStorage.getItem(k));",
+        "expectedOutput": [
+          "Ali",
+          "string",
+          null
+        ],
+        "exampleRuntime": "browser",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"Ali\", \"string\", null]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Asosiy metodlar",
         "text": "setItem(kalit, qiymat), getItem(kalit), removeItem(kalit), clear(). Hammasi faqat string bilan ishlaydi.",
         "code": "localStorage.setItem(\"ism\", \"Ali\");\nconsole.log(localStorage.getItem(\"ism\")); // \"Ali\"\nlocalStorage.removeItem(\"ism\");\n// localStorage.clear(); // hammasini o'chiradi"
       },
       {
-        "title": "2. Obyekt saqlash",
+        "title": "3. Obyekt saqlash",
         "text": "Obyektni to‘g‘ridan-to‘g‘ri saqlasang, \"[object Object]\" bo‘lib qoladi. JSON.stringify bilan saqlab, JSON.parse bilan o‘qish kerak.",
         "code": "const user = { ism: \"Ali\", yosh: 20 };\nlocalStorage.setItem(\"user\", JSON.stringify(user));\nconst saqlangan = JSON.parse(localStorage.getItem(\"user\"));\nconsole.log(saqlangan.ism); // Ali",
         "note": "getItem topmasa null qaytaradi. JSON.parse(null) → null, xato emas."
       },
       {
-        "title": "3. localStorage vs sessionStorage",
+        "title": "4. localStorage vs sessionStorage",
         "text": "localStorage brauzer qayta ochilsa ham saqlanadi. sessionStorage faqat shu tab (session) uchun: tab yopilsa o‘chadi.",
         "code": "localStorage.setItem(\"a\", \"1\"); // doimiy\nsessionStorage.setItem(\"b\", \"2\"); // tab yopilsa yo'qoladi"
       },
       {
-        "title": "4. Xatolar va cheklovlar",
+        "title": "5. Xatolar va cheklovlar",
         "text": "Storage hajmi cheklangan (odatda ~5 MB). To‘lsa yoki brauzer bloklasa, setItem xato beradi. Shuning uchun try/catch bilan yozish yaxshi.",
         "code": "try {\n  localStorage.setItem(\"kalit\", \"qiymat\");\n} catch (e) {\n  console.log(\"Saqlab bo'lmadi:\", e.message);\n}"
       },
       {
-        "title": "5. storage hodisasi",
+        "title": "6. storage hodisasi",
         "text": "Boshqa tabda localStorage o‘zgartirilsa, shu sahifada storage hodisasi yuz beradi. Bu bir nechta tab o‘rtasida sinxronlash uchun ishlatiladi.",
         "code": "window.addEventListener(\"storage\", (e) => {\n  console.log(e.key, e.newValue);\n});"
       },
       {
-        "title": "6. Cookie bilan farqi",
+        "title": "7. Cookie bilan farqi",
         "text": "Cookie har so‘rovda serverga yuboriladi, hajmi kichik (~4 KB) va muddati bor. localStorage esa faqat brauzerda, serverga yuborilmaydi. Maxfiy ma’lumotni localStorage da saqlash xavfsiz emas.",
         "code": "// maxfiy ma'lumotni localStorage ga qo'ymang:\n// localStorage.setItem(\"token\", \"...\"); // XSS xavfi"
+      },
+      {
+        "title": "8. Saqlangan JSON ni ishonchli o‘qish",
+        "text": "Storage matni qo‘lda yoki eski dastur versiyasida o‘zgargan bo‘lishi mumkin. getItem, JSON.parse va sxema tekshiruvini alohida hisobga oling. Cookie esa faqat mos domen/path/siyosatga to‘g‘ri kelgan so‘rovlarga yuboriladi; storage avtomatik serverga yuborilmaydi.",
+        "code": "function oqi(matn) {\n  try {\n    const q = JSON.parse(matn);\n    return q && typeof q === \"object\" && !Array.isArray(q) ? q : {};\n  } catch { return {}; }\n}\nconsole.log(Object.keys(oqi(\"xato\")).length);",
+        "expectedOutput": [
+          0
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "9. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Storage doimiy kafolat emas: foydalanuvchi tozalashi, maxfiy rejim yoki kvota cheklashi mumkin. Kirishning o‘zi ham SecurityError berishi mumkin. clear shu storage ichidagi barcha kalitlarni o‘chiradi. storage hodisasi yozgan tabning o‘ziga kelmaydi; boshqa mos oynalarda bo‘ladi. Maxfiy tokenlar XSS orqali o‘qilishi mumkin."
+      },
+      {
+        "title": "10. Kichik amaliy loyiha",
+        "text": "Tema tanlovini saqlang. Qayta ochilganda o‘qing, faqat light/dark qiymatlarini qabul qiling. Saqlash bloklangan holatda sahifa ishlashda davom etsin."
       }
     ],
-    "takeaway": "Storage faqat string saqlaydi; obyekt uchun JSON.stringify/parse.\nlocalStorage doimiy, sessionStorage tab bilan tugaydi.\ngetItem topmasa null qaytaradi.\nHajm cheklangan, xato berishi mumkin — try/catch.\nCookie serverga yuboriladi, localStorage yo‘q.\nMaxfiy ma’lumotni localStorage da saqlash xavfli.",
-    "exercise": "1) localStorage va sessionStorage farqi?\n2) Obyektni qanday saqlaysiz?\n3) getItem topmasa nima qaytaradi?\n4) Nega maxfiy tokenni localStorage ga qo‘ymaslik kerak?"
+    "takeaway": "localStorage va sessionStorage brauzerda kichik kalit-qiymat ma’lumot saqlaydi.\nStorage doimiy kafolat emas: foydalanuvchi tozalashi, maxfiy rejim yoki kvota cheklashi mumkin.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Tema tanlovini saqlang. Qayta ochilganda o‘qing, faqat light/dark qiymatlarini qabul qiling. Saqlash bloklangan holatda sahifa ishlashda davom etsin.\n\nQo‘shimcha savollar:\n1) localStorage va sessionStorage farqi?\n2) Obyektni qanday saqlaysiz?\n3) getItem topmasa nima qaytaradi?\n4) Nega maxfiy tokenni localStorage ga qo‘ymaslik kerak?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const k = \"js-dars-json-mashq\";\nlocalStorage.setItem(k, JSON.stringify({ ball: 0 }));\nconst o = JSON.parse(localStorage.getItem(k));\nconsole.log(o.ball);\nconsole.log(typeof o);\nlocalStorage.removeItem(k);\nconsole.log(localStorage.getItem(k));",
+    "exerciseExpected": [
+      0,
+      "object",
+      null
+    ],
+    "exerciseRuntime": "browser",
+    "exerciseAnswer": "1. 0 — JSON 0 ni saqladi\n2. \"object\" — parse obyekt qaytardi\n3. null — kalit o‘chirilgach null\n\nLoyihani yechish yo‘li: Alohida storage kalitini ishlating. try ichida o‘qib, whitelist bilan qiymatni tekshiring. UI ni saqlash muvaffaqiyatiga qaram qilmay yangilang; natija saqlanmasa foydalanuvchiga tushunarli xabar bering.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API"
+      }
+    ]
   },
   {
     "id": "web-apis",
     "title": "Foydali Web API lar: noldan",
     "question": "setTimeout, setInterval, requestAnimationFrame, URL, Intl va boshqa API lar nima qiladi?",
-    "explanation": "Brauzer JavaScript’ga ko‘p tayyor API beradi. Ular tilning bir qismi emas, balki muhit (browser) tomonidan taqdim etiladi. Kod o‘qiyotganda qaysi API ishlatilganini aniqlash, uning qaytargan qiymatini kuzatish muhim.",
+    "explanation": "Web API — JavaScript tili bilan brauzer bergan imkoniyat orasidagi ko‘prik. DOM, URL, taymer, fetch va storage tilning o‘zi emas, muhitdagi API lardir. Ayrimlari Node.js da ham mavjud, ayrimlari faqat brauzerda. Har birida qaytarish turi va bekor qilish/tozalash yo‘lini biling.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. setTimeout va setInterval",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "URL manzil qismlarini ajratadi. searchParams matn qiymatlari bilan ishlaydi; bo‘sh joyni URL formatiga kodlashni o‘zi bajaradi.",
+        "code": "const u = new URL(\"https://example.com/dars?mavzu=js\");\nconsole.log(u.pathname);\nconsole.log(u.searchParams.get(\"mavzu\"));\nu.searchParams.set(\"q\", \"Ali Vali\");\nconsole.log(u.searchParams.get(\"q\"));",
+        "expectedOutput": [
+          "/dars",
+          "js",
+          "Ali Vali"
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"/dars\", \"js\", \"Ali Vali\"]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. setTimeout va setInterval",
         "text": "setTimeout fn ni bir marta, setInterval esa har doim takrorlaydi. Ikkalasi ham timer ID qaytaradi; clearTimeout/clearInterval bilan bekor qilinadi.",
         "code": "const id = setTimeout(() => console.log(\"bir marta\"), 1000);\nclearTimeout(id); // bekor qilindi\n\nconst interval = setInterval(() => console.log(\"har 1 soniyada\"), 1000);\n// clearInterval(interval); // to'xtatish"
       },
       {
-        "title": "2. requestAnimationFrame",
+        "title": "3. requestAnimationFrame",
         "text": "Animatsiya uchun setTimeout o‘rniga requestAnimationFrame ishlatiladi: u ekran yangilanishiga moslashadi va fon tabda to‘xtaydi.",
-        "code": "function anim() {\n  console.log(\"frame\");\n  requestAnimationFrame(anim);\n}\nrequestAnimationFrame(anim);"
+        "code": "let kadr = 0;\nfunction anim() {\n  kadr++; console.log(\"kadr\", kadr);\n  if (kadr < 3) requestAnimationFrame(anim);\n}\nrequestAnimationFrame(anim); // 3 kadrdan keyin to‘xtaydi"
       },
       {
-        "title": "3. URL va URLSearchParams",
+        "title": "4. URL va URLSearchParams",
         "text": "URL obyekti bilan manzilni pars qilish mumkin. URLSearchParams query parametrlari bilan ishlaydi.",
         "code": "const u = new URL(\"https://example.com/sahifa?x=1&y=2\");\nconsole.log(u.pathname); // /sahifa\nconsole.log(u.searchParams.get(\"x\")); // \"1\"\nu.searchParams.set(\"x\", \"5\");\nconsole.log(u.toString()); // ...?x=5&y=2"
       },
       {
-        "title": "4. Intl — formatlash",
+        "title": "5. Intl — formatlash",
         "text": "Intl.NumberFormat va Intl.DateTimeFormat tilga mos format beradi. Pul va sana ko‘rsatishda ishlatiladi.",
         "code": "console.log(new Intl.NumberFormat(\"uz-UZ\").format(1234567));\nconsole.log(new Intl.NumberFormat(\"en-US\", {\n  style: \"currency\", currency: \"USD\"\n}).format(10)); // $10.00"
       },
       {
-        "title": "5. structuredClone",
+        "title": "6. structuredClone",
         "text": "Chuqur nusxa olish uchun zamonaviy usul. JSON usulidan farqli: Date, Map, Set saqlanadi, tsiklik bog‘lanish ishlaydi. Lekin funksiya va DOM element klonlanmaydi.",
         "code": "const a = { d: new Date(), m: new Map([[\"x\", 1]]) };\nconst b = structuredClone(a);\nconsole.log(b.d instanceof Date); // true\nconsole.log(b.m.get(\"x\")); // 1"
       },
       {
-        "title": "6. AbortController",
-        "text": "fetch yoki listenerni bekor qilish uchun ishlatiladi. signal berilib, keyin abort() chaqirilsa, so‘rov to‘xtatiladi.",
-        "code": "const controller = new AbortController();\nfetch(\"/api\", { signal: controller.signal });\ncontroller.abort(); // so'rov bekor qilindi"
+        "title": "7. AbortController",
+        "text": "Signal qo‘llaydigan API ga AbortSignal beriladi; abort bekor qilishni bildiradi. Fetch bekor qilinganda rejectionni catch bilan tuting. Abort serverda bajarilib bo‘lgan amalni orqaga qaytarmaydi.",
+        "code": "const controller = new AbortController();\nfetch(\"/api\", { signal: controller.signal })\n  .then(r => console.log(r.status))\n  .catch(e => console.log(e.name));\ncontroller.abort();"
+      },
+      {
+        "title": "8. Resurslar hayot davri",
+        "text": "Listenerni AbortSignal bilan, animatsiyani cancelAnimationFrame bilan, taymerni clearTimeout/clearInterval bilan tozalang. performance.now davomiylik o‘lchash uchun monotonic vaqt, Date.now esa kalendar vaqtidir.",
+        "code": "const c = new AbortController();\nconst signal = c.signal;\nc.abort();\nconsole.log(signal.aborted);",
+        "expectedOutput": [
+          true
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "9. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "API mavjudligini tekshiring: hamma muhitda document yoki navigator yo‘q. requestAnimationFrame bir marta callback rejalashtiradi; keyingi kadrni o‘zingiz so‘raysiz. Cheksiz listener/taymer qoldirmang. Clipboard, geolocation kabi API lar ruxsat yoki xavfsiz kontekst talab qilishi mumkin. URL API manzilni ajratadi, uning ishonchli ekanini o‘zi tasdiqlamaydi."
+      },
+      {
+        "title": "10. Kichik amaliy loyiha",
+        "text": "URL query dan mavzuni olib ko‘rsatadigan kichik sahifa yarating. Qidiruvni URLSearchParams bilan yangilang. Vaqt o‘lchash uchun performance.now, bekor qilish uchun AbortController ishlating."
       }
     ],
-    "takeaway": "setTimeout bir marta, setInterval takrorlaydi; ID bilan bekor qilinadi.\nrequestAnimationFrame animatsiya uchun ekranga moslashadi.\nURL/URLSearchParams manzil va parametrlar bilan ishlaydi.\nIntl tilga mos format beradi.\nstructuredClone chuqur nusxa, JSON dan kuchliroq.\nAbortController so‘rovni bekor qiladi.",
-    "exercise": "1) setTimeout va setInterval farqi?\n2) Animatsiya uchun nega requestAnimationFrame yaxshi?\n3) structuredClone JSON usulidan nima bilan yaxshi?\n4) AbortController nima qiladi?"
+    "takeaway": "Web API — JavaScript tili bilan brauzer bergan imkoniyat orasidagi ko‘prik.\nAPI mavjudligini tekshiring: hamma muhitda document yoki navigator yo‘q.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: URL query dan mavzuni olib ko‘rsatadigan kichik sahifa yarating. Qidiruvni URLSearchParams bilan yangilang. Vaqt o‘lchash uchun performance.now, bekor qilish uchun AbortController ishlating.\n\nQo‘shimcha savollar:\n1) setTimeout va setInterval farqi?\n2) Animatsiya uchun nega requestAnimationFrame yaxshi?\n3) structuredClone JSON usulidan nima bilan yaxshi?\n4) AbortController nima qiladi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const q = new URLSearchParams(\"x=1&x=2\");\nconsole.log(q.get(\"x\"));\nconsole.log(q.getAll(\"x\"));\nconst c = new AbortController();\nconsole.log(c.signal.aborted);\nc.abort();\nconsole.log(c.signal.aborted);",
+    "exerciseExpected": [
+      "1",
+      [
+        "1",
+        "2"
+      ],
+      false,
+      true
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. \"1\" — birinchi qiymat\n2. [\"1\", \"2\"] — barcha bir xil nomli qiymatlar\n3. false — hali faol\n4. true — abort belgisi o‘rnatildi\n\nLoyihani yechish yo‘li: new URL(location.href).searchParams bilan o‘qing. Parametr yo‘q bo‘lsa default tanlang. Kerak bo‘lsa history.replaceState bilan manzilni yangilang; URL ga maxfiy kalit kiritmang.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API"
+      }
+    ]
   },
   {
     "id": "proxy-reflect",
     "title": "Proxy va Reflect: noldan",
     "question": "Proxy obyekt harakatlarini qanday ushlaydi? get, set va Reflect nima?",
-    "explanation": "Proxy obyekt oldiga “vositachi” qo‘yadi: uning o‘qish, yozish va boshqa harakatlarini ushlab, o‘zgartirish mumkin. Reflect esa obyekt ustida standart amallarni bajarish uchun yordamchi metodlar beradi. Bu ilg‘or mavzu, lekin intervyuda so‘ralishi mumkin.",
+    "explanation": "Proxy — obyekt ustidagi ayrim amallarni tutib qoladigan vositachi. Target asl obyekt, handler esa get/set/has kabi trap lar to‘plami. Reflect shu standart amallarni funksiya ko‘rinishida bajarib, receiver kabi nozik qoidalarni saqlashga yordam beradi.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Oddiy Proxy",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Yozish proxy orqali asl targetga o‘tdi. Proxy boshqa reference, lekin alohida avtomatik klon emas. get/set traplari berilgan amalni Reflectga uzatyapti.",
+        "code": "const target = { ism: \"Ali\" };\nconst p = new Proxy(target, {\n  get(t, key, receiver) { return Reflect.get(t, key, receiver); },\n  set(t, key, value, receiver) { return Reflect.set(t, key, value, receiver); }\n});\np.ism = \"Vali\";\nconsole.log(target.ism);\nconsole.log(p === target);",
+        "expectedOutput": [
+          "Vali",
+          false
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"Vali\", false]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Oddiy Proxy",
         "text": "new Proxy(target, handler) bilan yaratiladi. handler.get(target, prop) xususiyat o‘qilganda chaqiriladi.",
         "code": "const target = { ism: \"Ali\" };\nconst proxy = new Proxy(target, {\n  get(t, prop) {\n    console.log(\"o'qildi:\", prop);\n    return t[prop];\n  }\n});\nconsole.log(proxy.ism); // log + Ali"
       },
       {
-        "title": "2. set ushlagichi",
+        "title": "3. set ushlagichi",
         "text": "set(target, prop, value) xususiyatga yozilganda chaqiriladi. Qiymatni tekshirib, rad etish yoki o‘zgartirish mumkin.",
         "code": "const proxy = new Proxy({}, {\n  set(t, prop, value) {\n    if (prop === \"yosh\" && value < 0) {\n      throw new Error(\"Yosh manfiy bo'lmaydi\");\n    }\n    t[prop] = value;\n    return true; // muvaffaqiyat belgisi\n  }\n});\nproxy.yosh = 20; // OK\n// proxy.yosh = -1; // xato"
       },
       {
-        "title": "3. Reflect nima?",
+        "title": "4. Reflect nima?",
         "text": "Reflect obyekt ustidagi standart amallarni (get, set, has, deleteProperty) funksiya sifatida beradi. Proxy ichida Reflect ishlatish eng to‘g‘ri usul: standart xatti-harakatni saqlaydi.",
         "code": "const proxy = new Proxy({}, {\n  get(t, prop, receiver) {\n    return Reflect.get(t, prop, receiver);\n  }\n});\nconsole.log(Reflect.has({ a: 1 }, \"a\")); // true"
       },
       {
-        "title": "4. Nega Reflect kerak?",
-        "text": "Reflect metodlari muvaffaqiyatni true/false bilan qaytaradi (xato tashlamaydi, delete kabi). Shuningdek, receiver argumenti this ni to‘g‘ri saqlaydi.",
+        "title": "5. Nega Reflect kerak?",
+        "text": "Reflect.get kabi metodlar qiymat qaytaradi. Reflect.set va Reflect.deleteProperty muvaffaqiyat uchun boolean qaytaradi. Bu “hech qachon xato tashlamaydi” degani emas: noto‘g‘ri argument, getter yoki proxy xatosi throw bo‘lishi mumkin. Receiver getter ichidagi this ni to‘g‘ri uzatishga yordam beradi.",
         "code": "const o = { a: 1 };\nconsole.log(Reflect.set(o, \"b\", 2)); // true\nconsole.log(o.b); // 2\nconsole.log(Reflect.deleteProperty(o, \"a\")); // true"
       },
       {
-        "title": "5. Amaliy: kuzatuvchi obyekt",
+        "title": "6. Amaliy: kuzatuvchi obyekt",
         "text": "Proxy bilan obyekt o‘zgarishlarini kuzatish mumkin. Bu reaktiv tizimlarning (Vue kabi) asosiy mexanizmlaridan biri.",
         "code": "function kuzat(o, callback) {\n  return new Proxy(o, {\n    set(t, prop, value) {\n      const eski = t[prop];\n      t[prop] = value;\n      callback(prop, eski, value);\n      return true;\n    }\n  });\n}\nconst s = kuzat({ x: 1 }, (k, e, y) => console.log(k, e, \"→\", y));\ns.x = 5; // x 1 → 5"
+      },
+      {
+        "title": "7. Reflect natijasi metodga bog‘liq",
+        "text": "Reflect.get qiymat qaytaradi, has/set/deleteProperty kabi metodlar boolean beradi. Noto‘g‘ri argument yoki getter ichidagi xato baribir throw bo‘lishi mumkin.",
+        "code": "const o = Object.freeze({ x: 1 });\nconsole.log(Reflect.get(o, \"x\"));\nconsole.log(Reflect.set(o, \"x\", 2));",
+        "expectedOutput": [
+          1,
+          false
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "8. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Trap ichida yana proxy[prop] ishlatish o‘zini qayta chaqirishi mumkin. Proxy invariants ni buzishga ruxsat bermaydi: non-configurable/non-writable property haqida yolg‘on natija TypeError berishi mumkin. Reflect metodlarining hammasi boolean qaytarmaydi va hammasi xatosiz emas. Private maydonli class hamda ayrim built-in lar receiver sabab oddiy forwarding bilan ishlamasligi mumkin."
+      },
+      {
+        "title": "9. Kichik amaliy loyiha",
+        "text": "Faqat manfiy bo‘lmagan yosh yozishga ruxsat beradigan proxy yarating. Yaroqli qiymat targetga tushsin, noto‘g‘ri qiymat aniq xato bersin. Getter uchun receiver ni saqlang."
       }
     ],
-    "takeaway": "Proxy obyekt harakatlarini ushlaydi: get, set va boshqalar.\nset true qaytarmasa, yozish muvaffaqiyatsiz hisoblanadi.\nReflect standart amallarni funksiya sifatida beradi.\nProxy ichida Reflect ishlatish to‘g‘ri usul.\nProxy reaktiv tizimlarning asosi.",
-    "exercise": "1) Proxy nima qiladi?\n2) set ushlagichi nima qaytarishi kerak?\n3) Nega Proxy ichida Reflect ishlatiladi?\n4) Proxy qayerda ishlatiladi?"
+    "takeaway": "Proxy — obyekt ustidagi ayrim amallarni tutib qoladigan vositachi.\nTrap ichida yana proxy[prop] ishlatish o‘zini qayta chaqirishi mumkin.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Faqat manfiy bo‘lmagan yosh yozishga ruxsat beradigan proxy yarating. Yaroqli qiymat targetga tushsin, noto‘g‘ri qiymat aniq xato bersin. Getter uchun receiver ni saqlang.\n\nQo‘shimcha savollar:\n1) Proxy nima qiladi?\n2) set ushlagichi nima qaytarishi kerak?\n3) Nega Proxy ichida Reflect ishlatiladi?\n4) Proxy qayerda ishlatiladi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const target = { x: 1 };\nconst p = new Proxy(target, {});\np.x = 2;\nconsole.log(target.x);\nconsole.log(Reflect.has(target, \"x\"));\nconsole.log(Reflect.deleteProperty(target, \"x\"));\nconsole.log(Object.hasOwn(target, \"x\"));",
+    "exerciseExpected": [
+      2,
+      true,
+      true,
+      false
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 2 — trap yo‘q bo‘lsa standart forwarding\n2. true — kalit bor\n3. true — o‘chirish muvaffaqiyatli\n4. false — endi own maydon yo‘q\n\nLoyihani yechish yo‘li: set ichida prop === \"yosh\" bo‘lsa Number.isFinite va >=0 ni tekshiring. Keyin Reflect.set(t,key,value,receiver) natijasini qaytaring; yozish bo‘lmasa yolg‘on true bermang.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy"
+      }
+    ]
   },
   {
     "id": "common-pitfalls",
     "title": "Ko‘p uchraydigan xatolar va tuzoqlar",
     "question": "JS da eng ko‘p qilingan xatolar: ==, falsy, this, closure, mutatsiya, NaN.",
-    "explanation": "Bu dars oldingi mavzularni birlashtiradi va kod o‘qishda eng ko‘p uchraydigan tuzoqlarni to‘plam sifatida ko‘rsatadi. Maqsad: kod ko‘rganda darhol “bu yer tuzoq bor” deya olish.",
+    "explanation": "Koddagi tuzoq ko‘pincha sintaksis xatosi emas, noto‘g‘ri taxmin. Bir qatorda uch narsani yozing: qiymat, tur va qanday amal bajarildi. Natijani ko‘rishdan oldin o‘z taxminingizni yozish xatoni topishni osonlashtiradi.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. == o‘rniga ===",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "+ stringni birlashtiradi, - sonli aylantirish qiladi. Bu aylantirish input ning o‘zini yangilamaydi. Bo‘sh matnning Number qiymati 0.",
+        "code": "const input = \"5\";\nconsole.log(input + 1);\nconsole.log(input - 1);\nconsole.log(typeof input);\nconsole.log(Number(\"\") === 0);",
+        "expectedOutput": [
+          "51",
+          4,
+          "string",
+          true
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"51\", 4, \"string\", true]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. == o‘rniga ===",
         "text": "== turlarni o‘zgartiradi: \"\" == 0, [] == false, null == undefined true. === hech qachon o‘zgartirmaydi. Amaliyotda === ishlatish xavfsiz.",
         "code": "console.log(\"\" == 0); // true\nconsole.log([] == false); // true\nconsole.log(null == undefined); // true\nconsole.log(\"\" === 0); // false"
       },
       {
-        "title": "2. Falsy bilan noto‘g‘ri tekshirish",
+        "title": "3. Falsy bilan noto‘g‘ri tekshirish",
         "text": "Bo‘sh massiv va bo‘sh obyekt truthy. 0 esa to‘g‘ri qiymat bo‘lishi mumkin, lekin if (x) uni yo‘q deb hisoblaydi.",
         "code": "const son = 0;\nif (!son) console.log(\"yo'q deb o'ylaymiz\"); // bu chiqadi, lekin 0 to'g'ri qiymat\n\nconst items = [];\nif (items) console.log(\"truthy\"); // chiqadi\nconsole.log(items.length > 0); // to'g'ri tekshirish"
       },
       {
-        "title": "3. this yo‘qolishi",
+        "title": "4. this yo‘qolishi",
         "text": "Metodni o‘zgaruvchiga olib chaqirsang yoki callback sifatida bersang, this yo‘qoladi. Arrow yoki bind bilan saqlash mumkin.",
         "code": "const o = { x: 1, f() { return this.x; } };\nconst g = o.f;\n// g(); // TypeError (strict)\nconsole.log(o.f.call(o)); // 1\nconsole.log(o.f.bind(o)()); // 1"
       },
       {
-        "title": "4. Mutatsiya kutilmaganda",
+        "title": "5. Mutatsiya kutilmaganda",
         "text": "sort, reverse, push, splice asl massivni o‘zgartiradi. const obyekt ichi o‘zgaradi. Bu ikki holat eng ko‘p chalkashtiriladi.",
         "code": "const a = [3, 1, 2];\nconst b = a.sort(); // a ham o'zgardi!\nconsole.log(a === b); // true\n\nconst o = { x: 1 };\no.x = 2; // const bo'lsa ham ishlaydi"
       },
       {
-        "title": "5. NaN va noto‘g‘ri hisob",
+        "title": "6. NaN va noto‘g‘ri hisob",
         "text": "NaN === NaN false. \"abc\" * 2 → NaN. Number(\"\") → 0. Bularni bilmaslik noto‘g‘ri natijaga olib keladi.",
         "code": "console.log(NaN === NaN); // false\nconsole.log(Number.isNaN(\"abc\" * 2)); // true\nconsole.log(Number(\"\")); // 0\nconsole.log(parseInt(\"12px\")); // 12"
       },
       {
-        "title": "6. Asinxronlik tartibi",
+        "title": "7. Asinxronlik tartibi",
         "text": "setTimeout va Promise.then darhol bajarilmaydi. Sinxron kod avval, keyin mikrovazifa, oxirida makrovazifa.",
         "code": "console.log(\"A\");\nsetTimeout(() => console.log(\"B\"), 0);\nPromise.resolve().then(() => console.log(\"C\"));\nconsole.log(\"D\");\n// A, D, C, B"
       },
       {
-        "title": "7. Kod o‘qish algoritmi",
+        "title": "8. Kod o‘qish algoritmi",
         "text": "Har qanday kodni o‘qishda quyidagi tartib yordam beradi: 1) o‘zgaruvchi turlarini aniqla; 2) har bir operatsiya natijasini yoz; 3) shartlarni hisobla; 4) asinxron navbatni esla; 5) oxirgi chiqishni yig.",
         "code": "// Misol:\nconst x = \"5\";\nconsole.log(x + 1); // \"51\" (string birlashdi)\nconsole.log(x - 1); // 4 (songa o'zgartirildi)\nconsole.log(typeof x); // \"string\" (x o'zgarmadi)"
+      },
+      {
+        "title": "9. Debug qilishning qisqa tartibi",
+        "text": "Katta kodni bitta kichik qaytariladigan misolga tushiring. Kirish va kutilgan natijani belgilang, so‘ng debugger bilan qaysi satrda taxmin buzilganini toping.",
+        "code": "const x = \"0\";\nconsole.log({ qiymat: x, tur: typeof x, boolean: Boolean(x) });"
+      },
+      {
+        "title": "10. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "const muzlatmaydi; sort asli bilan ishlaydi; [] truthy; NaN o‘ziga === emas; typeof null \"object\". a = b obyekt nusxasi emas. forEach ichidagi async ishlarni kutmaydi. Vaqtga va muhitga bog‘liq loglarni aniq natija deb yodlamang; sababni tahlil qiling."
+      },
+      {
+        "title": "11. Kichik amaliy loyiha",
+        "text": "Bir kichik hisoblagichga ataylab uch xato kiriting: string qo‘shish, noto‘g‘ri falsy tekshirish va sort mutatsiyasi. Keyin har biriga alohida test yozib tuzating."
       }
     ],
-    "takeaway": "== turlarni o‘zgartiradi, === qat’iy.\n[] va {} truthy; 0 falsy, lekin to‘g‘ri qiymat bo‘lishi mumkin.\nthis chaqirish usuliga bog‘liq; yo‘qolsa call/bind/arrow.\nsort/push/splice aslni o‘zgartiradi; const obyekt ichi o‘zgaradi.\nNaN hech narsaga teng emas.\nSinxron → mikro → makro tartibi.\nHar kodni turlar → natijalar → shartlar → navbat tartibida o‘qi.",
-    "exercise": "1) \"\" == 0 va \"\" === 0 natijalari?\n2) if ([]) bajariladimi?\n3) const o = {x:1}; o.x=2 ishlaydimi?\n4) A, setTimeout, Promise.then, D tartibi qanday?\n5) Kod o‘qish algoritmining 5 bosqichini yoz."
+    "takeaway": "Koddagi tuzoq ko‘pincha sintaksis xatosi emas, noto‘g‘ri taxmin.\nconst muzlatmaydi; sort asli bilan ishlaydi; [] truthy; NaN o‘ziga === emas; typeof null \"object\".",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Bir kichik hisoblagichga ataylab uch xato kiriting: string qo‘shish, noto‘g‘ri falsy tekshirish va sort mutatsiyasi. Keyin har biriga alohida test yozib tuzating.\n\nQo‘shimcha savollar:\n1) \"\" == 0 va \"\" === 0 natijalari?\n2) if ([]) bajariladimi?\n3) const o = {x:1}; o.x=2 ishlaydimi?\n4) A, setTimeout, Promise.then, D tartibi qanday?\n5) Kod o‘qish algoritmining 5 bosqichini yoz.",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const a = [3, 1, 2];\nconst b = a.sort((x, y) => x - y);\nconsole.log(a);\nconsole.log(a === b);\nconsole.log(Boolean([]));\nconsole.log(NaN === NaN);",
+    "exerciseExpected": [
+      [
+        1,
+        2,
+        3
+      ],
+      true,
+      true,
+      false
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. [1, 2, 3] — sort aslni o‘zgartirdi\n2. true — sort shu massivni qaytardi\n3. true — massiv obyekt sifatida truthy\n4. false — NaN qat’iy tenglikda o‘ziga teng emas\n\nLoyihani yechish yo‘li: Number bilan aniq aylantirish, null/undefined ni maqsadli tekshirish, toSorted yoki [...list].sort bilan mustaqil tartiblashdan foydalaning.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Introduction"
+      }
+    ]
   },
   {
     "id": "recursion",
     "title": "Rekursiya: noldan",
     "question": "Funksiya o‘zini o‘zi chaqirsa nima bo‘ladi? Bazis va rekursiv qadam nima?",
-    "explanation": "Rekursiya — funksiyaning o‘zini o‘zi chaqirishi. Har bir rekursiv chaqirish yangi scope yaratadi va masalani kichikroq qismga ajratadi. To‘xtash sharti (bazis) bo‘lmasa, cheksiz chaqirish va stack overflow yuz beradi. Kod o‘qiyotganda avval bazisni top.",
+    "explanation": "Rekursiya — funksiya masalaning kichikroq nusxasini yechish uchun o‘zini chaqirishi. Ikki qism shart: to‘xtash holati va unga yaqinlashtiradigan qadam. Hisoblashni ichkariga kirish va javoblarning qaytishi sifatida kuzating.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Eng oddiy rekursiya",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "yig(3) → 3+yig(2) → 3+2+yig(1) → 3+2+1+yig(0). Bazis 0 qaytaradi, keyin javoblar 1, 3, 6 bo‘lib tashqariga chiqadi. Misolda n manfiy bo‘lmagan butun son bo‘lishi kerak.",
+        "code": "function yig(n) {\n  if (n === 0) return 0;\n  return n + yig(n - 1);\n}\nconsole.log(yig(3));",
+        "expectedOutput": [
+          6
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [6]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Eng oddiy rekursiya",
         "text": "Funksiya o‘zini chaqiradi, lekin har safar argument kichiklashadi. n = 0 ga yetganda to‘xtaydi. Bu bazis holati.",
         "code": "function hisobla(n) {\n  if (n === 0) return 0; // bazis\n  return n + hisobla(n - 1); // rekursiv qadam\n}\nconsole.log(hisobla(3)); // 6 (3+2+1+0)",
         "note": "hisobla(3) → 3 + hisobla(2) → 3 + 2 + hisobla(1) → ... → 6."
       },
       {
-        "title": "2. Bazis shart nima uchun shart?",
+        "title": "3. Bazis shart nima uchun shart?",
         "text": "Bazis bo‘lmasa, funksiya hech qachon to‘xtamaydi va call stack to‘ladi: RangeError: Maximum call stack size exceeded.",
         "code": "// function cheksiz(n) {\n//   return cheksiz(n + 1); // to'xtash yo'q\n// }\n// cheksiz(1); // RangeError"
       },
       {
-        "title": "3. Faktorial",
+        "title": "4. Faktorial",
         "text": "Klassik misol: n! = n × (n-1)!, 0! = 1. Bazis n === 0. Har qadam n ni 1 ga kamaytiradi.",
         "code": "function faktorial(n) {\n  if (n === 0) return 1;\n  return n * faktorial(n - 1);\n}\nconsole.log(faktorial(5)); // 120"
       },
       {
-        "title": "4. Rekursiya va tsikl",
+        "title": "5. Rekursiya va tsikl",
         "text": "Ko‘p masalalarni ham rekursiya, ham tsikl bilan yechish mumkin. Tsikl odatda tezroq va xotirani kamroq ishlatadi; rekursiya esa ba’zi tuzilmalar (daraxt) uchun qulayroq.",
         "code": "// tsikl bilan yig'indi:\nfunction yigindi(n) {\n  let s = 0;\n  for (let i = 1; i <= n; i++) s += i;\n  return s;\n}\nconsole.log(yigindi(3)); // 6"
       },
       {
-        "title": "5. Ichki obyektlarda rekursiya",
+        "title": "6. Ichki obyektlarda rekursiya",
         "text": "Rekursiya ierarxik ma’lumotlarda (daraxt, ichki obyektlar) juda qulay. Har qadam ichki obyektga o‘tadi.",
         "code": "const tuzilma = {\n  nom: \"bosh\",\n  bolalar: [\n    { nom: \"bir\", bolalar: [] },\n    { nom: \"ikki\", bolalar: [] }\n  ]\n};\nfunction chiqar(o) {\n  console.log(o.nom);\n  o.bolalar.forEach(chiqar);\n}\nchiqar(tuzilma); // bosh, bir, ikki"
       },
       {
-        "title": "6. Stack chuqurligi",
-        "text": "Har bir chaqirish stack da joy oladi. Chuqur rekursiya (masalan 10000 qadam) stack overflow beradi. Bunday hollarda tsikl yoki trampolin usuli ishlatiladi.",
+        "title": "7. Stack chuqurligi",
+        "text": "Har bir faol rekursiv chaqirish stack resursi oladi. Chuqurlik chegarasi muhit va funksiyaga bog‘liq; 10000 kabi universal aniq son yo‘q. Chuqur tuzilmalarda ochiq stackli tsikl, cheklov yoki boshqa algoritm tanlanishi mumkin.",
         "code": "// function chuqur(n) {\n//   if (n === 0) return 0;\n//   return chuqur(n - 1);\n// }\n// chuqur(20000); // RangeError (muhitga qarab)"
+      },
+      {
+        "title": "8. Kirishni tekshirib keyin rekursiya qilish",
+        "text": "Yordamchi ichki funksiya rekursiyani bajarishi mumkin, tashqi funksiya esa kirishni bir marta tekshiradi. Katta natija Number aniqlik chegarasidan chiqishi mumkin.",
+        "code": "function sanoq(n) {\n  if (!Number.isInteger(n) || n < 0) throw new RangeError(\"Butun n >= 0 kerak\");\n  let jami = 0;\n  for (let i = 1; i <= n; i++) jami += i;\n  return jami;\n}\nconsole.log(sanoq(0));\nconsole.log(sanoq(5));",
+        "expectedOutput": [
+          0,
+          15
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "9. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Bazis borligi yetarli emas: qadam unga olib borishi ham kerak. n=-1 ni doim kamaytirish 0 ga yetmaydi. JavaScript’da stack chuqurligi muhitga bog‘liq; universal xavfsiz 10000 qadam yo‘q. Daraxtda sikl bo‘lsa visited Set yoki boshqa cheklov kerak. Oddiy Fibonacci takroriy chaqiruvlar sabab sekinlashadi."
+      },
+      {
+        "title": "10. Kichik amaliy loyiha",
+        "text": "Faktorial funksiyasiga manfiy, kasr va noto‘g‘ri tur uchun tekshiruv qo‘shing. Keyin xuddi shu yig‘indini tsikl bilan yozib, natijalarni n=0,1,5 da solishtiring."
       }
     ],
-    "takeaway": "Rekursiya — funksiyaning o‘zini chaqirishi.\nBazis shart bo‘lmasa cheksiz chaqirish va RangeError.\nHar qadam masalani kichiklashtirishi shart.\nTsikl tezroq, rekursiya ierarxiya uchun qulay.\nChuqur rekursiya stack overflow ga olib keladi.",
-    "exercise": "1) faktorial(0) nima qaytaradi va nega?\n2) Bazis shart bo‘lmasa nima bo‘ladi?\n3) 3 + hisobla(2) qanday ochiladi?\n4) Rekursiya va tsiklni qachon tanlaysiz?"
+    "takeaway": "Rekursiya — funksiya masalaning kichikroq nusxasini yechish uchun o‘zini chaqirishi.\nBazis borligi yetarli emas: qadam unga olib borishi ham kerak.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Faktorial funksiyasiga manfiy, kasr va noto‘g‘ri tur uchun tekshiruv qo‘shing. Keyin xuddi shu yig‘indini tsikl bilan yozib, natijalarni n=0,1,5 da solishtiring.\n\nQo‘shimcha savollar:\n1) faktorial(0) nima qaytaradi va nega?\n2) Bazis shart bo‘lmasa nima bo‘ladi?\n3) 3 + hisobla(2) qanday ochiladi?\n4) Rekursiya va tsiklni qachon tanlaysiz?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "function f(n) { return n === 0 ? 1 : n * f(n - 1); }\nconsole.log(f(0));\nconsole.log(f(4));\nfunction yig(n) { return n === 0 ? 0 : n + yig(n - 1); }\nconsole.log(yig(3));",
+    "exerciseExpected": [
+      1,
+      24,
+      6
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 1 — 0! bazisi 1\n2. 24 — 4*3*2*1\n3. 6 — 3+2+1+0\n\nLoyihani yechish yo‘li: Tashqi funksiyada Number.isInteger(n) va n>=0 ni tekshiring. Bazisni n===0 qiling, qadamda n-1 yuboring. Cheksiz katta n ni qabul qilmaslik chegarasini alohida belgilang.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Glossary/Recursion"
+      }
+    ]
   },
   {
     "id": "debounce-throttle",
     "title": "Debounce va Throttle: noldan",
     "question": "Debounce va throttle farqi nima? Qayerda ishlatiladi?",
-    "explanation": "Ikkalasi ham tez-tez chaqiriladigan funksiyani boshqarish usullari. Debounce — oxirgi chaqiruvdan keyin ma’lum vaqt o‘tganda bajaradi (qidirish maydoni). Throttle — har vaqt oralig‘ida bir marta bajaradi (scroll, resize). Bu intervyuda juda ko‘p so‘raladi.",
+    "explanation": "Debounce — chaqiruvlar to‘xtagach oxirgi ishni bajarish. Throttle — vaqt oralig‘ida bajarish tezligini cheklash. Qidiruvga yozishda debounce, tez-tez scroll/resize ishlarida throttle qulay. Leading/trailing qoidalari tanlangan implementationga bog‘liq.\n\nAsinxron misollarni alohida ishga tushiring va callback natijalarini kuting. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Muammo",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Har chaqirish oldingi taymerni bekor qiladi. Oxirgi argument abc saqlanib, tanaffusdan so‘ng bitta callback ishlaydi. function wrapperning this qiymati apply orqali saqlanadi.",
+        "code": "(async () => {\n  function debounce(fn, ms) {\n    let timer;\n    return function (...args) {\n      clearTimeout(timer);\n      timer = setTimeout(() => fn.apply(this, args), ms);\n    };\n  }\n  const qidir = debounce(x => console.log(x), 5);\n  qidir(\"a\"); qidir(\"ab\"); qidir(\"abc\");\n  await new Promise(resolve => setTimeout(resolve, 20));\n})();",
+        "expectedOutput": [
+          "abc"
+        ],
+        "exampleRuntime": "async",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"abc\"]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Muammo",
         "text": "Foydalanuvchi har belgi yozganda yoki har scroll pikselida funksiya chaqirilsa, juda ko‘p ish bajariladi. Buni cheklash kerak.",
         "code": "// yomon: har harfda so'rov yuboriladi\ninput.addEventListener(\"input\", () => {\n  fetch(\"/qidir?x=\" + input.value);\n});"
       },
       {
-        "title": "2. Debounce",
+        "title": "3. Debounce",
         "text": "Har chaqiruvda oldingi timer bekor qilinadi va yangisi qo‘yiladi. Faqat foydalanuvchi to‘xtagandan keyin bajariladi. setTimeout + clearTimeout asosida ishlaydi.",
-        "code": "function debounce(fn, ms) {\n  let timer;\n  return function (...args) {\n    clearTimeout(timer);\n    timer = setTimeout(() => fn(...args), ms);\n  };\n}\n\nconst qidir = debounce((x) => console.log(\"so'rov:\", x), 300);\nqidir(\"a\"); qidir(\"ab\"); qidir(\"abc\");\n// faqat: so'rov: abc"
+        "code": "function debounce(fn, ms) {\n  let timer;\n  return function (...args) {\n    clearTimeout(timer);\n    timer = setTimeout(() => fn.apply(this, args), ms);\n  };\n}\n\nconst qidir = debounce((x) => console.log(\"so'rov:\", x), 300);\nqidir(\"a\"); qidir(\"ab\"); qidir(\"abc\");\n// faqat: so'rov: abc"
       },
       {
-        "title": "3. Throttle",
+        "title": "4. Throttle",
         "text": "Har bir vaqt oralig‘ida bir marta bajariladi. Oraliq ichidagi qo‘shimcha chaqiruvlar e’tiborga olinmaydi. Scroll va resize hodisalarida ishlatiladi.",
-        "code": "function throttle(fn, ms) {\n  let oxirgi = 0;\n  return function (...args) {\n    const hozir = Date.now();\n    if (hozir - oxirgi >= ms) {\n      oxirgi = hozir;\n      fn(...args);\n    }\n  };\n}\n\nconst harakat = throttle(() => console.log(\"scroll\"), 200);"
+        "code": "function throttle(fn, ms) {\n  let oxirgi = -Infinity;\n  return function (...args) {\n    const hozir = Date.now();\n    if (hozir - oxirgi >= ms) {\n      oxirgi = hozir;\n      fn(...args);\n    }\n  };\n}\n\nconst harakat = throttle(() => console.log(\"scroll\"), 200);"
       },
       {
-        "title": "4. Asosiy farq",
+        "title": "5. Asosiy farq",
         "text": "Debounce — oxirgi chaqiruvdan keyin kutadi. Throttle — birinchi chaqiruvda bajaradi va keyingilarni vaqt oralig‘igacha o‘tkazadi. Qidirish uchun debounce, scroll uchun throttle.",
         "code": "// tez-tez chaqirish: a, b, c (har 50ms)\n// debounce(300): faqat oxirgisidan 300ms keyin\n// throttle(200): 0ms da bir, 200ms da bir"
       },
       {
-        "title": "5. Amaliy misol",
+        "title": "6. Amaliy misol",
         "text": "Kod o‘qiyotganda closure ichidagi timer/oxirgi o‘zgaruvchisiga e’tibor ber: u chaqiruvlar orasida saqlanadi.",
         "code": "const input = document.querySelector(\"#qidir\");\ninput.addEventListener(\"input\", debounce((e) => {\n  console.log(e.target.value);\n}, 400));"
+      },
+      {
+        "title": "7. Cancel qila oladigan debounce",
+        "text": "Ushbu trailing variantda cancel kutilayotgan ishni olib tashlaydi. Wrapperni har hodisada emas, bir marta tuzing.",
+        "code": "function debounce(fn, ms) {\n  let timer;\n  function wrapped(...args) {\n    clearTimeout(timer);\n    timer = setTimeout(() => fn.apply(this, args), ms);\n  }\n  wrapped.cancel = () => clearTimeout(timer);\n  return wrapped;\n}"
+      },
+      {
+        "title": "8. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Har hodisada debounce(fn, ms) ni qayta yaratish alohida taymerlar ochadi: wrapperni bir marta yarating. Hodisa obyektini kechroq o‘qish o‘rniga kerakli value ni vaqtida olish qulay. Eski tarmoq javobi yangisini bosib ketishi mumkin; debounce so‘rovlar race ini o‘zi hal qilmaydi. Cancel, leading va trailing talabini oldin belgilang."
+      },
+      {
+        "title": "9. Kichik amaliy loyiha",
+        "text": "Qidiruv maydoniga debounce qo‘shing. Chaqiruv sonini ko‘rsating, sahifa yopilganda taymerni cancel qiling. Throttle uchun birinchi va oxirgi hodisa talabi qandayligini yozing."
       }
     ],
-    "takeaway": "Debounce — oxirgi chaqiruvdan keyin bajaradi (qidirish).\nThrottle — har vaqt oralig‘ida bir marta (scroll/resize).\nDebounce clearTimeout + setTimeout bilan yoziladi.\nThrottle Date.now() farqi bilan yoziladi.\nIkkalasi ham closure ichida holat saqlaydi.",
-    "exercise": "1) Qidirish maydoni uchun qaysi usul yaxshi?\n2) Scroll hodisasi uchun-chi?\n3) Debounce da nima uchun clearTimeout kerak?\n4) Throttle va debounce asosiy farqi nima?"
+    "takeaway": "Debounce — chaqiruvlar to‘xtagach oxirgi ishni bajarish.\nHar hodisada debounce(fn, ms) ni qayta yaratish alohida taymerlar ochadi: wrapperni bir marta yarating.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Qidiruv maydoniga debounce qo‘shing. Chaqiruv sonini ko‘rsating, sahifa yopilganda taymerni cancel qiling. Throttle uchun birinchi va oxirgi hodisa talabi qandayligini yozing.\n\nQo‘shimcha savollar:\n1) Qidirish maydoni uchun qaysi usul yaxshi?\n2) Scroll hodisasi uchun-chi?\n3) Debounce da nima uchun clearTimeout kerak?\n4) Throttle va debounce asosiy farqi nima?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "function throttle(fn, ms, now) {\n  let old = -Infinity;\n  return (...args) => {\n    const t = now();\n    if (t - old >= ms) { old = t; fn(...args); }\n  };\n}\nlet vaqt = 0;\nconst r = [];\nconst f = throttle(x => r.push(x), 100, () => vaqt);\nf(\"A\"); vaqt = 20; f(\"B\"); vaqt = 100; f(\"C\");\nconsole.log(r);",
+    "exerciseExpected": [
+      [
+        "A",
+        "C"
+      ]
+    ],
+    "exerciseRuntime": "async",
+    "exerciseAnswer": "1. [\"A\", \"C\"] — birinchi leading chaqiruv va 100 ms ga yetgandagi keyingi chaqiruv olindi\n\nLoyihani yechish yo‘li: const search = debounce(qidirish,300) ni bir marta tuzing. Input listenerida search(input.value) chaqiring. Cancel uchun timer ni yopuvchi closure metodini bering. So‘rovlar uchun AbortController yoki requestId ishlating.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Glossary/Debounce"
+      }
+    ]
   },
   {
     "id": "currying",
     "title": "Currying va qisman qo‘llash: noldan",
     "question": "Currying nima? f(a,b,c) ni f(a)(b)(c) ga aylantirish qanday ishlaydi?",
-    "explanation": "Currying — ko‘p argumentli funksiyani bir argumentli funksiyalar zanjiriga aylantirish. Har bir funksiya keyingisini qaytaradi. Qisman qo‘llash (partial application) esa ba’zi argumentlarni oldindan mahkamlash. Ikkalasi ham closure asosida ishlaydi.",
+    "explanation": "Currying — ko‘p argumentli funksiyani argumentlarni bosqichma-bosqich oladigan funksiyalarga aylantirish. qosh(2)(3) birinchi chaqirishda yangi funksiya, ikkinchisida qiymat beradi. Partial application esa argumentlarning bir qismini oldindan bog‘lash; u aynan bir xil tushuncha emas.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Currying misoli",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "qosh(5) 5 ni closure orqali saqlagan yangi funksiya beradi. beshQosh(2) keyin 5+2 ni hisoblaydi. Har bir qosh(a) mustaqil sozlangan funksiya yaratadi.",
+        "code": "const qosh = a => b => a + b;\nconst beshQosh = qosh(5);\nconsole.log(beshQosh(2));\nconsole.log(qosh(1)(3));",
+        "expectedOutput": [
+          7,
+          4
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [7, 4]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Currying misoli",
         "text": "Oddiy funksiyani currying shakliga o‘zgartirish: har bir qadam keyingi funksiyani qaytaradi, oxirgisida hisoblash bajariladi.",
         "code": "function qosh(a) {\n  return function (b) {\n    return a + b;\n  };\n}\nconsole.log(qosh(2)(3)); // 5\n\nconst beshQosh = qosh(5);\nconsole.log(beshQosh(10)); // 15",
         "note": "qosh(2) chaqirilganda a = 2 saqlanadi (closure), keyin qosh(2)(3) da b = 3."
       },
       {
-        "title": "2. Arrow bilan qisqa",
+        "title": "3. Arrow bilan qisqa",
         "text": "Arrow funksiyalar bilan currying juda qisqa yoziladi.",
         "code": "const kopaytir = a => b => c => a * b * c;\nconsole.log(kopaytir(2)(3)(4)); // 24"
       },
       {
-        "title": "3. Umumiy curry funksiyasi",
+        "title": "4. Umumiy curry funksiyasi",
         "text": "Rest parametrlar bilan ixtiyoriy funksiyani currying qilish mumkin. Argumentlar yetarli bo‘lguncha funksiya qaytarilaveradi.",
         "code": "function curry(fn) {\n  return function yig(...args) {\n    if (args.length >= fn.length) return fn(...args);\n    return (...keyin) => yig(...args, ...keyin);\n  };\n}\nconst yig3 = curry((a, b, c) => a + b + c);\nconsole.log(yig3(1)(2)(3)); // 6\nconsole.log(yig3(1, 2)(3)); // 6"
       },
       {
-        "title": "4. Qisman qo‘llash",
+        "title": "5. Qisman qo‘llash",
         "text": "Partial application ba’zi argumentlarni oldindan berib, qolganlarini keyin olish. bind va closure bilan yoziladi.",
         "code": "function salomlash(kim, xabar) {\n  return kim + \", \" + xabar;\n}\nconst aliGa = salomlash.bind(null, \"Ali\");\nconsole.log(aliGa(\"Salom\")); // Ali, Salom"
       },
       {
-        "title": "5. Nega foydali?",
+        "title": "6. Nega foydali?",
         "text": "Currying funksiyalarni qayta ishlatish va kompozitsiya qilishni osonlashtiradi: oldindan sozlangan funksiya yaratish.",
         "code": "const kutil = ms => fn => setTimeout(fn, ms);\nkutil(1000)(() => console.log(\"1 soniyadan keyin\"));"
+      },
+      {
+        "title": "7. Funksiya uzunligi arity uchun doim yetarli emas",
+        "text": "length birinchi default parametrgacha bo‘lgan rasmiy parametrlarni sanaydi; rest sanalmaydi. Shuning uchun generic curry ni barcha funksiyaga universal deb aytmang.",
+        "code": "console.log(((a, b = 1, c) => {}).length);\nconsole.log(((...args) => {}).length);",
+        "expectedOutput": [
+          1,
+          0
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "8. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "qosh(2,3) bilan qosh(2)(3) avtomatik bir xil emas. Umumiy curry yordamchisi fn.length ga tayansa, default/rest parametrlar arity ni o‘zgartiradi. Method this ini saqlash ham alohida talab. Qisman qo‘llash uchun bind bu yerda funksiya qaytaradi, darhol chaqirmaydi."
+      },
+      {
+        "title": "9. Kichik amaliy loyiha",
+        "text": "Soliq foizi oldindan berilgan hisoblash funksiyasini yarating. Keyin turli narxlar bilan ishlating. Oddiy uch argumentli variant va currying variantining natijalarini solishtiring."
       }
     ],
-    "takeaway": "Currying: f(a,b) → f(a)(b), har funksiya keyingisini qaytaradi.\nClosure har qadam argumentni saqlaydi.\nArrow bilan qisqa: a => b => a+b.\nPartial application ba’zi argumentlarni oldindan mahkamlaydi.\nbind ham qisman qo‘llash usuli.",
-    "exercise": "1) qosh(2)(3) qanday ishlaydi?\n2) const f = a => b => a+b; f(1)(2) nima?\n3) Currying va partial application farqi?\n4) bind bilan qanday qisman qo‘llash mumkin?"
+    "takeaway": "Currying — ko‘p argumentli funksiyani argumentlarni bosqichma-bosqich oladigan funksiyalarga aylantirish.\nqosh(2,3) bilan qosh(2)(3) avtomatik bir xil emas.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Soliq foizi oldindan berilgan hisoblash funksiyasini yarating. Keyin turli narxlar bilan ishlating. Oddiy uch argumentli variant va currying variantining natijalarini solishtiring.\n\nQo‘shimcha savollar:\n1) qosh(2)(3) qanday ishlaydi?\n2) const f = a => b => a+b; f(1)(2) nima?\n3) Currying va partial application farqi?\n4) bind bilan qanday qisman qo‘llash mumkin?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const kop = a => b => a * b;\nconst ikki = kop(2);\nconsole.log(ikki(4));\nconsole.log(kop(3)(4));\nfunction yig(a,b,c) { return a+b+c; }\nconst bir = yig.bind(null, 1);\nconsole.log(bir(2,3));",
+    "exerciseExpected": [
+      8,
+      12,
+      6
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 8 — 2 oldindan saqlandi\n2. 12 — 3 va 4 bosqichma-bosqich berildi\n3. 6 — qisman qo‘llash birinchi argumentni bog‘ladi\n\nLoyihani yechish yo‘li: const soliq = foiz => narx => narx * (1+foiz/100). Foiz va narxlarni tekshirishni hisoblashdan oldin ajrating.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Glossary/Currying"
+      }
+    ]
   },
   {
     "id": "memoization",
     "title": "Memoization: noldan",
     "question": "Memoization nima? Natijalar qanday keshlanadi va qachon foydali?",
-    "explanation": "Memoization — funksiya natijasini saqlab, keyingi chaqiruvda hisoblash o‘rniga tayyor natijani qaytarish usuli. Kuchli hisoblashlar va rekursiya (masalan Fibonacci) uchun juda foydali. Closure va Map/Object bilan yoziladi.",
+    "explanation": "Memoization — bir xil argumentlar uchun avval hisoblangan javobni keshdan qaytarish. Foyda hisoblash qayta takrorlanganda bor. Kesh kaliti, funksiyaning sof ekanligi va kesh qancha yashashi asosiy dizayn savollari.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Muammo",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Birinchi 5 uchun hisoblash bajariladi va Map ga yoziladi. Keyingi 5 uchun shu kalit bor va saqlangan natija olinadi. Bu misol faqat bitta argument uchun yozilgan.",
+        "code": "function memo(fn) {\n  const m = new Map();\n  return x => {\n    if (m.has(x)) return m.get(x);\n    const value = fn(x); m.set(x, value); return value;\n  };\n}\nconst kvadrat = memo(x => x * x);\nconsole.log(kvadrat(5));\nconsole.log(kvadrat(5));",
+        "expectedOutput": [
+          25,
+          25
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [25, 25]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Muammo",
         "text": "Oddiy rekursiv Fibonacci bir xil qiymatlarni qayta-qayta hisoblaydi: juda sekin.",
         "code": "function fib(n) {\n  if (n < 2) return n;\n  return fib(n - 1) + fib(n - 2);\n}\n// fib(40) juda uzoq ishlaydi — takroriy hisoblar tufayli"
       },
       {
-        "title": "2. Kesh bilan yechim",
+        "title": "3. Kesh bilan yechim",
         "text": "Hisoblangan natijani obyektga saqlaymiz. Keyingi chaqiruvda keshda borsa, darhol qaytaramiz.",
         "code": "function fibTez(n, kesh = {}) {\n  if (n < 2) return n;\n  if (kesh[n] !== undefined) return kesh[n];\n  kesh[n] = fibTez(n - 1, kesh) + fibTez(n - 2, kesh);\n  return kesh[n];\n}\nconsole.log(fibTez(40)); // tez chiqadi"
       },
       {
-        "title": "3. Umumiy memoize funksiyasi",
-        "text": "Har qanday funksiyani keshlab qo‘yish mumkin. Argumentlar kalit sifatida ishlatiladi.",
+        "title": "4. Umumiy memoize funksiyasi",
+        "text": "Quyidagi sodda helper argumentlarini JSON.stringify qilib kesh kaliti qiladi. Bu universal emas: sikl, BigInt, undefined va reference identikligi bilan cheklovlar bor. Faqat tanlangan argument turlari uchun ishlating va key tanlash siyosatini belgilang.",
         "code": "function memoize(fn) {\n  const kesh = new Map();\n  return function (...args) {\n    const kalit = JSON.stringify(args);\n    if (kesh.has(kalit)) return kesh.get(kalit);\n    const natija = fn(...args);\n    kesh.set(kalit, natija);\n    return natija;\n  };\n}\nconst kvadrat = memoize(x => x * x);\nconsole.log(kvadrat(5), kvadrat(5)); // ikkinchisi keshdan"
       },
       {
-        "title": "4. E’tibor: faqat sof funksiyalar",
+        "title": "5. E’tibor: faqat sof funksiyalar",
         "text": "Memoization faqat bir xil argumentga doim bir xil natija qaytaradigan (sof/pure) funksiyalar uchun xavfsiz. Yon ta’siri bor funksiyani keshlamang.",
         "code": "// yomon: natija har safar farq qiladi\n// memoize(() => Date.now()) — noto'g'ri ishlatish\n\n// yaxshi: bir xil kirish → bir xil chiqish\nmemoize(x => x * 2);"
       },
       {
-        "title": "5. Kesh xotirasi",
+        "title": "6. Kesh xotirasi",
         "text": "Kesh o‘sib boradi: har xil argument uchun yangi yozuv. Katta ma’lumotlarda eskirgan yozuvlarni o‘chirish (LRU) kerak bo‘lishi mumkin.",
         "code": "const kesh = new Map();\nkesh.set(\"a\", 1);\n// kesh.clear(); // butunlash o'chirish"
+      },
+      {
+        "title": "7. Kesh va natija reference i",
+        "text": "Kesh obyekt qaytarsa, keyingi chaqirish ham o‘sha obyektni olishi mumkin. Tashqi kod uni o‘zgartirsa keyingi natija ham ta’sirlanadi. Keshning o‘zi ham xotira egallaydi; TTL/LRU yoki tozalashni talabga qarab tanlang.",
+        "code": "const m = new Map([[\"x\", { n: 1 }]]);\nconst a = m.get(\"x\"); a.n = 2;\nconsole.log(m.get(\"x\").n);",
+        "expectedOutput": [
+          2
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "8. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "if(cache.get(x)) falsy javoblarni keshda yo‘q deb oladi; has ishlating. JSON.stringify(args) universal kalit emas: undefined/null, sikl, BigInt, obyekt tartibi va reference farqlari bor. O‘zgaruvchi obyekt argumenti keshni eskirtirishi mumkin. Async xatoli Promise ni keshda saqlab qolish yoki o‘chirish alohida siyosat talab qiladi."
+      },
+      {
+        "title": "9. Kichik amaliy loyiha",
+        "text": "Bitta primitive argumentli sof funksiyani Map bilan keshlang. Hisoblash nechta bo‘lganini alohida hisoblagich bilan kuzating; bir xil kirishda qayta hisoblamasin. Kesh hajmi chegarasini belgilang."
       }
     ],
-    "takeaway": "Memoization — natijani keshlab, qayta hisoblamaslik.\nRekursiv hisoblashlarda juda tezlashtiradi.\nClosure yoki Map bilan yoziladi.\nFaqat sof funksiyalarga qo‘llash xavfsiz.\nKesh hajmini nazorat qilish kerak.",
-    "exercise": "1) Nega oddiy fib(40) sekin?\n2) Kesh qanday ishlaydi?\n3) Nega faqat sof funksiyalarni keshlash kerak?\n4) Map o‘rniga obyekt ishlatish mumkinmi?"
+    "takeaway": "Memoization — bir xil argumentlar uchun avval hisoblangan javobni keshdan qaytarish.\nif(cache.get(x)) falsy javoblarni keshda yo‘q deb oladi; has ishlating.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Bitta primitive argumentli sof funksiyani Map bilan keshlang. Hisoblash nechta bo‘lganini alohida hisoblagich bilan kuzating; bir xil kirishda qayta hisoblamasin. Kesh hajmi chegarasini belgilang.\n\nQo‘shimcha savollar:\n1) Nega oddiy fib(40) sekin?\n2) Kesh qanday ishlaydi?\n3) Nega faqat sof funksiyalarni keshlash kerak?\n4) Map o‘rniga obyekt ishlatish mumkinmi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "let chaqiruv = 0;\nconst cache = new Map();\nfunction ikki(x) {\n  if (cache.has(x)) return cache.get(x);\n  chaqiruv++; const r=x*2; cache.set(x,r); return r;\n}\nconsole.log(ikki(0));\nconsole.log(ikki(0));\nconsole.log(chaqiruv);\nconsole.log(cache.size);",
+    "exerciseExpected": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 0 — 0 ham yaroqli javob\n2. 0 — has sabab 0 keshdan olindi\n3. 1 — faqat bir hisoblash\n4. 1 — bitta kalit\n\nLoyihani yechish yo‘li: Map.has bilan tekshiring, hisoblashdan keyin set qiling. MaxSize bo‘lsa yangi kalitdan oldin kerakli eski kalitni o‘chiring. Bu FIFO misolimi yoki haqiqiy LRU mi, aniq belgilang.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Glossary/Memoization"
+      }
+    ]
   },
   {
     "id": "symbol-bigint",
     "title": "Symbol va BigInt: noldan",
     "question": "Symbol nima? BigInt qachon kerak? Nega ularni boshqa turlar bilan aralashtirib bo‘lmaydi?",
-    "explanation": "Symbol — noyob va o‘zgaruvchan identifikator yaratadigan primitive tur. Obyekt kaliti sifatida ishlatiladi. BigInt — katta butun sonlar uchun tur: Number aniqlik yo‘qotadi, BigInt esa yo‘q. Ikkalasi ham maxsus qoidalarga ega.",
+    "explanation": "Symbol noyob identifikator qiymati; BigInt esa ixtiyoriy aniqlikdagi butun son turidir. Symbol(\"id\") tavsif yozuvi, qiymatning global nomi emas. BigInt uchun oxiriga n yozamiz yoki BigInt(...) chaqiramiz. Number bilan arifmetika qoidalari bir xil emas.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Symbol",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Har Symbol yangi noyob qiymat. Symbol.for umumiy registryda shu kalit uchun bir xil qiymatni oladi. BigInt natijasini String bilan matnga aylantirib chiqardik.",
+        "code": "console.log(Symbol(\"id\") === Symbol(\"id\"));\nconsole.log(Symbol.for(\"dars\") === Symbol.for(\"dars\"));\nconsole.log(String(10n + 2n));\nconsole.log(typeof 10n);",
+        "expectedOutput": [
+          false,
+          true,
+          "12",
+          "bigint"
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [false, true, \"12\", \"bigint\"]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Symbol",
         "text": "Symbol() har chaqirilganda yangi noyob qiymat yaratadi. Hatto tavsif bir xil bo‘lsa ham teng emas. Obyektga yashirin kalit qo‘yish uchun ishlatiladi.",
         "code": "const a = Symbol(\"id\");\nconst b = Symbol(\"id\");\nconsole.log(a === b); // false\nconsole.log(typeof a); // \"symbol\"\n\nconst o = { [a]: 1 };\nconsole.log(o[a]); // 1\nconsole.log(Object.keys(o)); // [] — ko'rinmaydi"
       },
       {
-        "title": "2. Symbol.iterator va well-known",
+        "title": "3. Symbol.iterator va well-known",
         "text": "JavaScript ichida ba’zi Symbol lar maxsus ma’noga ega: Symbol.iterator, Symbol.toPrimitive. Ular obyektning ichki xatti-harakatini o‘zgartiradi.",
         "code": "const massiv = [1, 2];\nconsole.log(typeof massiv[Symbol.iterator]); // \"function\"\nconsole.log([...massiv]); // iterator yordamida"
       },
       {
-        "title": "3. BigInt",
+        "title": "4. BigInt",
         "text": "Katta butun sonlar uchun: son oxiriga n qo‘yiladi yoki BigInt() chaqiriladi. Number bilan aralashtirib hisoblab bo‘lmaydi: TypeError.",
         "code": "const katta = 9007199254740993n;\nconsole.log(typeof katta); // \"bigint\"\nconsole.log(katta + 1n); // 9007199254740994n\n// console.log(katta + 1); // TypeError",
         "note": "Number 9007199254740993 ni 9007199254740992 qilib qo‘yadi (aniqlik yo‘qotish). BigInt buni to‘g‘ri saqlaydi."
       },
       {
-        "title": "4. BigInt va taqqoslash",
+        "title": "5. BigInt va taqqoslash",
         "text": "BigInt va Number keng tarqalgan taqqoslashda ishlaydi (==, <, >), lekin qat’iy tenglik (===) har doim false, chunki turlar farq qiladi.",
         "code": "console.log(1n == 1); // true\nconsole.log(1n === 1); // false\nconsole.log(1n < 2); // true\nconsole.log(BigInt(5)); // 5n"
       },
       {
-        "title": "5. JSON va BigInt",
+        "title": "6. JSON va BigInt",
         "text": "JSON.stringify BigInt ni qo‘llab-quvvatlamaydi: TypeError. Uni avval stringga aylantirish kerak.",
         "code": "// JSON.stringify({ x: 1n }); // TypeError\nconsole.log(JSON.stringify({ x: \"1\" })); // ishlaydi"
+      },
+      {
+        "title": "7. Symbol kalit va JSON chegarasi",
+        "text": "Symbol kalitlar Reflect.ownKeys da ko‘rinadi, Object.keys da ko‘rinmaydi. JSON uchun BigInt ni qanday kodlashni o‘zingiz tanlaysiz; tiklashda maydon turini bilish kerak.",
+        "code": "const s = Symbol(\"id\");\nconst o = { [s]: 1, katta: 123n };\nconsole.log(Reflect.ownKeys(o).length);\nconsole.log(JSON.stringify(o, (_, v) => typeof v === \"bigint\" ? v.toString() : v));",
+        "expectedOutput": [
+          2,
+          "{\"katta\":\"123\"}"
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "8. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "1n + 1 TypeError, ammo 1n == 1 true bo‘lishi mumkin. BigInt bo‘lishi butun natija beradi, kasrni tashlaydi. Number dan BigInt ga o‘tganda allaqachon yo‘qolgan aniqlik qaytmaydi; katta sonni matndan yarating. JSON BigInt ni odatda stringify qilmaydi. Symbol tavsifi bilan equality tekshirmang."
+      },
+      {
+        "title": "9. Kichik amaliy loyiha",
+        "text": "Katta butun identifikatorni stringdan BigInt ga aylantiring, 1n qo‘shing va JSON ga yozish uchun yana string qiling. Qayta o‘qishda schema asosida BigInt ga tiklang."
       }
     ],
-    "takeaway": "Symbol noyob identifikator; bir xil tavsif bilan ham teng emas.\nSymbol kalitlari Object.keys da ko'rinmaydi.\nSymbol.iterator for...of mexanizmi.\nBigInt katta butun sonlar uchun: 123n.\nBigInt va Number aralash hisoblanmaydi (TypeError).\nJSON.stringify BigInt ni qo'llab-quvvatlamaydi.",
-    "exercise": "1) Symbol(\"a\") === Symbol(\"a\") nima?\n2) Nega Symbol kalit Object.keys da yo'q?\n3) 1n + 1 nima beradi?\n4) 1n === 1 va 1n == 1 farqi?"
+    "takeaway": "Symbol noyob identifikator qiymati; BigInt esa ixtiyoriy aniqlikdagi butun son turidir.\n1n + 1 TypeError, ammo 1n == 1 true bo‘lishi mumkin.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Katta butun identifikatorni stringdan BigInt ga aylantiring, 1n qo‘shing va JSON ga yozish uchun yana string qiling. Qayta o‘qishda schema asosida BigInt ga tiklang.\n\nQo‘shimcha savollar:\n1) Symbol(\"a\") === Symbol(\"a\") nima?\n2) Nega Symbol kalit Object.keys da yo'q?\n3) 1n + 1 nima beradi?\n4) 1n === 1 va 1n == 1 farqi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "console.log(5n == 5);\nconsole.log(5n === 5);\nconsole.log(String(7n / 2n));\nconsole.log(Boolean(0n));\nconst s = Symbol(\"id\");\nconst o = { [s]: 1 };\nconsole.log(Object.keys(o).length);",
+    "exerciseExpected": [
+      true,
+      false,
+      "3",
+      false,
+      0
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. true — == qiymat bo‘yicha solishtirishi mumkin\n2. false — turlar boshqa\n3. \"3\" — butun bo‘lish kasrni tashlaydi\n4. false — 0n falsy\n5. 0 — symbol kalit Object.keys ga kirmaydi\n\nLoyihani yechish yo‘li: const id=BigInt(\"9007199254740993\"); natijani (id+1n).toString() bilan saqlang. Hamma raqamli stringni avtomatik BigInt qilish o‘rniga maydon sxemasini ishlating.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt"
+      }
+    ]
   },
   {
     "id": "weakmap-weakset",
     "title": "WeakMap va WeakSet: noldan",
-    "question": "WeakMap/WeakSet Map/Set dan qanday farq qiladi? Nega “weak”?",
-    "explanation": "WeakMap va WeakSet faqat obyekt kalitlari/qiymatlarini saqlaydi va ularga “zaif” (weak) bog‘lanish qiladi. Agar obyekt boshqa joyda ishlatilmasa, chiqindi yig‘uvchi (garbage collector) uni olib tashlaydi. Bu xotira sizishining oldini oladi.",
+    "question": "WeakMap/WeakSet kalitlari, reference va garbage collection qanday bog‘langan?",
+    "explanation": "WeakMap va WeakSet obyekt identifikatoriga bog‘langan vaqtinchalik ma’lumot uchun. Ular kalit yoki qiymatning o‘zini kuchli reference sifatida ushlab qolmaydi. Zamonaviy JavaScript’da obyektlardan tashqari registryga kiritilmagan Symbol ham weak hold qilinishi mumkin.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. WeakMap asoslari",
-        "text": "Kalit faqat obyekt bo‘lishi mumkin. size xususiyati yo‘q, iteratsiya qilib bo‘lmaydi. get/set/has/delete metodlari bor.",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Kalit obyekt reference i. get ma’lumotni oladi, delete yozuvni o‘chiradi. Boshqa aynan shunday {} yangi kalit bo‘ladi. GC qachon ishga tushishini bu kod orqali aniqlamaymiz.",
+        "code": "const key = {};\nconst m = new WeakMap();\nm.set(key, \"tayyor\");\nconsole.log(m.get(key));\nconsole.log(m.has(key));\nm.delete(key);\nconsole.log(m.has(key));",
+        "expectedOutput": [
+          "tayyor",
+          true,
+          false
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"tayyor\", true, false]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. WeakMap asoslari",
+        "text": "Kalit obyekt yoki registryga kiritilmagan Symbol bo‘lishi mumkin. size xususiyati yo‘q, iteratsiya qilib bo‘lmaydi. get/set/has/delete metodlari bor.",
         "code": "const wm = new WeakMap();\nconst obyekt = {};\nwm.set(obyekt, \"ma'lumot\");\nconsole.log(wm.get(obyekt)); // ma'lumot\nconsole.log(wm.has(obyekt)); // true\n// wm.size — yo'q; for...of — ishlamaydi"
       },
       {
-        "title": "2. Nega “weak”?",
-        "text": "Map obyektni qattiq ushlab turadi: u hech qayerda ishlatilmasa ham o‘chirilmaydi. WeakMap esa ushlab turmaydi: obyekt boshqa joyda yo‘qolsa, avtomatik o‘chadi.",
-        "code": "let o = {};\nconst wm = new WeakMap();\nwm.set(o, 1);\no = null; // endi obyektga hech kim murojaat qilmaydi\n// WeakMap dagi yozuv ham avtomatik yo'qoladi"
+        "title": "3. Nega “weak”?",
+        "text": "Reachable Map kalitni kuchli ushlab turadi. WeakMapning o‘zi kalitning yashashiga kuchli sabab bo‘lmaydi. Boshqa reference lar qolmasa kalit yig‘ilishi mumkin; GC vaqti va aynan qachon yozuv yo‘qolishi kuzatiladigan kafolat emas.",
+        "code": "let o = {};\nconst wm = new WeakMap();\nwm.set(o, 1);\no = null; // endi obyektga hech kim murojaat qilmaydi\n// GC keyinroq yig‘ishi mumkin; aniq vaqti kafolatlanmaydi"
       },
       {
-        "title": "3. WeakSet",
-        "text": "WeakSet faqat obyektlarni saqlaydi, takrorlarsiz. add/delete/has bor, iteratsiya yo‘q.",
-        "code": "const ws = new WeakSet();\nconst o = {};\nws.add(o);\nconsole.log(ws.has(o)); // true\n// ws.add(1); // TypeError: faqat obyekt"
+        "title": "4. WeakSet",
+        "text": "WeakSet obyektlar va registryga kiritilmagan Symbol larni takrorlarsiz saqlaydi. add/delete/has bor, iteratsiya yo‘q.",
+        "code": "const ws = new WeakSet();\nconst o = {};\nws.add(o);\nconsole.log(ws.has(o)); // true\n// ws.add(1); // TypeError: number weak qiymat emas"
       },
       {
-        "title": "4. Qayerda ishlatiladi?",
-        "text": "Obyektga qo‘shimcha ma’lumot biriktirish (masalan, kesh yoki “ishlangan” belgisi) va DOM elementlariga tegishli holat saqlash. Element DOM dan o‘chirilsa, ma’lumot ham o‘chadi.",
+        "title": "5. Qayerda ishlatiladi?",
+        "text": "Obyektga qo‘shimcha ma’lumot biriktirish (masalan, kesh yoki “ishlangan” belgisi) va DOM elementlariga tegishli holat saqlash. Element DOM dan o‘chirilsa ham boshqa kuchli reference lar qolishi mumkin. Obyekt unreachable bo‘lganda GC yig‘ishi mumkin; aniq vaqt kafolatlanmaydi.",
         "code": "const ishlangan = new WeakSet();\nfunction ishla(element) {\n  if (ishlangan.has(element)) return;\n  ishlangan.add(element);\n  // ishlash...\n}"
       },
       {
-        "title": "5. Cheklovlar",
-        "text": "Iteratsiya yo‘q, size yo‘q, kalit faqat obyekt. Shuning uchun Map/Set o‘rniga faqat xotira muhim bo‘lganda tanlanadi.",
+        "title": "6. Cheklovlar",
+        "text": "Iteratsiya yo‘q, size yo‘q, kalit obyekt yoki registryga kiritilmagan Symbol. Shuning uchun Map/Set o‘rniga faqat xotira muhim bo‘lganda tanlanadi.",
         "code": "// wm.forEach — yo'q\n// [...wm] — ishlamaydi\n// wm.keys() — yo'q"
+      },
+      {
+        "title": "7. Kuchli va weak reference farqi",
+        "text": "Weak kolleksiya avtomatik “tez tozalash” buyrug‘i emas. Faqat u orqali reachable bo‘lish obyektni ushlab turmasligi mumkin. Finalization yoki GC vaqtiga biznes natijani bog‘lamang.",
+        "code": "const key = {};\nconst m = new WeakMap([[key, 7]]);\nconsole.log(m.get({}));\nconsole.log(m.get(key));",
+        "expectedOutput": [
+          {
+            "$undefined": true
+          },
+          7
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "8. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "size, keys, forEach va odatiy iteratsiya yo‘q. GC vaqtini kuzatib natija tartibini va’da qilib bo‘lmaydi. DOM dan o‘chirish yetarli emas: boshqa kuchli reference lar qolgan bo‘lishi mumkin. Symbol.for qiymati registryda bo‘lgani uchun weak kalit bo‘la olmaydi. Map ham o‘zi reachable bo‘lmasa yig‘ilishi mumkin."
+      },
+      {
+        "title": "9. Kichik amaliy loyiha",
+        "text": "Obyektga kesh ma’lumoti bog‘laydigan WeakMap va bir marta ishlangan obyektlarni belgilaydigan WeakSet yozing. Bir xil va yangi obyekt reference larini solishtiring."
       }
     ],
-    "takeaway": "WeakMap kaliti faqat obyekt; WeakSet faqat obyekt saqlaydi.\nZaif bog‘lanish: obyekt yo‘qolsa, yozuv ham o‘chadi.\nsize va iteratsiya yo‘q.\nXotira sizishining oldini oladi.\nDOM elementlariga holat biriktirish uchun qulay.",
-    "exercise": "1) WeakMap va Map farqi nima?\n2) Nega size yo‘q?\n3) wm.set(1, \"x\") ishlaydimi?\n4) WeakMap qayerda foydali?"
+    "takeaway": "WeakMap va WeakSet obyekt identifikatoriga bog‘langan vaqtinchalik ma’lumot uchun.\nsize, keys, forEach va odatiy iteratsiya yo‘q.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Obyektga kesh ma’lumoti bog‘laydigan WeakMap va bir marta ishlangan obyektlarni belgilaydigan WeakSet yozing. Bir xil va yangi obyekt reference larini solishtiring.\n\nQo‘shimcha savollar:\n1) WeakMap va Map farqi nima?\n2) Nega size yo‘q?\n3) wm.set(1, \"x\") ishlaydimi?\n4) WeakMap qayerda foydali?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const a = {}, b = {};\nconst ws = new WeakSet([a]);\nconsole.log(ws.has(a));\nconsole.log(ws.has(b));\nconsole.log(typeof ws.size);\nconst m = new WeakMap();\nconst s = Symbol(\"local\");\nm.set(s, 1);\nconsole.log(m.get(s));",
+    "exerciseExpected": [
+      true,
+      false,
+      "undefined",
+      1
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. true — aynan shu obyekt bor\n2. false — yangi obyekt boshqa\n3. \"undefined\" — size mavjud emas\n4. 1 — registryga kiritilmagan Symbol weak kalit bo‘la oladi\n\nLoyihani yechish yo‘li: WeakMap.set(obj, natija) bilan saqlang. WeakSet.has(obj) true bo‘lsa qayta ishlamang. Iteratsiya yoki kalitlar soni kerak bo‘lsa Map/Set mosroq.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap"
+      }
+    ]
   },
   {
     "id": "object-descriptors",
     "title": "Obyekt descriptorlari: freeze, seal, defineProperty",
     "question": "Xususiyatni o‘chirib bo‘lmaslik, faqat o‘qish, Object.freeze va seal nima qiladi?",
-    "explanation": "Har bir obyekt xususiyatining descriptorlari bor: value, writable, enumerable, configurable. Ularni Object.defineProperty bilan boshqarish mumkin. freeze va seal shu mexanizm ustiga qurilgan. Kod o‘qiyotganda “bu xususiyat o‘zgartirilishi mumkinmi?” deb so‘ra.",
+    "explanation": "Descriptor — obyekt xususiyatining qoidalari. Data property uchun value/writable, accessor uchun get/set ishlatiladi. enumerable ro‘yxatga chiqishini, configurable o‘chirish va qayta sozlash imkonini boshqaradi. Bu turli savollar, bitta “const property” belgisi emas.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Descriptor nima?",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "defineProperty bilan yangi property yaratishda yozilmagan boolean bayroqlar false. Shu sabab x o‘qiladi va sanaladi, lekin writable false bo‘lib qoladi.",
+        "code": "const o = {};\nObject.defineProperty(o, \"x\", { value: 1, enumerable: true });\nconst d = Object.getOwnPropertyDescriptor(o, \"x\");\nconsole.log(o.x);\nconsole.log(d.writable);\nconsole.log(Object.keys(o));",
+        "expectedOutput": [
+          1,
+          false,
+          [
+            "x"
+          ]
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [1, false, [\"x\"]]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Descriptor nima?",
         "text": "Object.getOwnPropertyDescriptor obyekt xususiyati haqida ma’lumot beradi: qiymat, yozish mumkinmi, sanab o‘tiladimi, o‘chirish mumkinmi.",
         "code": "const o = { x: 1 };\nconsole.log(Object.getOwnPropertyDescriptor(o, \"x\"));\n// { value: 1, writable: true, enumerable: true, configurable: true }"
       },
       {
-        "title": "2. defineProperty",
+        "title": "3. defineProperty",
         "text": "Xususiyatni maxsus qoidalar bilan yaratish yoki o‘zgartirish. writable: false — qiymat o‘zgartirilmaydi (strict mode da TypeError).",
         "code": "const o = {};\nObject.defineProperty(o, \"x\", {\n  value: 1,\n  writable: false,\n  enumerable: true,\n  configurable: false\n});\nconsole.log(o.x); // 1\n// o.x = 2; // strict mode da TypeError"
       },
       {
-        "title": "3. Faqat o‘qish uchun",
+        "title": "4. Faqat o‘qish uchun",
         "text": "writable: false va configurable: false bilan o‘zgarmas xususiyat yaratiladi. Lekin obyekt ichidagi obyektlar o‘zgarishi mumkin (yuzaki).",
         "code": "const o = {};\nObject.defineProperty(o, \"konstanta\", { value: 42 });\n// default: writable: false, enumerable: false, configurable: false\nconsole.log(o.konstanta); // 42\nconsole.log(Object.keys(o)); // [] — sanab o'tilmaydi"
       },
       {
-        "title": "4. Object.freeze",
-        "text": "freeze barcha xususiyatlarni yozish va o‘chirishdan qulflaydi. Lekin chuqur emas: ichki obyektlar o‘zgaradi.",
+        "title": "5. Object.freeze",
+        "text": "freeze yangi own xususiyat qo‘shish/o‘chirishni, own data property qiymatiga yozishni cheklaydi. Bu yuzaki. Accessor setter va Map/Set kabi ichki slotlarni universal muzlatish emas.",
         "code": "const o = { x: 1, ichki: { y: 2 } };\nObject.freeze(o);\no.x = 5; // ishlamaydi\no.ichki.y = 9; // ishlaydi — yuzaki\nconsole.log(Object.isFrozen(o)); // true"
       },
       {
-        "title": "5. Object.seal",
-        "text": "seal yangi xususiyat qo‘shish va o‘chirishni taqiqlaydi, lekin mavjudlarini o‘zgartirishga ruxsat beradi.",
+        "title": "6. Object.seal",
+        "text": "seal yangi xususiyat qo‘shish va own xususiyatlarni o‘chirishni cheklaydi. Oldindan writable bo‘lgan property qiymatiga yozish mumkin; non-writable propertyni yoziladigan qilib qo‘ymaydi.",
         "code": "const o = { x: 1 };\nObject.seal(o);\no.x = 2; // ishlaydi\no.y = 3; // ishlamaydi\ndelete o.x; // ishlamaydi\nconsole.log(Object.isSealed(o)); // true"
       },
       {
-        "title": "6. preventExtensions",
+        "title": "7. preventExtensions",
         "text": "Faqat yangi xususiyat qo‘shishni taqiqlaydi. Mavjudlari o‘zgaradi va o‘chiriladi.",
         "code": "const o = { x: 1 };\nObject.preventExtensions(o);\no.y = 2; // ishlamaydi\ndelete o.x; // ishlaydi"
+      },
+      {
+        "title": "8. freeze, seal va preventExtensions taqqoslash",
+        "text": "preventExtensions yangi maydonni to‘sadi. seal bunga configurable=false qo‘shadi. freeze data propertylar uchun writable=false ham qiladi. Accessor setterlar mavjud bo‘lsa freeze uni avtomatik yo‘qotmaydi.",
+        "code": "const m = Object.freeze(new Map());\nm.set(\"x\", 1);\nconsole.log(m.get(\"x\"));",
+        "expectedOutput": [
+          1
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "9. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Data descriptor va accessor descriptor maydonlarini bitta propertyda aralashtirib bo‘lmaydi. freeze yuzaki va Map/Set ichki yozuvlarini muzlatmaydi. seal mavjud writable propertyni yozishdan to‘smaydi, ammo non-writable ni writable qilib qo‘ymaydi. Strict rejimda taqiqlangan yozish throw qilishi mumkin, oddiy rejimda ba’zilari e’tiborsiz qoladi."
+      },
+      {
+        "title": "10. Kichik amaliy loyiha",
+        "text": "Obyektga sanalmaydigan id va o‘zgaradigan name maydoni yarating. Object.keys bilan farqini ko‘ring, freeze dan oldin va keyin yozish holatini tekshiring."
       }
     ],
-    "takeaway": "Descriptor: value, writable, enumerable, configurable.\ndefineProperty bilan xususiyat qoidalarini belgilash mumkin.\nfreeze — yozish va o‘chirishni taqiqlaydi, lekin yuzaki.\nseal — qo‘shish/o‘chirishni taqiqlaydi, o‘zgartirishga ruxsat.\npreventExtensions — faqat yangi qo‘shishni taqiqlaydi.",
-    "exercise": "1) freeze dan keyin ichki obyekt o‘zgaradimi?\n2) seal va freeze farqi?\n3) defineProperty da default writable nima?\n4) preventExtensions nima taqiqlaydi?"
+    "takeaway": "Descriptor — obyekt xususiyatining qoidalari.\nData descriptor va accessor descriptor maydonlarini bitta propertyda aralashtirib bo‘lmaydi.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Obyektga sanalmaydigan id va o‘zgaradigan name maydoni yarating. Object.keys bilan farqini ko‘ring, freeze dan oldin va keyin yozish holatini tekshiring.\n\nQo‘shimcha savollar:\n1) freeze dan keyin ichki obyekt o‘zgaradimi?\n2) seal va freeze farqi?\n3) defineProperty da default writable nima?\n4) preventExtensions nima taqiqlaydi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const o = { ichki: { n: 1 } };\nObject.freeze(o);\no.ichki.n = 2;\nconsole.log(o.ichki.n);\nconsole.log(Object.isFrozen(o));\nconst a = Object.seal({ x: 1 });\na.x = 3;\nconsole.log(a.x);\nconsole.log(Object.isExtensible(a));",
+    "exerciseExpected": [
+      2,
+      true,
+      3,
+      false
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 2 — ichki obyekt muzlatilmagan\n2. true — tashqi obyekt frozen\n3. 3 — seal writable maydonga yozishni saqlaydi\n4. false — yangi maydon qo‘shib bo‘lmaydi\n\nLoyihani yechish yo‘li: Object.defineProperty(o,\"id\",{value:1,enumerable:false}) va oddiy name property yarating. Strict testda taqiqlangan yozishni try/catch ichida alohida sinang.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty"
+      }
+    ]
   },
   {
     "id": "dynamic-import-async-iteration",
     "title": "Dynamic import va async iteratsiya",
     "question": "import() nima? for await...of qanday ishlaydi?",
-    "explanation": "Oddiy import statik: fayl yuklanishida bajariladi. Dynamic import() — funksiya sifatida, kerak paytda modulni yuklaydi va Promise qaytaradi. for await...of esa asinxron iteratorlarni ketma-ket o‘qish uchun ishlatiladi.",
+    "explanation": "Dynamic import kerak bo‘lganda modulni yuklaydi va Promise qaytaradi. Async iterator esa vaqt davomida keladigan qiymatlarni bitta-bitta beradi. Ikkalasi async/await bilan o‘qiladi, lekin biri fayl yuklash, ikkinchisi ketma-ketlikni iste’mol qilishdir.\n\nAsinxron misollarni alohida ishga tushiring va callback natijalarini kuting. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Dynamic import",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "async function* qiymatlarni yield qiladi. for await har next natijasini kutadi. Bu yerda to‘plangan massiv 1 va 2 bo‘ladi. Dynamic import misollari alohida fayllarni talab qiladi.",
+        "code": "(async () => {\n  async function* sonlar() {\n    yield 1;\n    yield await Promise.resolve(2);\n  }\n  const r = [];\n  for await (const n of sonlar()) r.push(n);\n  console.log(r);\n})();",
+        "expectedOutput": [
+          [
+            1,
+            2
+          ]
+        ],
+        "exampleRuntime": "async",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [[1, 2]]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Dynamic import",
         "text": "import(\"./modul.js\") chaqirilganda modul yuklanadi va Promise qaytaradi. Kodning faqat kerakli qismida yuklash (lazy loading) uchun ishlatiladi.",
         "code": "async function yukla() {\n  const modul = await import(\"./math.js\");\n  console.log(modul.yig(1, 2));\n}\nyukla();\n\n// yoki:\nimport(\"./math.js\").then(m => console.log(m.PI));"
       },
       {
-        "title": "2. Nega foydali?",
+        "title": "3. Nega foydali?",
         "text": "Katta modullarni dastlab yuklamay, faqat foydalanuvchi kerak qilganda olish: dastlabki yuklanish tezlashadi. Shartli yuklash ham mumkin.",
         "code": "if (kerak) {\n  const { ishla } = await import(\"./kattamodul.js\");\n  ishla();\n}"
       },
       {
-        "title": "3. Async generator",
+        "title": "4. Async generator",
         "text": "async function* bilan asinxron generator yaratiladi. yield bilan qiymat beriladi, lekin await ham ishlatish mumkin.",
         "code": "async function* sonlar() {\n  yield 1;\n  await new Promise(r => setTimeout(r, 100));\n  yield 2;\n}\nconst g = sonlar();\nconsole.log(await g.next()); // { value: 1, done: false }"
       },
       {
-        "title": "4. for await...of",
+        "title": "5. for await...of",
         "text": "Asinxron iteratorni ketma-ket o‘qish uchun. Har qadam Promise bajarilishini kutadi. Oddiy for...of asinxron iteratorni to‘g‘ri o‘qiy olmaydi.",
         "code": "async function* ketma() {\n  yield Promise.resolve(1);\n  yield Promise.resolve(2);\n}\nfor await (const qiymat of ketma()) {\n  console.log(qiymat); // 1, keyin 2\n}"
       },
       {
-        "title": "5. Amaliy: fayl oqimi",
+        "title": "6. Amaliy: fayl oqimi",
         "text": "Node.js da oqimlar (stream) va brauzerda katta ma’lumotlar bilan ishlashda for await...of qulay.",
         "code": "// for await (const bolak of readStream) {\n//   ishla(bolak);\n// }"
+      },
+      {
+        "title": "7. Dynamic importning mustaqil fayl misoli",
+        "text": "Quyidagi ikki faylni yarating va node main.mjs bilan ishga tushiring. Brauzerda esa module script va mahalliy HTTP server kerak.",
+        "code": "// math.mjs\nexport default (a, b) => a + b;\n\n// main.mjs\nconst modul = await import(\"./math.mjs\");\nconsole.log(modul.default(2, 3)); // 5"
+      },
+      {
+        "title": "8. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "import() rad etilishi mumkin, shuning uchun catch kerak. Qaytgan obyekt modul namespace i, default eksport .default orqali. for await oddiy iterable ni ham o‘qishi mumkin. break iteratorning return tozalash yo‘lini chaqirishi mumkin; generator resurslarini finally da tozalang. for await avval boshlanib bo‘lgan barcha Promise larni ketma-ket boshlatadi degani emas."
+      },
+      {
+        "title": "9. Kichik amaliy loyiha",
+        "text": "Async generator bilan 1 dan 3 gacha qiymat bering va for await bilan yig‘ing. Keyin tugma bosilganda alohida math.mjs modulini import qiladigan sahifa yarating."
       }
     ],
-    "takeaway": "import() modulni kerak paytda yuklaydi va Promise qaytaradi.\nLazy loading va shartli yuklash uchun ishlatiladi.\nasync function* asinxron generator yaratadi.\nfor await...of asinxron iteratorni ketma-ket o‘qiydi.\nOddiy for...of asinxron iterator uchun yaramaydi.",
-    "exercise": "1) import() va oddiy import farqi?\n2) import() nima qaytaradi?\n3) for await...of qachon kerak?\n4) async function* nima yaratadi?"
+    "takeaway": "Dynamic import kerak bo‘lganda modulni yuklaydi va Promise qaytaradi.\nimport() rad etilishi mumkin, shuning uchun catch kerak.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Async generator bilan 1 dan 3 gacha qiymat bering va for await bilan yig‘ing. Keyin tugma bosilganda alohida math.mjs modulini import qiladigan sahifa yarating.\n\nQo‘shimcha savollar:\n1) import() va oddiy import farqi?\n2) import() nima qaytaradi?\n3) for await...of qachon kerak?\n4) async function* nima yaratadi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "(async () => {\n  async function* g() { yield 3; yield 4; }\n  const it = g();\n  console.log((await it.next()).value);\n  console.log((await it.next()).value);\n  console.log((await it.next()).done);\n})();",
+    "exerciseExpected": [
+      3,
+      4,
+      true
+    ],
+    "exerciseRuntime": "async",
+    "exerciseAnswer": "1. 3 — birinchi yield\n2. 4 — ikkinchi yield\n3. true — generator tugadi\n\nLoyihani yechish yo‘li: Generator next natijalaridagi done qiymatini kuzating. import xatosini try/catch bilan tuting; tugmani yuklanish davomida boshqaring. Modul yo‘li va fayl kengaytmasini aniq yozing.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of"
+      }
+    ]
   },
   {
     "id": "promise-combinators",
     "title": "Promise kombinatorlari: all, race, allSettled, any",
     "question": "Promise.all, race, allSettled va any farqi nima? Qaysi birini qachon ishlatish kerak?",
-    "explanation": "Bu metodlar bir nechta Promise ni birlashtiradi. Farqi: qachon bajariladi va xatoga qanday munosabat qiladi. Intervyuda to‘rttasini farqlash ko‘p so‘raladi.",
+    "explanation": "Bir nechta Promise bilan ishlaganda qaysi natija kerakligini tanlaymiz: all — hammasi muvaffaqiyatli, allSettled — hammasining holati, race — birinchi yakun, any — birinchi muvaffaqiyat. Bu metodlar ishlarni o‘z-o‘zidan boshlamaydi; ularga allaqachon yaratilgan Promise lar ham berilishi mumkin.\n\nAsinxron misollarni alohida ishga tushiring va callback natijalarini kuting. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Promise.all",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "all natijani kirish tartibida beradi. allSettled rad etilgan ish sababini ham saqlaydi; bittasi xato bo‘lgani uchun qolgan natijalar yo‘qolmaydi.",
+        "code": "(async () => {\n  console.log(await Promise.all([Promise.resolve(1), Promise.resolve(2)]));\n  const r = await Promise.allSettled([Promise.resolve(\"ok\"), Promise.reject(\"xato\")]);\n  console.log(r.map(x => x.status));\n})();",
+        "expectedOutput": [
+          [
+            1,
+            2
+          ],
+          [
+            "fulfilled",
+            "rejected"
+          ]
+        ],
+        "exampleRuntime": "async",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [[1, 2], [\"fulfilled\", \"rejected\"]]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Promise.all",
         "text": "Barchasi bajarilsa, natijalar massivini qaytaradi. Birortasi rad etilsa, darhol shu xato bilan rad etiladi.",
         "code": "console.log(await Promise.all([\n  Promise.resolve(1),\n  Promise.resolve(2)\n])); // [1, 2]\n\n// Promise.all([Promise.resolve(1), Promise.reject(\"xato\")])\n// → rad etiladi: \"xato\""
       },
       {
-        "title": "2. Promise.race",
+        "title": "3. Promise.race",
         "text": "Birinchisi tugagan (bajarilgan yoki rad etilgan) natijani qaytaradi. Qolganlar kutilmaydi. Timeout bilan ishlatish uchun qulay.",
         "code": "const sekin = new Promise(r => setTimeout(() => r(\"sekin\"), 100));\nconst tez = new Promise(r => setTimeout(() => r(\"tez\"), 10));\nconsole.log(await Promise.race([sekin, tez])); // tez"
       },
       {
-        "title": "3. Promise.allSettled",
-        "text": "Barchasini kutadi, lekin xatolarda rad etilmaydi. Har birining holati va natijasini qaytaradi: { status: \"fulfilled\", value } yoki { status: \"rejected\", reason }.",
+        "title": "4. Promise.allSettled",
+        "text": "Yaroqli iterable dagi barcha ishlarning settlementini kutadi. Har bir ish rad etilishi umumiy natijani rad qilmaydi: status va value yoki reason qaytariladi. Iterable ni olishning o‘zi xato bersa, umumiy Promise rad etilishi mumkin.",
         "code": "console.log(await Promise.allSettled([\n  Promise.resolve(1),\n  Promise.reject(\"xato\")\n]));\n// [{status:\"fulfilled\",value:1}, {status:\"rejected\",reason:\"xato\"}]"
       },
       {
-        "title": "4. Promise.any",
+        "title": "5. Promise.any",
         "text": "Birinchisi muvaffaqiyatli bajarilgan natijani qaytaradi. Hammasi rad etilsa, AggregateError beradi. race dan farqi: rad etishlarni e'tiborga olmaydi.",
         "code": "console.log(await Promise.any([\n  Promise.reject(\"birinchi xato\"),\n  Promise.resolve(\"muvaffaqiyat\")\n])); // muvaffaqiyat"
       },
       {
-        "title": "5. Timeout namunasi",
+        "title": "6. Timeout namunasi",
         "text": "race bilan so‘rovga vaqt cheklovi qo‘yish mumkin: vaqt tugasa, rad etilgan Promise yutadi.",
         "code": "const timeout = new Promise((_, reject) =>\n  setTimeout(() => reject(new Error(\"vaqt tugadi\")), 1000)\n);\ntry {\n  await Promise.race([fetch(\"/api\"), timeout]);\n} catch (e) {\n  console.log(e.message); // vaqt tugadi bo'lishi mumkin\n}"
+      },
+      {
+        "title": "7. Natija tartibi bajarilish tezligi emas",
+        "text": "all natijalarni kirish tartibida yig‘adi. Natija tugagach boshqa ishlarni to‘xtatish kerak bo‘lsa API ning bekor qilish mexanizmini alohida qo‘llang.",
+        "code": "(async () => {\n  const a = Promise.resolve(\"bir\");\n  const b = Promise.resolve(\"ikki\");\n  console.log(await Promise.all([b, a]));\n})();",
+        "expectedOutput": [
+          [
+            "ikki",
+            "bir"
+          ]
+        ],
+        "exampleRuntime": "async"
+      },
+      {
+        "title": "8. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "all/race qaytgani qolgan ishlarni avtomatik bekor qilmaydi. Timeoutni race bilan yutqazish fetch ni to‘xtatmaydi: AbortController kerak. all([]) bo‘sh massiv bilan fulfilled, any([]) AggregateError bilan rejected, race([]) esa pending qoladi. any natijasidagi errors tartibi kirish tartibiga mos."
+      },
+      {
+        "title": "9. Kichik amaliy loyiha",
+        "text": "Uchta mustaqil ishni allSettled bilan ishga tushiring. Muvaffaqiyatli qiymatlarni va xatolarni ikki ro‘yxatga ajrating. Boshqa variantda birinchi muvaffaqiyatni any bilan oling."
       }
     ],
-    "takeaway": "all — hammasi bajarilsa natija, bitta xato → rad.\nrace — birinchisi tugagani (xato ham bo'lishi mumkin).\nallSettled — hammasini kutadi, holatlarni qaytaradi.\nany — birinchisi muvaffaqiyatli bo'lgani; hammasi xato → AggregateError.\nrace bilan timeout yozish qulay.",
-    "exercise": "1) all va allSettled farqi?\n2) race va any farqi nima?\n3) Hammasi rad etilsa, any nima beradi?\n4) Timeout uchun qaysi kombinator ishlatiladi?"
+    "takeaway": "Bir nechta Promise bilan ishlaganda qaysi natija kerakligini tanlaymiz: all — hammasi muvaffaqiyatli, allSettled — hammasining holati, race — birinchi yakun, any — birinchi muvaffaqiyat.\nall/race qaytgani qolgan ishlarni avtomatik bekor qilmaydi.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Uchta mustaqil ishni allSettled bilan ishga tushiring. Muvaffaqiyatli qiymatlarni va xatolarni ikki ro‘yxatga ajrating. Boshqa variantda birinchi muvaffaqiyatni any bilan oling.\n\nQo‘shimcha savollar:\n1) all va allSettled farqi?\n2) race va any farqi nima?\n3) Hammasi rad etilsa, any nima beradi?\n4) Timeout uchun qaysi kombinator ishlatiladi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "(async () => {\n  console.log(await Promise.all([]));\n  console.log(await Promise.any([Promise.reject(\"x\"), Promise.resolve(\"ok\")]));\n  try { await Promise.any([]); }\n  catch (e) { console.log(e.name); }\n})();",
+    "exerciseExpected": [
+      [],
+      "ok",
+      "AggregateError"
+    ],
+    "exerciseRuntime": "async",
+    "exerciseAnswer": "1. [] — kutadigan ish yo‘q\n2. \"ok\" — birinchi muvaffaqiyat tanlandi\n3. \"AggregateError\" — muvaffaqiyatli element yo‘q\n\nLoyihani yechish yo‘li: Natijalarni status === \"fulfilled\" bo‘yicha filter qiling, value ni oling. Rejected holatda reason dan xabar tayyorlang. Bo‘sh kirishni ham test qiling.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"
+      }
+    ]
   },
   {
     "id": "node-basics",
     "title": "Node.js asoslari: require, ESM, process",
     "question": "Node.js nima? CommonJS va ESM farqi? process va global obyektlar nima?",
-    "explanation": "Node.js — JavaScript’ni brauzersiz, serverda ishga tushiradigan muhit. Uning o‘z global obyektlari bor: process, Buffer, require. Kod o‘qiyotganda avval modul tizimini aniqla: require (CommonJS) yoki import (ESM).",
+    "explanation": "Node.js JavaScript’ni brauzerdan tashqarida bajaradigan muhit. Unda odatda document yo‘q, lekin fayl, server va process API lari bor. .cjs CommonJS, .mjs ES modul uchun aniq kengaytma. Loyihadagi package.json type ham .js fayl talqiniga ta’sir qiladi.\n\nNode.js misollarini alohida .cjs yoki .mjs fayliga yozib, terminalda node bilan bajaring. Brauzer konsoli Node.js modullarini bermaydi. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. CommonJS: require va module.exports",
-        "text": "Node.js ning eski va hali ham keng tarqalgan modul tizimi. module.exports bilan eksport qilinadi, require() bilan olinadi. require sinxron bajariladi.",
-        "code": "// math.js\nmodule.exports = { yig(a, b) { return a + b; } };\n\n// app.js\nconst math = require(\"./math.js\");\nconsole.log(math.yig(1, 2)); // 3"
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "require built-in modulni oladi, paket o‘rnatish kerak emas. process.argv massiv bo‘lgani uchun typeof object. Terminalda Node ishlaydi, bu kodni oddiy brauzer konsoliga yozmang.",
+        "code": "// demo.cjs: node demo.cjs\nconst path = require(\"node:path\");\nconsole.log(path.extname(\"dars.js\"));\nconsole.log(typeof process.argv);",
+        "expectedOutput": [
+          ".js",
+          "object"
+        ],
+        "exampleRuntime": "node",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\".js\", \"object\"]. Har bir console.log bitta natija beradi."
       },
       {
-        "title": "2. ESM: import va export",
-        "text": "Zamonaviy standart. Fayl .mjs bo‘lsa yoki package.json da \"type\": \"module\" bo‘lsa ishlaydi. import asinxron yuklanadi va faqat yuqorida yoziladi.",
+        "title": "2. CommonJS: require va module.exports",
+        "text": "Node.js ning eski va hali ham keng tarqalgan modul tizimi. module.exports bilan eksport qilinadi, require() bilan olinadi. require sinxron bajariladi.",
+        "code": "// math.cjs\nmodule.exports = { yig(a,b) { return a+b; } };\n\n// app.cjs — alohida fayl\nconst math = require(\"./math.cjs\");\nconsole.log(math.yig(1,2)); // 3"
+      },
+      {
+        "title": "3. ESM: import va export",
+        "text": "ES modul uchun .mjs yoki .js ni type:\"module\" package ichida ishlating. Static import modul yuqori darajasida e’lon qilinadi; dynamic import() Promise qaytaradi. Fayl kengaytmasi va yo‘llar aniq bo‘lsin.",
         "code": "// package.json: { \"type\": \"module\" }\n// math.js\nexport const yig = (a, b) => a + b;\n\n// app.js\nimport { yig } from \"./math.js\";\nconsole.log(yig(1, 2));"
       },
       {
-        "title": "3. Ikki tizimni aralashtirmaslik",
-        "text": "Bir faylda require va import ni birga ishlatish xato beradi. Loyihada bitta tizim tanlanadi.",
-        "code": "// import x from \"x\";\n// const y = require(\"y\"); // SyntaxError"
+        "title": "4. Ikki tizimni aralashtirmaslik",
+        "text": "CJS va ESM bir loyihada mos chegaralar orqali ishlashi mumkin. ESM ichida oddiy global require yo‘q; createRequire kabi bridge kerak bo‘lishi mumkin. Zamonaviy Node ba’zi sinxron ESM modullarni require qila oladi, top-level await kabi cheklovlar bor; versiya qoidalarini tekshiring.",
+        "code": "// bridge.mjs\nimport { createRequire } from \"node:module\";\nconst require = createRequire(import.meta.url);\nconst path = require(\"node:path\");\nconsole.log(path.extname(\"app.cjs\")); // \".cjs\""
       },
       {
-        "title": "4. process obyekti",
+        "title": "5. process obyekti",
         "text": "process — joriy Node.js jarayoni. process.argv komanda satri argumentlari, process.env muhit o‘zgaruvchilari, process.exit() jarayonni tugatadi.",
         "code": "console.log(process.argv); // [node, fayl, arg1, ...]\nconsole.log(process.env.NODE_ENV); // \"production\" bo'lishi mumkin\nconsole.log(process.platform); // \"darwin\", \"win32\", \"linux\"\n// process.exit(1); // xato kodi bilan tugatish"
       },
       {
-        "title": "5. __dirname va __filename",
+        "title": "6. __dirname va __filename",
         "text": "CommonJS da joriy fayl va papka yo‘li bor. ESM da ular yo‘q: import.meta.url ishlatiladi.",
-        "code": "// CommonJS:\nconsole.log(__dirname);\nconsole.log(__filename);\n\n// ESM:\nconsole.log(import.meta.url);"
+        "code": "// CJS (.cjs) faylda:\n// console.log(__dirname);\n// console.log(__filename);\n\n// ES modul (.mjs) faylda:\nimport { fileURLToPath } from \"node:url\";\nconsole.log(fileURLToPath(import.meta.url));"
+      },
+      {
+        "title": "7. Muhit sozlamalarini aniq aylantirish",
+        "text": "process.env qiymatlari odatda string yoki undefined. \"false\" stringi truthy; sonli sozlamani Number va diapazon bilan tekshiring. Tashqi qiymatni bevosita ishonchli tur deb olmang.",
+        "code": "const raw = \"3000\";\nconst port = Number(raw);\nconsole.log(Number.isInteger(port) && port > 0 && port <= 65535);",
+        "expectedOutput": [
+          true
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "8. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "require ESM ichida odatda global berilmaydi; kerakli holatda createRequire ishlatiladi. CJS va ESM bir loyihada mos chegaralar bilan birga yashashi mumkin. Bu har doim SyntaxError emas. Static import yuqori darajada, import() esa shart ichida ham mumkin. process.cwd joriy ishchi papka, fayl katalogi bilan bir xil bo‘lishi shart emas."
+      },
+      {
+        "title": "9. Kichik amaliy loyiha",
+        "text": "hello.cjs faylini node hello.cjs Ali bilan ishga tushiring. process.argv[2] dan ism oling, keyin qosh funksiyasini alohida .cjs va .mjs modulga ajratib sinang."
       }
     ],
-    "takeaway": "CommonJS: require + module.exports, sinxron.\nESM: import + export, asinxron, package.json type module.\nIkkisini bir faylda aralashtirib bo'lmaydi.\nprocess argv/env/exit/platform beradi.\n__dirname CommonJS da, ESM da import.meta.url.",
-    "exercise": "1) require va import farqi nima?\n2) process.argv nima beradi?\n3) ESM da __dirname o'rniga nima ishlatiladi?\n4) Nega ikki tizimni aralashtirish xato?"
+    "takeaway": "Node.js JavaScript’ni brauzerdan tashqarida bajaradigan muhit.\nrequire ESM ichida odatda global berilmaydi; kerakli holatda createRequire ishlatiladi.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: hello.cjs faylini node hello.cjs Ali bilan ishga tushiring. process.argv[2] dan ism oling, keyin qosh funksiyasini alohida .cjs va .mjs modulga ajratib sinang.\n\nQo‘shimcha savollar:\n1) require va import farqi nima?\n2) process.argv nima beradi?\n3) ESM da __dirname o'rniga nima ishlatiladi?\n4) Nega ikki tizimni aralashtirish xato?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const path = require(\"node:path\");\nconsole.log(path.extname(\"app.mjs\"));\nconsole.log(typeof process);\nconsole.log(process.argv[2]);",
+    "exerciseExpected": [
+      ".mjs",
+      "object",
+      "Ali"
+    ],
+    "exerciseRuntime": "node",
+    "exerciseAnswer": "1. \".mjs\" — kengaytma\n2. \"object\" — Node jarayoni API si\n3. \"Ali\" — node demo.cjs Ali dagi uchinchi argument\n\nLoyihani yechish yo‘li: const ism=process.argv[2] ?? \"Mehmon\". .cjs uchun module.exports/require, .mjs uchun export/import yozing. Fayl yo‘llarini ./ bilan aniq bering.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://nodejs.org/api/packages.html"
+      }
+    ]
   },
   {
     "id": "node-fs-path",
     "title": "Node.js: fs va path bilan ishlash",
     "question": "Fayl o‘qish/yozish qanday? sync, callback va Promise farqi? path nima qiladi?",
-    "explanation": "fs moduli fayllar bilan ishlaydi: o‘qish, yozish, o‘chirish. Har bir amal uchun uch xil shakl bor: sinxron (Sync), callback va Promise (fs/promises). path esa yo‘llarni boshqarish uchun, turli OS larda to‘g‘ri ishlaydi.",
+    "explanation": "fs fayllarni o‘qish/yozish, path esa yo‘llarni tuzish uchun. Matn o‘qishda utf8 berilmasa ko‘pincha Buffer olasiz. Async fs Promise kutish paytida event loop ni band qilmaydi; sinxron usul joriy oqimni bloklaydi. Quyidagi mustaqil misol faqat o‘zi yaratgan vaqtinchalik papkada ishlaydi.\n\nNode.js misollarini alohida .cjs yoki .mjs fayliga yozib, terminalda node bilan bajaring. Brauzer konsoli Node.js modullarini bermaydi. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Uch usul",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "mkdtemp alohida katalog yaratadi. writeFile matn yozadi, readFile uni qaytaradi. finally faqat o‘zi yaratgan katalogni tozalaydi. Haqiqiy loyiha fayllari bilan yozishdan oldin yo‘lni tekshiring.",
+        "code": "const fs = require(\"node:fs/promises\");\nconst os = require(\"node:os\");\nconst path = require(\"node:path\");\n(async () => {\n  const dir = await fs.mkdtemp(path.join(os.tmpdir(), \"js-dars-\"));\n  try {\n    const file = path.join(dir, \"salom.txt\");\n    await fs.writeFile(file, \"Salom\", \"utf8\");\n    console.log(await fs.readFile(file, \"utf8\"));\n    console.log(path.extname(file));\n  } finally { await fs.rm(dir, { recursive: true, force: true }); }\n})();",
+        "expectedOutput": [
+          "Salom",
+          ".txt"
+        ],
+        "exampleRuntime": "node",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"Salom\", \".txt\"]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Uch usul",
         "text": "readFileSync darhol natija qaytaradi va boshqa kodni bloklaydi. readFile callback oladi. fs/promises dagi readFile Promise qaytaradi — zamonaviy usul.",
-        "code": "const fs = require(\"fs\");\n\n// sinxron (bloklaydi):\nconst matn = fs.readFileSync(\"fayl.txt\", \"utf8\");\n\n// callback:\nfs.readFile(\"fayl.txt\", \"utf8\", (err, data) => {\n  if (err) throw err;\n  console.log(data);\n});\n\n// Promise (zamonaviy):\nconst fsProm = require(\"fs/promises\");\nconst data = await fsProm.readFile(\"fayl.txt\", \"utf8\");"
+        "code": "// sync.cjs\nconst fs = require(\"node:fs\");\nconsole.log(fs.readFileSync(\"fayl.txt\", \"utf8\"));\n\n// callback.cjs — alohida fayl\nconst fs2 = require(\"node:fs\");\nfs2.readFile(\"fayl.txt\", \"utf8\", (err, data) => {\n  if (err) { console.error(err.code); return; }\n  console.log(data);\n});\n\n// promise.mjs — alohida fayl\nimport { readFile } from \"node:fs/promises\";\nconsole.log(await readFile(\"fayl.txt\", \"utf8\"));"
       },
       {
-        "title": "2. Yozish",
+        "title": "3. Yozish",
         "text": "writeFile faylga yozadi. Agar fayl bor bo‘lsa, ustiga yozadi. flags bilan qo‘shimcha qilish mumkin.",
-        "code": "await fsProm.writeFile(\"natija.txt\", \"Salom\");\nawait fsProm.appendFile(\"natija.txt\", \"\\nYana satr\");\nawait fsProm.mkdir(\"papka\", { recursive: true });\nawait fsProm.unlink(\"fayl.txt\"); // o'chirish"
+        "code": "// Alohida mashq papkasidagi yozish.mjs\nimport { writeFile, appendFile, readFile } from \"node:fs/promises\";\nawait writeFile(\"mashq.txt\", \"Salom\", \"utf8\");\nawait appendFile(\"mashq.txt\", \"\\nYana satr\", \"utf8\");\nconsole.log(await readFile(\"mashq.txt\", \"utf8\"));"
       },
       {
-        "title": "3. Xatolarni tekshirish",
+        "title": "4. Xatolarni tekshirish",
         "text": "Fayl yo‘q bo‘lsa, xato yuz beradi. Callback da err birinchi argument, Promise da try/catch ishlatiladi.",
-        "code": "try {\n  const d = await fsProm.readFile(\"yoq.txt\", \"utf8\");\n} catch (e) {\n  console.log(e.code); // ENOENT\n}"
+        "code": "// error.mjs\nimport { readFile } from \"node:fs/promises\";\ntry { await readFile(\"yoq.txt\", \"utf8\"); }\ncatch (e) { console.log(e.code); } // yo‘q faylda ENOENT"
       },
       {
-        "title": "4. path moduli",
+        "title": "5. path moduli",
         "text": "path.join qismlarni to‘g‘ri ajratgich bilan birlashtiradi. path.resolve mutlaq yo‘l yaratadi. path.extname kengaytmani oladi.",
         "code": "const path = require(\"path\");\nconsole.log(path.join(\"papka\", \"fayl.txt\")); // papka/fayl.txt\nconsole.log(path.resolve(\"fayl.txt\")); // /to/liq/yol/fayl.txt\nconsole.log(path.extname(\"fayl.txt\")); // \".txt\"\nconsole.log(path.basename(\"/a/b/fayl.txt\")); // \"fayl.txt\""
       },
       {
-        "title": "5. Nega join kerak?",
+        "title": "6. Nega join kerak?",
         "text": "Windows da \"\\\", macOS/Linux da \"/\" ishlatiladi. path.join har tizimda to‘g‘ri ajratgich qo‘yadi.",
-        "code": "// noto'g'ri:\nconst p = \"papka/\" + \"fayl.txt\";\n// to'g'ri:\nconst p2 = path.join(\"papka\", \"fayl.txt\");"
+        "code": "const path = require(\"node:path\");\nconsole.log(path.join(\"papka\", \"fayl.txt\")); // ajratgich muhitga mos"
+      },
+      {
+        "title": "7. Buffer va matn kodlash",
+        "text": "Faylda baytlar saqlanadi. UTF-8 dekodlash matn qiladi. Buffer.length baytlarni, string.length UTF-16 birliklarini sanaydi; ularni bir xil o‘lchov deb olmang.",
+        "code": "const b = Buffer.from(\"😀\", \"utf8\");\nconsole.log(b.length);\nconsole.log(b.toString(\"utf8\").length);",
+        "expectedOutput": [
+          4,
+          2
+        ],
+        "exampleRuntime": "node"
+      },
+      {
+        "title": "8. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "writeFile mavjud faylni almashtiradi; appendFile qo‘shadi. Nisbiy yo‘llar ko‘pincha process.cwd ga bog‘liq. path.join matnni birlashtiradi, foydalanuvchi yo‘lini avtomatik ruxsatli qilmaydi. readFile dan oldin exists tekshirish o‘rniga xatoni tutish odatda race ni kamaytiradi. CJS ichida top-level await yozmang; async IIFE yoki .mjs ishlating."
+      },
+      {
+        "title": "9. Kichik amaliy loyiha",
+        "text": "Alohida mashq papkasiga JSON yozing va qayta o‘qing. Buzilgan JSON bilan yo‘q fayl xatosini ajrating. Faqat mashq uchun yaratilgan fayllarni tozalang."
       }
     ],
-    "takeaway": "fs: readFileSync, readFile(callback), fs/promises (zamonaviy).\nwriteFile/appendFile/mkdir/unlink asosiy amallar.\nXatoni callback da err, Promise da try/catch bilan tut.\npath.join yo‘llarni OS ga mos birlashtiradi.\npath.resolve mutlaq yo‘l, extname kengaytma.",
-    "exercise": "1) Uch o'qish usuli farqi nima?\n2) ENOENT nima?\n3) Nega path.join ishlatish kerak?\n4) path.extname(\"a.txt\") nima beradi?"
+    "takeaway": "fs fayllarni o‘qish/yozish, path esa yo‘llarni tuzish uchun.\nwriteFile mavjud faylni almashtiradi; appendFile qo‘shadi.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Alohida mashq papkasiga JSON yozing va qayta o‘qing. Buzilgan JSON bilan yo‘q fayl xatosini ajrating. Faqat mashq uchun yaratilgan fayllarni tozalang.\n\nQo‘shimcha savollar:\n1) Uch o'qish usuli farqi nima?\n2) ENOENT nima?\n3) Nega path.join ishlatish kerak?\n4) path.extname(\"a.txt\") nima beradi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const path = require(\"node:path\");\nconsole.log(path.extname(\"dars.json\"));\nconsole.log(path.basename(\"dars.json\"));\nconsole.log(path.posix.join(\"a\", \"b.txt\"));",
+    "exerciseExpected": [
+      ".json",
+      "dars.json",
+      "a/b.txt"
+    ],
+    "exerciseRuntime": "node",
+    "exerciseAnswer": "1. \".json\" — kengaytma\n2. \"dars.json\" — faylning nomi\n3. \"a/b.txt\" — POSIX usulida birlashtirilgan yo‘l\n\nLoyihani yechish yo‘li: fs/promises bilan await writeFile(JSON.stringify(...)) va readFile(\"utf8\") ishlating. catch da e.code === \"ENOENT\" ni JSON SyntaxError dan farqlang.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://nodejs.org/api/fs.html"
+      }
+    ]
   },
   {
     "id": "node-streams",
     "title": "Node.js: stream va event emitter",
     "question": "Stream nima? Nega katta fayllarda readFile yomon? pipe va EventEmitter qanday ishlaydi?",
-    "explanation": "Stream — ma’lumotni qismlarga (chunk) oqim sifatida o‘qish/yozish usuli. Katta faylni to‘liq xotiraga olish o‘rniga, qism-qism ishlaydi. EventEmitter — hodisalar asosida ishlash mexanizmi, Node.js ning ko‘p qismi shunga asoslangan.",
+    "explanation": "Stream katta ma’lumotni bo‘laklab uzatadi. Readable beradi, Writable qabul qiladi, Duplex ikkisini, Transform esa o‘zgartirishni bajaradi. Iste’molchi sekin bo‘lsa backpressure ishlab chiqarish tezligini boshqaradi. pipeline ulash va xato/tozalashni muvofiqlashtiradi.\n\nNode.js misollarini alohida .cjs yoki .mjs fayliga yozib, terminalda node bilan bajaring. Brauzer konsoli Node.js modullarini bermaydi. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Nega stream?",
-        "text": "readFile butun faylni xotiraga oladi. 10 GB faylda xotira tugaydi. Stream esa har qismni alohida qayta ishlaydi.",
-        "code": "const fs = require(\"fs\");\n// yomon: butun fayl xotirada\n// const data = fs.readFileSync(\"katta.txt\");\n\n// yaxshi: qism-qism\nconst stream = fs.createReadStream(\"katta.txt\", \"utf8\");\nstream.on(\"data\", chunk => console.log(chunk.length));\nstream.on(\"end\", () => console.log(\"tugadi\"));"
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Readable ikki bo‘lak beradi, Writable ularni qabul qiladi. done() shu bo‘lak tugaganini bildiradi. pipeline Promise si yakunlangach yig‘ilgan natijani chiqardik.",
+        "code": "const { Readable, Writable } = require(\"node:stream\");\nconst { pipeline } = require(\"node:stream/promises\");\n(async () => {\n  const bolaklar = [];\n  const chiqish = new Writable({\n    write(chunk, encoding, done) { bolaklar.push(chunk.toString()); done(); }\n  });\n  await pipeline(Readable.from([\"Salom\", \" JS\"]), chiqish);\n  console.log(bolaklar.join(\"\"));\n})();",
+        "expectedOutput": [
+          "Salom JS"
+        ],
+        "exampleRuntime": "node",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"Salom JS\"]. Har bir console.log bitta natija beradi."
       },
       {
-        "title": "2. pipe",
+        "title": "2. Nega stream?",
+        "text": "readFile butun faylni xotiraga oladi. Katta faylda bu katta xotira talab qiladi yoki limitga yetadi. Stream esa bo‘laklab o‘qib, iste’mol tezligini boshqarishga yordam beradi.",
+        "code": "const fs = require(\"fs\");\n// yomon: butun fayl xotirada\n// const data = fs.readFileSync(\"katta.txt\");\n\n// yaxshi: qism-qism\nconst stream = fs.createReadStream(\"katta.txt\", \"utf8\");\nstream.on(\"data\", chunk => console.log(chunk.length));\nstream.on(\"end\", () => console.log(\"tugadi\"));\nstream.on(\"error\", e => console.error(e.code));"
+      },
+      {
+        "title": "3. pipe",
         "text": "pipe o‘qish oqimini yozish oqimiga ulaydi. Katta faylni nusxalash uchun eng qisqa usul.",
-        "code": "const oqish = fs.createReadStream(\"kirish.txt\");\nconst chiqish = fs.createWriteStream(\"chiqish.txt\");\noqish.pipe(chiqish);\nchiqish.on(\"finish\", () => console.log(\"nusxalandi\"));"
+        "code": "const fs = require(\"node:fs\");\nconst { pipeline } = require(\"node:stream/promises\");\n(async () => {\n  try {\n    await pipeline(fs.createReadStream(\"kirish.txt\"), fs.createWriteStream(\"chiqish.txt\"));\n    console.log(\"nusxalandi\");\n  } catch (e) { console.error(e.code || e.message); }\n})();"
       },
       {
-        "title": "3. EventEmitter",
+        "title": "4. EventEmitter",
         "text": "EventEmitter hodisa chiqarish va tinglash uchun. on() tinglaydi, emit() chiqaradi. Node.js da ko‘p obyektlar undan meros oladi.",
         "code": "const EventEmitter = require(\"events\");\nconst e = new EventEmitter();\ne.on(\"salom\", ism => console.log(\"Salom\", ism));\ne.emit(\"salom\", \"Ali\"); // Salom Ali"
       },
       {
-        "title": "4. Xato hodisasi",
+        "title": "5. Xato hodisasi",
         "text": "Stream da error hodisasi bor. Uni tinglamasang, jarayon o‘chib qolishi mumkin.",
-        "code": "const s = fs.createReadStream(\"yoq.txt\");\ns.on(\"error\", err => console.log(\"Xato:\", err.code));"
+        "code": "const fs = require(\"node:fs\");\nconst s = fs.createReadStream(\"yoq.txt\");\ns.on(\"error\", e => console.log(e.code));"
       },
       {
-        "title": "5. To‘rtta stream turi",
+        "title": "6. To‘rtta stream turi",
         "text": "Readable (o‘qish), Writable (yozish), Duplex (ikkisi ham), Transform (o‘zgartirib o‘tadi).",
-        "code": "const { Transform } = require(\"stream\");\nconst katta = new Transform({\n  transform(chunk, enc, cb) {\n    cb(null, chunk.toString().toUpperCase());\n  }\n});\nfs.createReadStream(\"a.txt\").pipe(katta).pipe(fs.createWriteStream(\"b.txt\"));"
+        "code": "const fs = require(\"node:fs\");\nconst { Transform } = require(\"node:stream\");\nconst { pipeline } = require(\"node:stream/promises\");\nconst katta = new Transform({ transform(chunk, enc, cb) { cb(null, chunk.toString().toUpperCase()); } });\npipeline(fs.createReadStream(\"a.txt\", \"utf8\"), katta, fs.createWriteStream(\"b.txt\"))\n  .catch(e => console.error(e.message));"
+      },
+      {
+        "title": "7. UTF-8 bo‘laklarini xavfsiz birlashtirish",
+        "text": "StringDecoder qisman kelgan baytlarni keyingi bo‘lak bilan birlashtirib dekodlaydi. Chunkni har safar alohida toString qilish ayrim belgilarni buzishi mumkin.",
+        "code": "const { StringDecoder } = require(\"node:string_decoder\");\nconst d = new StringDecoder(\"utf8\");\nconsole.log(d.write(Buffer.from([0xE2])));\nconsole.log(d.write(Buffer.from([0x82, 0xAC])));",
+        "expectedOutput": [
+          "",
+          "€"
+        ],
+        "exampleRuntime": "node"
+      },
+      {
+        "title": "8. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Chunk bitta satr yoki bitta JSON obyekt bilan teng bo‘lishi shart emas. UTF-8 belgi bo‘laklar orasida bo‘linishi mumkin: decodingni to‘g‘ri bajaring. pipe xatolarni barcha ishtirokchilarda to‘liq avtomatik tutish vositasi emas; pipeline qulayroq. EventEmitter error hodisasi listenersiz qolsa jarayon xato bilan tugashi mumkin."
+      },
+      {
+        "title": "9. Kichik amaliy loyiha",
+        "text": "Kichik faylni pipeline bilan nusxalang. Yo‘q kirish fayli uchun xatoni tuting. EventEmitter da on, once va off farqlarini sinang."
       }
     ],
-    "takeaway": "Stream ma’lumotni qism-qism ishlaydi, xotirani tejaydi.\npipe o‘qishni yozishga ulaydi.\nEventEmitter: on() tingla, emit() chiqar.\nerror hodisasini tinglash shart.\nReadable, Writable, Duplex, Transform — to‘rt tur.",
-    "exercise": "1) Nega katta faylda readFile yomon?\n2) pipe nima qiladi?\n3) on va emit farqi?\n4) Stream da error ni tinglamasang nima bo'ladi?"
+    "takeaway": "Stream katta ma’lumotni bo‘laklab uzatadi.\nChunk bitta satr yoki bitta JSON obyekt bilan teng bo‘lishi shart emas.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Kichik faylni pipeline bilan nusxalang. Yo‘q kirish fayli uchun xatoni tuting. EventEmitter da on, once va off farqlarini sinang.\n\nQo‘shimcha savollar:\n1) Nega katta faylda readFile yomon?\n2) pipe nima qiladi?\n3) on va emit farqi?\n4) Stream da error ni tinglamasang nima bo'ladi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const { EventEmitter } = require(\"node:events\");\nconst e = new EventEmitter();\nlet n = 0;\ne.once(\"salom\", () => n++);\ne.emit(\"salom\"); e.emit(\"salom\");\nconsole.log(n);\nconsole.log(e.listenerCount(\"salom\"));",
+    "exerciseExpected": [
+      1,
+      0
+    ],
+    "exerciseRuntime": "node",
+    "exerciseAnswer": "1. 1 — once faqat birinchi emitda ishladi\n2. 0 — bir martalik listener olib tashlandi\n\nLoyihani yechish yo‘li: await pipeline(createReadStream(kirish), createWriteStream(chiqish)) ni try/catch bilan o‘rang. Chiqishning finish holati bilan oddiy data hodisasini adashtirmang.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://nodejs.org/api/stream.html"
+      }
+    ]
   },
   {
     "id": "design-patterns",
     "title": "Design patternlar: Factory, Singleton, Observer, Module",
     "question": "Eng ko‘p so‘raladigan patternlar nima? Qachon qaysi birini ishlatish kerak?",
-    "explanation": "Design pattern — takrorlanadigan muammolarga tasdiqlangan yechim shabloni. Bu kod yozish retsepti emas, balki tuzilma g‘oyasi. Intervyuda ko‘pincha \"bu kod qaysi pattern?\" yoki \"shu muammoni qanday hal qilasiz?\" deb so‘rashadi.",
+    "explanation": "Pattern — qayta uchraydigan muammoni hal qilishning nomlangan usuli. Factory yaratishni ajratadi, Observer o‘zgarish xabarini tarqatadi, Module ichki holatni yashiradi. Pattern ishlatish maqsad emas: avval muammo va soddaroq yechimni aniqlang.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Factory",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Factory bir xil tuzilmani izchil yaratdi. Har chaqirish yangi obyekt berdi. Qaysi tuzilma qaytishini bitta joyda boshqarish mumkin.",
+        "code": "function userYarat(ism, rol = \"user\") {\n  return { ism, rol };\n}\nconst a = userYarat(\"Ali\");\nconst b = userYarat(\"Vali\", \"admin\");\nconsole.log(a.rol);\nconsole.log(b.rol);\nconsole.log(a === b);",
+        "expectedOutput": [
+          "user",
+          "admin",
+          false
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"user\", \"admin\", false]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Factory",
         "text": "Obyekt yaratishni alohida funksiyaga o‘tkazadi. Qaysi tur yaratilishi parametrgabog‘liq. new bilan to‘g‘ridan-to‘g‘ri yaratish o‘rniga ishlatiladi.",
         "code": "function yarat(tur, ism) {\n  if (tur === \"user\") return { ism, rol: \"user\" };\n  if (tur === \"admin\") return { ism, rol: \"admin\" };\n  throw new Error(\"Noma'lum tur\");\n}\nconst u = yarat(\"admin\", \"Ali\");\nconsole.log(u.rol); // admin"
       },
       {
-        "title": "2. Singleton",
+        "title": "3. Singleton",
         "text": "Bir klassdan faqat bitta obyekt bo‘lishini kafolatlaydi. Birinchi chaqirishda yaratilib, keyingilarida shu obyekt qaytariladi.",
         "code": "class Sozlamalar {\n  static instance;\n  constructor() {\n    if (Sozlamalar.instance) return Sozlamalar.instance;\n    this.til = \"uz\";\n    Sozlamalar.instance = this;\n  }\n}\nconst a = new Sozlamalar();\nconst b = new Sozlamalar();\nconsole.log(a === b); // true"
       },
       {
-        "title": "3. Observer (kuzatuvchi)",
+        "title": "4. Observer (kuzatuvchi)",
         "text": "Bir obyekt holati o‘zgarganda, unga bog‘langan barcha kuzatuvchilarga xabar beradi. EventEmitter va reaktiv tizimlarning asosi.",
         "code": "class Kuzatuvchi {\n  constructor() { this.tinglovchilar = []; }\n  qosh(fn) { this.tinglovchilar.push(fn); }\n  xabar(v) { this.tinglovchilar.forEach(fn => fn(v)); }\n}\nconst k = new Kuzatuvchi();\nk.qosh(x => console.log(\"bir:\", x));\nk.qosh(x => console.log(\"ikki:\", x));\nk.xabar(\"yangi\");"
       },
       {
-        "title": "4. Module pattern",
+        "title": "5. Module pattern",
         "text": "Closure bilan ochiq va yopiq qismlarni ajratadi. Faqat qaytarilgan metodlar tashqariga ko‘rinadi.",
         "code": "const hisob = (function () {\n  let son = 0; // yopiq\n  return {\n    oshir() { return ++son; },\n    qiymat() { return son; }\n  };\n})();\nhisob.oshir();\nconsole.log(hisob.qiymat()); // 1\n// hisob.son — ko'rinmaydi"
       },
       {
-        "title": "5. Qachon qaysi?",
+        "title": "6. Qachon qaysi?",
         "text": "Factory — turga qarab obyekt yaratish. Singleton — bitta umumiy holat (sozlamalar, kesh). Observer — holat o‘zgarishini tarqatish. Module — ma’lumotni yashirish.",
         "code": "// umumiy qoida: patternni muammo talab qilsa qo'llan\n// \"har joyda pattern ishlatish\" — yomon odat"
+      },
+      {
+        "title": "7. Unsubscribe qaytaradigan Observer",
+        "text": "Set takroriy ayni funksiya reference ini kamaytiradi. Emit vaqtida snapshot olish listener o‘chishi/qo‘shilishi qoidalarini aniq qiladi.",
+        "code": "function kanal() {\n  const set = new Set();\n  return {\n    subscribe(fn) { set.add(fn); return () => set.delete(fn); },\n    emit(v) { for (const fn of [...set]) fn(v); }\n  };\n}\nconst k = kanal();\nconst off = k.subscribe(x => console.log(x));\nk.emit(\"bir\"); off(); k.emit(\"ikki\");",
+        "expectedOutput": [
+          "bir"
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "8. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Singleton bu kod/muhitda bir instance ni ulashadi, butun internet yoki barcha workerlar bo‘yicha bitta holat kafolati emas. Umumiy singleton testlarni bir-biriga bog‘lashi mumkin. Observer unsubscribe bermasa listenerlar yig‘iladi. Module pattern bilan ES module bir xil mexanizm emas, ikkalasi ham yashirishga yordam berishi mumkin."
+      },
+      {
+        "title": "9. Kichik amaliy loyiha",
+        "text": "Obuna bo‘lish va obunani bekor qilish funksiyasini qaytaradigan kuzatuvchi yozing. Bir tinglovchini o‘chirib, keyingi xabar faqat qolganlariga borishini tekshiring."
       }
     ],
-    "takeaway": "Factory yaratishni funksiyaga o‘tkazadi.\nSingleton bitta obyekt kafolatlaydi.\nObserver holat o‘zgarishini kuzatuvchilarga yetkazadi.\nModule closure bilan ma’lumot yashiradi.\nPattern muammoga yechim, o‘z maqsadi emas.",
-    "exercise": "1) Factory va new farqi nima?\n2) Singleton nega bitta obyekt qaytaradi?\n3) Observer qayerda ishlatiladi?\n4) Module pattern ma’lumotni qanday yashiradi?"
+    "takeaway": "Pattern — qayta uchraydigan muammoni hal qilishning nomlangan usuli.\nSingleton bu kod/muhitda bir instance ni ulashadi, butun internet yoki barcha workerlar bo‘yicha bitta holat kafolati emas.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Obuna bo‘lish va obunani bekor qilish funksiyasini qaytaradigan kuzatuvchi yozing. Bir tinglovchini o‘chirib, keyingi xabar faqat qolganlariga borishini tekshiring.\n\nQo‘shimcha savollar:\n1) Factory va new farqi nima?\n2) Singleton nega bitta obyekt qaytaradi?\n3) Observer qayerda ishlatiladi?\n4) Module pattern ma’lumotni qanday yashiradi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "function yarat() { let n = 0; return { oshir: () => ++n }; }\nconst a = yarat(), b = yarat();\nconsole.log(a.oshir());\nconsole.log(a.oshir());\nconsole.log(b.oshir());\nconsole.log(a.n);",
+    "exerciseExpected": [
+      1,
+      2,
+      1,
+      {
+        "$undefined": true
+      }
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 1 — a holati\n2. 2 — a o‘zini davom ettiradi\n3. 1 — b mustaqil\n4. undefined — closure ichidagi n ochiq maydon emas\n\nLoyihani yechish yo‘li: subscribe(fn) Set ga qo‘shsin va () => set.delete(fn) qaytarsin. emit snapshot bo‘yicha yursin. Listener throw qilsa qolganlari ishlash siyosatini aniq belgilang.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Glossary/Design_pattern"
+      }
+    ]
   },
   {
     "id": "testing-basics",
     "title": "Testing: unit test, Jest va Vitest asoslari",
     "question": "Unit test nima? test/expect qanday yoziladi? Nega test muhim?",
-    "explanation": "Test — kod to‘g‘ri ishlashini avtomatik tekshirish. Unit test bitta funksiyani sinaydi. Jest va Vitest eng mashhur ramkalar: ular test() va expect() beradi. Kod o‘qiyotganda test nomi nimani tekshirishini aytib beradi.",
+    "explanation": "Test — kirish, amal va kutilgan natijani tekshiradigan kichik dastur. “Kodni ishga tushirdim” bilan “natija to‘g‘ri ekanini assert qildim” farq qiladi. Bir test bir aniq xulqni tekshirsin, xato bo‘lsa tushunarli sabab ko‘rsatsin. Jest/Vitest test runner, matcher esa tekshirish ifodasi.\n\nNode.js misollarini alohida .cjs yoki .mjs fayliga yozib, terminalda node bilan bajaring. Brauzer konsoli Node.js modullarini bermaydi. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Oddiy test",
-        "text": "test(nom, fn) bitta holatni sinaydi. expect(natija).toBe(kutilgan) qat’iy tenglikni tekshiradi.",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Bu mustaqil Node .cjs misolida built-in assert ishlatildi, paket kerak emas. Natija boshqa bo‘lsa assert xato beradi va oxirgi logga yetilmaydi. Keyingi bo‘limlarda Jest/Vitest sintaksisi ko‘rsatiladi.",
+        "code": "const assert = require(\"node:assert/strict\");\nfunction qosh(a, b) { return a + b; }\nassert.equal(qosh(2, 3), 5);\nassert.equal(qosh(0, 0), 0);\nconsole.log(\"Tekshiruvlar o‘tdi\");",
+        "expectedOutput": [
+          "Tekshiruvlar o‘tdi"
+        ],
+        "exampleRuntime": "node",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"Tekshiruvlar o‘tdi\"]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Oddiy test",
+        "text": "Test runner muhitida test(nom,fn) bitta holatni tekshiradi. Jest/Vitest expect(natija).toBe(kutilgan) uchun Object.is asosidagi tekshiruv qiladi: NaN teng, +0 va -0 farqli. Obyekt tarkibini toEqual bilan tekshiring.",
         "code": "function yig(a, b) { return a + b; }\n\ntest(\"1 + 2 = 3\", () => {\n  expect(yig(1, 2)).toBe(3);\n});"
       },
       {
-        "title": "2. Ko‘p keng tarqalgan matcherlar",
+        "title": "3. Ko‘p keng tarqalgan matcherlar",
         "text": "toBe qat’iy tenglik, toEqual tarkibni solishtirish (obyekt/massiv), toBeTruthy, toBeFalsy, toContain, toThrow.",
         "code": "expect([1, 2]).toEqual([1, 2]); // tarkib\nexpect({ a: 1 }).toEqual({ a: 1 });\nexpect([]).toBeTruthy();\nexpect([1, 2]).toContain(1);\nexpect(() => { throw new Error(\"x\"); }).toThrow();"
       },
       {
-        "title": "3. Guruh va tayyorgarlik",
+        "title": "4. Guruh va tayyorgarlik",
         "text": "describe bilan testlarni guruhlash. beforeEach har testdan oldin bajariladi, afterEach keyin.",
         "code": "describe(\"hisob\", () => {\n  let hisob;\n  beforeEach(() => { hisob = 0; });\n  test(\"oshirish\", () => { expect(++hisob).toBe(1); });\n});"
       },
       {
-        "title": "4. Sof funksiyalar testi oson",
+        "title": "5. Sof funksiyalar testi oson",
         "text": "Yon ta’siri yo‘q funksiyani sinash oson: kirish berasan, chiqishni tekshirasan. Tashqi holatga bog‘liq funksiyani sinash qiyin.",
         "code": "// yaxshi: sof\nexpect(yig(2, 3)).toBe(5);\n\n// qiyin: tashqi holat va vaqtga bog'liq\n// expect(Date.now()).toBe(...) — ishonchsiz"
       },
       {
-        "title": "5. Qamrov (coverage)",
+        "title": "6. Qamrov (coverage)",
         "text": "Coverage kodning necha foizi test bilan qoplanganini ko‘rsatadi. 100% har doim ham kerak emas: muhim yo‘llarga e’tibor berish yaxshiroq.",
         "code": "// npx vitest run --coverage\n// npx jest --coverage"
+      },
+      {
+        "title": "7. Arrange, Act, Assert va asinxron test",
+        "text": "Avval ma’lumot tayyorlanadi, keyin ish bajariladi, oxirida natija tekshiriladi. Test runner kerakli Promise ni kutishi uchun async testda await bo‘lsin.",
+        "code": "// Vitest: test faylida\nimport { test, expect } from \"vitest\";\ntest(\"Promise natijasi\", async () => {\n  const natija = await Promise.resolve(5);\n  expect(natija).toBe(5);\n});"
+      },
+      {
+        "title": "8. Toza test holati va mock chegarasi",
+        "text": "Mock tashqi tarmoq yoki vaqtni nazorat qiladi. Hammasini mock qilsangiz haqiqiy integratsiya xatolari yashirinishi mumkin. Sof funksiyaga keraksiz mock qo‘shmang; muhim chegaralarni haqiqiy integratsiyada ham tekshiring.",
+        "code": "// Har test o‘z kirishini yaratsin:\nconst kirish = [3, 1, 2];\nconst chiqish = kirish.toSorted((a,b) => a-b);\nconsole.log(kirish);\nconsole.log(chiqish);",
+        "expectedOutput": [
+          [
+            3,
+            1,
+            2
+          ],
+          [
+            1,
+            2,
+            3
+          ]
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "9. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Jest/Vitest dagi toBe Object.is asosida ishlaydi; obyekt tarkibi uchun toEqual. Async test Promise ni return yoki await qilmasa erta o‘tib ketishi mumkin. Boshqa testdan qolgan holat va real vaqt/tarmoq flaky natija beradi. Coverage yuqori bo‘lishi talablar to‘liq tekshirilganini kafolatlamaydi."
+      },
+      {
+        "title": "10. Kichik amaliy loyiha",
+        "text": "Chegirma funksiyasini normal qiymat, 0, chegaraviy foiz va noto‘g‘ri tur bilan test qiling. Asinxron rad etilishni ham await bilan tekshiring."
       }
     ],
-    "takeaway": "Unit test bitta funksiyani sinaydi.\ntest() + expect().toBe() / toEqual() asosiy shakl.\ndescribe guruh, beforeEach tayyorgarlik.\nSof funksiyalarni sinash oson.\nCoverage foiz emas, muhim yo'llar muhim.",
-    "exercise": "1) toBe va toEqual farqi nima?\n2) beforeEach qachon ishlaydi?\n3) Nega sof funksiyani test qilish oson?\n4) Coverage 100% bo'lishi shartmi?"
+    "takeaway": "Test — kirish, amal va kutilgan natijani tekshiradigan kichik dastur.\nJest/Vitest dagi toBe Object.is asosida ishlaydi; obyekt tarkibi uchun toEqual.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Chegirma funksiyasini normal qiymat, 0, chegaraviy foiz va noto‘g‘ri tur bilan test qiling. Asinxron rad etilishni ham await bilan tekshiring.\n\nQo‘shimcha savollar:\n1) toBe va toEqual farqi nima?\n2) beforeEach qachon ishlaydi?\n3) Nega sof funksiyani test qilish oson?\n4) Coverage 100% bo'lishi shartmi?",
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "function qosh(a,b) { return a+b; }\nconsole.log(qosh(2,3) === 5);\nconsole.log(qosh(0,0) === 0);\nconsole.log(Object.is(NaN, NaN));\nconsole.log(Object.is(0, -0));",
+    "exerciseExpected": [
+      true,
+      true,
+      true,
+      false
+    ],
+    "exerciseRuntime": "node",
+    "exerciseAnswer": "1. true — oddiy holat\n2. true — chegaraviy 0\n3. true — Object.is NaN ni teng deb biladi\n4. false — Object.is ishorali nollarni farqlaydi\n\nLoyihani yechish yo‘li: Kutilgan natijani qo‘lda hisoblab yozing. toThrow uchun funksiya reference i, Promise rejection uchun await expect(...).rejects ishlating. BeforeEach orqali kerakli holatni har testga yangidan bering.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://vitest.dev/guide/"
+      }
+    ]
   }
 ];
 
@@ -3977,71 +6264,131 @@ window.lessons.push(...[
     "id": "iife-pure",
     "title": "IIFE va pure function tushunchasi",
     "question": "Darhol chaqiriladigan va sof funksiya qanday ishlaydi?",
-    "explanation": "Funksiyalarni endi ikki tomondan ko‘ramiz: qachon chaqirilishi va tashqi holatga ta’siri. IIFE — yaratilishi bilan chaqiriladigan ifoda. Pure function — bir xil argumentlarga bir xil natija berib, tashqi holatni o‘zgartirmaydigan funksiya.",
+    "explanation": "IIFE — yozilishi bilan chaqiriladigan funksiya ifodasi. Pure function — bir xil argumentga bir xil natija beradigan va tashqi kuzatiladigan holatni o‘zgartirmaydigan funksiya. Biri chaqirish shakli, ikkinchisi xulq: ular bitta tushuncha emas.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. IIFE nima?",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Qavs ichidagi function ifoda bo‘ldi, oxiridagi (2,3) uni darhol chaqirdi. ikki hech narsani tashqarida yangilamaydi va bir xil 4 uchun 8 qaytaradi.",
+        "code": "const natija = (function (a, b) {\n  return a + b;\n})(2, 3);\nconsole.log(natija);\nfunction ikki(x) { return x * 2; }\nconsole.log(ikki(4));\nconsole.log(ikki(4));",
+        "expectedOutput": [
+          5,
+          8,
+          8
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [5, 8, 8]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. IIFE nima?",
         "text": "Funksiya ifodasini qavs ichiga olib, oxiriga () yozsak darhol chaqiriladi. Ichki o‘zgaruvchi tashqariga chiqmaydi.",
         "code": "(function () {\n  const xabar = \"Bir marta ishladi\";\n  console.log(xabar);\n})();\n// console.log(xabar); // ReferenceError"
       },
       {
-        "title": "2. Sof funksiya",
+        "title": "3. Sof funksiya",
         "text": "Natija faqat argumentlarga bog‘liq. Funksiya tashqi o‘zgaruvchini, berilgan massivni yoki sahifani o‘zgartirmaydi. Hisoblangan qiymat return bilan qaytariladi.",
         "code": "function jami(a, b) {\n  return a + b;\n}\nconsole.log(jami(2, 3)); // 5\nconsole.log(jami(2, 3)); // 5"
       },
       {
-        "title": "3. Yon ta’sirni ko‘rish",
+        "title": "4. Yon ta’sirni ko‘rish",
         "text": "Tashqi o‘zgaruvchini yangilash — yon ta’sir. Natija har chaqirishda oldingi holatga bog‘liq bo‘ladi. Bunday ishlar ilovada kerak bo‘lishi mumkin, lekin hisoblashni ulardan ajratish tekshirishni osonlashtiradi.",
         "code": "let sanoq = 0;\nfunction oshir() {\n  sanoq += 1;\n  return sanoq;\n}\nconsole.log(oshir()); // 1\nconsole.log(oshir()); // 2"
       },
       {
-        "title": "4. Massivni o‘zgartirmasdan natija olish",
+        "title": "5. Massivni o‘zgartirmasdan natija olish",
         "text": "push kirish massivini o‘zgartiradi. Spread bilan yangi massiv qaytarish tashqi massivni o‘zgartirmaydi. Bu yerda elementlar oddiy sonlar bo‘lgani uchun yuzaki nusxa yetarli.",
         "code": "function qosh(sonlar, son) {\n  return [...sonlar, son];\n}\nconst asl = [1, 2];\nconsole.log(qosh(asl, 3)); // [1, 2, 3]\nconsole.log(asl);         // [1, 2]"
+      },
+      {
+        "title": "6. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Sof funksiya ichida mahalliy vaqtinchalik o‘zgaruvchi ishlatish mumkin; muammo tashqi kuzatiladigan holatni o‘zgartirishda. Kirgan massivga push yoki obyektga yozish yon ta’sirdir. Date.now, Math.random va o‘zgaruvchan tashqi ma’lumot natijani faqat argumentga bog‘liq qilmaydi. IIFE modul o‘rnini hamma joyda bosmaydi."
+      },
+      {
+        "title": "7. Kichik amaliy loyiha",
+        "text": "Savatchaga mahsulot qo‘shadigan sof funksiya yozing: eski massivga push qilmasin, yangi massiv qaytarsin. Natija va asl qiymatni alohida tekshiring."
       }
     ],
-    "takeaway": "IIFE darhol ishlaydi; pure function tashqi holatni o‘zgartirmaydi. Math.random va hozirgi vaqtga bog‘liq natija odatda sof bo‘lmaydi.",
-    "exercise": "Berilgan narx va chegirma foizidan yakuniy narxni hisoblaydigan sof funksiya yozing. Argumentlarni o‘zgartirmasin va tashqaridagi o‘zgaruvchini ishlatmasin.",
+    "takeaway": "IIFE — yozilishi bilan chaqiriladigan funksiya ifodasi.\nSof funksiya ichida mahalliy vaqtinchalik o‘zgaruvchi ishlatish mumkin; muammo tashqi kuzatiladigan holatni o‘zgartirishda.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Savatchaga mahsulot qo‘shadigan sof funksiya yozing: eski massivga push qilmasin, yangi massiv qaytarsin. Natija va asl qiymatni alohida tekshiring.\n\nQo‘shimcha savollar:\nBerilgan narx va chegirma foizidan yakuniy narxni hisoblaydigan sof funksiya yozing. Argumentlarni o‘zgartirmasin va tashqaridagi o‘zgaruvchini ishlatmasin.",
     "resources": [
       {
         "title": "MDN: IIFE",
         "url": "https://developer.mozilla.org/en-US/docs/Glossary/IIFE"
+      },
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Glossary/Pure_function"
       }
-    ]
+    ],
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const a = [1, 2];\nconst qosh = (list, x) => [...list, x];\nconst b = qosh(a, 3);\nconsole.log(a);\nconsole.log(b);\nconsole.log(a === b);\nconsole.log((() => 7)());",
+    "exerciseExpected": [
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        2,
+        3
+      ],
+      false,
+      7
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. [1, 2] — asl o‘zgarmadi\n2. [1, 2, 3] — yangi massiv\n3. false — tashqi massiv boshqa reference\n4. 7 — IIFE darhol chaqirildi\n\nLoyihani yechish yo‘li: return [...savatcha, mahsulot]. Ichki obyektlarni keyin o‘zgartirsangiz ular umumiy reference ekanini unutmang; kerakli qatlamni ham nusxalang."
   },
   {
     "id": "git-npm",
     "title": "Git va npm asoslari",
     "question": "Loyihani qanday saqlaymiz va paketlar bilan qanday ishlaymiz?",
-    "explanation": "Git fayllardagi o‘zgarishlar tarixini yuritadi. npm JavaScript paketlarini o‘rnatish va loyiha buyruqlarini ishga tushirishga yordam beradi. Quyidagi buyruqlar JavaScript konsolida emas, loyiha papkasida ochilgan terminalda bajariladi. Git, Node.js va npm o‘rnatilgan bo‘lishi kerak.",
+    "explanation": "Git fayllarning o‘zgarishlar tarixini saqlaydi, GitHub shu repozitoriyni onlayn joylashtirishi mumkin. npm paketlarni va loyiha buyruqlarini boshqaradi. Git commit mahalliy yozuv, push esa mavjud remote ga yuborish. Bu buyruqlar JavaScript konsolida bajarilmaydi.\n\nBuyruqlar loyiha papkasida ochilgan terminalda bajariladi. JSON, HTML va JS namunalarini o‘z fayllariga joylang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Loyiha va package.json",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Bu uch buyruq vositalar o‘rnatilganini va versiyasini ko‘rsatadi. Natijadagi raqam sizning kompyuteringizga bog‘liq. Keyingi misollarni alohida mashq papkasida bajaring.",
+        "code": "git --version\nnode --version\nnpm --version"
+      },
+      {
+        "title": "2. Loyiha va package.json",
         "text": "Alohida papka oching. npm init -y boshlang‘ich package.json yaratadi. Unda loyiha nomi, buyruqlar va paketlar haqidagi ma’lumot turadi.",
         "code": "mkdir js-mashq\ncd js-mashq\nnpm init -y",
         "note": "node --version va npm --version bilan o‘rnatilganini tekshirishingiz mumkin."
       },
       {
-        "title": "2. Git bilan holatni ko‘rish",
+        "title": "3. Git bilan holatni ko‘rish",
         "text": "git init shu papkada tarix yuritishni boshlaydi. git status o‘zgargan fayllarni ko‘rsatadi. Faylni index.html nomida yaratgandan keyin uni commitga tayyorlang.",
         "code": "git init -b main\ngit status\ngit add index.html\ngit commit -m \"Birinchi sahifa\"",
         "note": "Commit mahalliy tarixga yoziladi. GitHub’ga yuborish alohida push amalidir. Birinchi commitda Git ism va emailingizni sozlashni so‘rashi mumkin."
       },
       {
-        "title": "3. Paket o‘rnatish",
+        "title": "4. Paket o‘rnatish",
         "text": "npm install paketni o‘rnatadi. --save-dev paket faqat ishlab chiqish vositasi ekanini bildiradi. node_modules o‘rnatilgan fayllar, package-lock.json esa aniq versiyalar va bog‘liqliklarni qayd etadi.",
         "code": "npm install --save-dev --save-exact prettier\nnpx prettier --check index.html",
         "note": "node_modules ni Gitga qo‘shmang: .gitignore fayliga node_modules/ yozing. package.json va package-lock.json ni saqlang."
       },
       {
-        "title": "4. Loyiha buyruqlari",
+        "title": "5. Loyiha buyruqlari",
         "text": "package.json ichidagi scripts ga nomlangan buyruq yozish mumkin. Quyidagi JSON bo‘lagi scripts maydoniga tegishli. npm run format uni ishga tushiradi.",
         "code": "\"scripts\": {\n  \"format\": \"prettier --write .\"\n}\n\n# Terminalda:\nnpm run format",
         "note": "Git o‘zgarishlar tarixini saqlaydi; npm run esa buyruq bajaradi. Bu ikkisi bir xil vosita emas."
+      },
+      {
+        "title": "6. Repozitoriy tarixi va ishchi papka",
+        "text": "git diff odatda ishchi papka bilan index farqini ko‘rsatadi. git diff --staged index bilan oxirgi commit farqini ko‘rsatadi. Branch boshqa yo‘nalishda ish yuritishga yordam beradi.",
+        "code": "git switch -c mashq\ngit diff --staged\n# Ish tugagach kerakli fayllarni alohida stage qiling:\ngit add index.html\ngit commit -m \"Matnni yangilash\""
+      },
+      {
+        "title": "7. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "git add saqlash tugmasi emas, commitga tayyorlash. Commit push bo‘lmasdan mahalliy qoladi. node_modules ni odatda commit qilmang, package-lock.json ni loyiha bilan saqlang. npm run build faqat scripts da build mavjud bo‘lsa ishlaydi. --force bilan push qilishni oddiy yangilash usuli deb qabul qilmang."
+      },
+      {
+        "title": "8. Kichik amaliy loyiha",
+        "text": "Alohida mashq repozitoriy yarating. index.html ni commit qiling, matnni yangilang va git diff bilan farqini ko‘ring. package.json ga format:check scriptini qo‘shing."
       }
     ],
-    "takeaway": "Terminal buyruqlarini loyiha papkasida bajaring. Commitdan oldin git status va git diff bilan nimalar o‘zgarganini ko‘ring.",
-    "exercise": "js-mashq papkasida package.json va index.html yarating. .gitignore ga node_modules/ kiriting. git status bilan fayllarni ko‘rib, birinchi commitni yarating.",
+    "takeaway": "Git fayllarning o‘zgarishlar tarixini saqlaydi, GitHub shu repozitoriyni onlayn joylashtirishi mumkin.\ngit add saqlash tugmasi emas, commitga tayyorlash.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Alohida mashq repozitoriy yarating. index.html ni commit qiling, matnni yangilang va git diff bilan farqini ko‘ring. package.json ga format:check scriptini qo‘shing.\n\nQo‘shimcha savollar:\njs-mashq papkasida package.json va index.html yarating. .gitignore ga node_modules/ kiriting. git status bilan fayllarni ko‘rib, birinchi commitni yarating.",
     "resources": [
       {
         "title": "npm: package.json",
@@ -4051,180 +6398,365 @@ window.lessons.push(...[
         "title": "Git qo‘llanmasi",
         "url": "https://git-scm.com/docs/gittutorial"
       }
-    ]
+    ],
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "git status\ngit diff\ngit log --oneline\nnpm run",
+    "exerciseExpected": [
+      "Joriy fayllar holati",
+      "Commitga kirmagan fayl farqlari",
+      "Commitlar qisqa tarixi",
+      "Loyiha scripts buyruqlari"
+    ],
+    "exerciseRuntime": "terminal",
+    "exerciseAnswer": "1. \"Joriy fayllar holati\" — nima o‘zgarganini ko‘rsatadi\n2. \"Commitga kirmagan fayl farqlari\" — qaysi satrlar o‘zgarganini ko‘rsatadi\n3. \"Commitlar qisqa tarixi\" — tarixni o‘qiydi\n4. \"Loyiha scripts buyruqlari\" — scripts ro‘yxatini ko‘rsatadi\n\nLoyihani yechish yo‘li: Avval git init -b main va fayl yaratish. git add index.html dan keyin git diff --staged ni ko‘ring, so‘ng commit qiling. Remote bo‘lsa URL ini tekshirib, tegishli branchga push qiling."
   },
   {
     "id": "dom-forms",
     "title": "DOM elementlar yaratish va formalar bilan ishlash",
     "question": "Forma qiymatini qanday o‘qiyman va yangi element qo‘shaman?",
-    "explanation": "DOM — brauzer HTML sahifani ifodalaydigan obyektlar daraxti. Element tanlashni o‘rgandik; endi yangi element yaratish va forma yuborilishini boshqaramiz. HTML misolini index.html ga, JavaScript misolini defer bilan ulangan app.js ga yozing.",
+    "explanation": "Forma foydalanuvchi ma’lumotini to‘playdi. label maydon nomini, name server yoki FormData uchun kalitni, value matnni bildiradi. id bilan name bir xil vazifa emas. Hisoblashdan oldin input.value string ekanini va bo‘sh qiymat holatini tekshiramiz.\n\nBu dars brauzer DOM muhitida bajariladi. HTML va JS deb ajratilgan misollarni tegishli fayllarga yozing; mustaqil DOM misollarini konsolda ham sinash mumkin. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Forma va natija ro‘yxati",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "FormData name atributlari orqali juftlik oladi. yosh qiymati \"20\" matni; Number bilan aylantirgandan so‘ng qo‘shish 21 beradi.",
+        "code": "const form = document.createElement(\"form\");\nform.innerHTML = '<input name=\"ism\" value=\"Ali\"><input name=\"yosh\" value=\"20\">';\nconst data = new FormData(form);\nconsole.log(data.get(\"ism\"));\nconsole.log(typeof data.get(\"yosh\"));\nconsole.log(Number(data.get(\"yosh\")) + 1);",
+        "expectedOutput": [
+          "Ali",
+          "string",
+          21
+        ],
+        "exampleRuntime": "browser",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"Ali\", \"string\", 21]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Forma va natija ro‘yxati",
         "text": "form qiymatlarni birga yuborish uchun. label dagi for input ning id qiymatiga mos keladi. required bo‘sh qiymatni yuborishga yo‘l qo‘ymaydi.",
         "code": "<form id=\"todo-form\">\n  <label for=\"todo-input\">Vazifa</label>\n  <input id=\"todo-input\" required>\n  <button type=\"submit\">Qo‘shish</button>\n</form>\n<ul id=\"todos\"></ul>\n<script src=\"app.js\" defer></script>"
       },
       {
-        "title": "2. Element yaratish",
+        "title": "3. Element yaratish",
         "text": "createElement yangi element yaratadi, lekin u hali sahifada yo‘q. textContent matnni beradi, append esa ota elementga qo‘shadi.",
         "code": "const royxat = document.querySelector(\"#todos\");\nconst band = document.createElement(\"li\");\nband.textContent = \"JavaScript o‘rganish\";\nroyxat.append(band);",
         "note": "Natija: ro‘yxatda JavaScript o‘rganish yozuvi paydo bo‘ladi. Foydalanuvchi kiritgan matn uchun textContent ishlating."
       },
       {
-        "title": "3. submit hodisasini tutish",
+        "title": "4. submit hodisasini tutish",
         "text": "submit tugma bosilganda ham, inputda Enter bosilganda ham ishlaydi. preventDefault sahifaning odatiy qayta yuborilishini to‘xtatadi. trim chetdagi bo‘sh joylarni olib tashlaydi.",
         "code": "const form = document.querySelector(\"#todo-form\");\nconst input = document.querySelector(\"#todo-input\");\nconst list = document.querySelector(\"#todos\");\n\nform.addEventListener(\"submit\", (event) => {\n  event.preventDefault();\n  const matn = input.value.trim();\n  if (!matn) return;\n  const li = document.createElement(\"li\");\n  li.textContent = matn;\n  list.append(li);\n  form.reset();\n  input.focus();\n});"
       },
       {
-        "title": "4. Sonli input ham matn qaytaradi",
+        "title": "5. Sonli input ham matn qaytaradi",
         "text": "input.value odatda string bo‘ladi. Hisoblashdan oldin Number bilan aylantiring. Bo‘sh maydonni alohida tekshiring: Number(\"\") natijasi 0.",
         "code": "const qiymat = \"12\"; // input.value kabi\nconst son = Number(qiymat);\nconsole.log(son + 3); // 15\nconsole.log(qiymat + 3); // \"123\""
+      },
+      {
+        "title": "6. value, checked va valueAsNumber",
+        "text": "Checkbox holati value emas checked orqali tekshiriladi. Number inputda valueAsNumber son yoki NaN qaytaradi. submit listenerini formaga bog‘lash Enter bilan ishlashni ham saqlaydi.",
+        "code": "const i = document.createElement(\"input\");\ni.type = \"number\"; i.value = \"12\";\nconsole.log(i.valueAsNumber);\ni.value = \"\";\nconsole.log(Number.isNaN(i.valueAsNumber));",
+        "expectedOutput": [
+          12,
+          true
+        ],
+        "exampleRuntime": "browser"
+      },
+      {
+        "title": "7. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Forma ichida type yozilmagan button odatda submit bo‘ladi; yordamchi tugma uchun type=\"button\" qo‘ying. Disabled maydon FormData ga kirmaydi, belgilanmagan checkbox ham yo‘q. required format va biznes qoidalarining hammasini tekshirmaydi. Brauzer validatsiyasi serverdagi tekshiruv o‘rnini bosmaydi."
+      },
+      {
+        "title": "8. Kichik amaliy loyiha",
+        "text": "Ism va yosh formasini tuzing. Bo‘sh ismni trim bilan rad eting, yaroqli ma’lumotni createElement va textContent bilan kartaga qo‘shing. O‘chirish tugmasi kartani olib tashlasin."
       }
     ],
-    "takeaway": "Forma bilan submit hodisasida ishlang. createElement → textContent → append orqali matnni sahifaga chiqaring.",
-    "exercise": "Yuqoridagi todo formasini yarating. Vazifa yoniga “O‘chirish” tugmasi qo‘shing; bosilganda o‘sha li elementini remove() qilsin.",
+    "takeaway": "Forma foydalanuvchi ma’lumotini to‘playdi.\nForma ichida type yozilmagan button odatda submit bo‘ladi; yordamchi tugma uchun type=\"button\" qo‘ying.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Ism va yosh formasini tuzing. Bo‘sh ismni trim bilan rad eting, yaroqli ma’lumotni createElement va textContent bilan kartaga qo‘shing. O‘chirish tugmasi kartani olib tashlasin.\n\nQo‘shimcha savollar:\nYuqoridagi todo formasini yarating. Vazifa yoniga “O‘chirish” tugmasi qo‘shing; bosilganda o‘sha li elementini remove() qilsin.",
     "resources": [
       {
         "title": "MDN: forma submit hodisasi",
         "url": "https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/submit_event"
+      },
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/FormData"
       }
-    ]
+    ],
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const form = document.createElement(\"form\");\nform.innerHTML = '<input name=\"a\" value=\"5\"><input name=\"b\" value=\"7\" disabled><input type=\"checkbox\" name=\"ok\" value=\"yes\">';\nconst d = new FormData(form);\nconsole.log(d.get(\"a\"));\nconsole.log(d.has(\"b\"));\nconsole.log(d.has(\"ok\"));\nconst input = form.querySelector(\"input\");\nconsole.log(typeof input.value);",
+    "exerciseExpected": [
+      "5",
+      false,
+      false,
+      "string"
+    ],
+    "exerciseRuntime": "browser",
+    "exerciseAnswer": "1. \"5\" — name bo‘yicha qiymat olindi\n2. false — disabled maydon chiqarildi\n3. false — belgilanmagan checkbox yo‘q\n4. \"string\" — value matn\n\nLoyihani yechish yo‘li: submit ichida preventDefault, input qiymatlarini tekshirish, keyin document.createElement bilan karta tuzing. textContent ishlating. Formani muvaffaqiyatli qo‘shilgach reset qiling."
   },
   {
     "id": "async-timers",
     "title": "Sinxron va asinxron kod, setTimeout/setInterval",
     "question": "Kod qaysi tartibda ishlaydi? Kutish vaqtida sahifa to‘xtab qoladimi?",
-    "explanation": "Sinxron kod ketma-ket bajariladi: oldingi ish tugamaguncha keyingisi boshlanmaydi. Brauzer taymer va tarmoq kutishini o‘zi boshqaradi; JavaScript esa keyingi kodni davom ettiradi. Kutish tugagach tegishli funksiya bajarishga tayyor bo‘ladi.",
+    "explanation": "Sinxron kod hozirgi ishni tugatib keyingisiga o‘tadi. Asinxron API kutishni muhitga topshirib, callback yoki Promise orqali keyin natija beradi. setTimeout JavaScript hisoblashini boshqa oqimga ko‘chirmaydi; u keyingi chaqirishni rejalashtiradi.\n\nAsinxron misollarni alohida ishga tushiring va callback natijalarini kuting. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Sinxron tartib",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Taymer rejalashtirildi, lekin sinxron davom satri avval chiqdi. await faqat shu async funksiyaning davom qismini kutdiradi, butun brauzerni to‘xtatmaydi.",
+        "code": "(async () => {\n  console.log(\"boshlanish\");\n  const tayyor = new Promise(resolve => setTimeout(() => {\n    console.log(\"keyin\"); resolve();\n  }, 0));\n  console.log(\"davom\");\n  await tayyor;\n})();",
+        "expectedOutput": [
+          "boshlanish",
+          "davom",
+          "keyin"
+        ],
+        "exampleRuntime": "async",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"boshlanish\", \"davom\", \"keyin\"]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Sinxron tartib",
         "text": "Oddiy console.log chaqiriqlari yozilgan tartibda bajariladi. Juda uzoq sinxron hisoblash sahifa javob berishini sekinlashtirishi mumkin.",
         "code": "console.log(\"A\");\nconsole.log(\"B\");\nconsole.log(\"C\"); // tartib: A, B, C"
       },
       {
-        "title": "2. setTimeout bir marta chaqiradi",
+        "title": "3. setTimeout bir marta chaqiradi",
         "text": "setTimeout funksiyani darhol bajarmaydi: keyinroq bajarishga rejalashtiradi. Vaqt millisekundda: 1000 ms = 1 soniya. Ko‘rsatilgan muddat eng kam kutishdir, aniq bajarilish vaqti emas.",
         "code": "console.log(\"Boshlanish\");\nsetTimeout(() => {\n  console.log(\"Keyinroq\");\n}, 1000);\nconsole.log(\"Davom etadi\");",
         "note": "Natija: Boshlanish, Davom etadi, keyin Keyinroq. setTimeout dagi funksiya — callback."
       },
       {
-        "title": "3. Nol vaqt ham keyin bajariladi",
+        "title": "4. Nol vaqt ham keyin bajariladi",
         "text": "0 millisekund yozish hozirgi kodni bo‘lmaydi. Callback joriy bajarilish tugagach ishga tushishi mumkin. Event loop mavzusida sababini chuqurroq ko‘ramiz.",
         "code": "console.log(1);\nsetTimeout(() => console.log(2), 0);\nconsole.log(3); // tartib: 1, 3, 2"
       },
       {
-        "title": "4. Bekor qilish va takrorlash",
+        "title": "5. Bekor qilish va takrorlash",
         "text": "clearTimeout hali ishlamagan taymerni bekor qiladi. setInterval takroriy callback rejalashtiradi; kerak bo‘lmaganda clearInterval bilan to‘xtating.",
         "code": "const kutish = setTimeout(() => console.log(\"Bu chiqmaydi\"), 1000);\nclearTimeout(kutish);\n\nlet sanoq = 0;\nconst interval = setInterval(() => {\n  sanoq += 1;\n  console.log(sanoq);\n  if (sanoq === 3) clearInterval(interval);\n}, 1000);",
         "note": "Interval misoli taxminan har soniyada 1, 2, 3 chiqaradi, keyin to‘xtaydi."
+      },
+      {
+        "title": "6. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "setTimeout(fn(), 1000) fn ni hozir chaqiradi. Belgilangan vaqt aniq bajarilish kafolati emas. setInterval ichidagi uzoq asinxron ishlar bir-birini bosib ketishi mumkin; ish tugagach keyingi setTimeout ni rejalashtirish nazoratliroq. Taymerni kerak bo‘lmaganda to‘xtating."
+      },
+      {
+        "title": "7. Kichik amaliy loyiha",
+        "text": "Boshlash/to‘xtatish tugmali sanagich qiling. Boshlash ikki marta bosilganda ikki interval yaratilmasin. 5 ga yetganda to‘xtasin."
       }
     ],
-    "takeaway": "Taymer kutish paytida keyingi kod bajariladi. Asinxron rejalashtirish og‘ir sinxron hisoblashni avtomatik ravishda boshqa oqimga ko‘chirmaydi.",
-    "exercise": "Avval A chiqaring, 500 ms dan keyin B chiqishini rejalashtiring, keyin C chiqaring. Natija tartibini oldindan yozing. So‘ng 5 gacha sanaydigan va to‘xtaydigan interval yarating.",
+    "takeaway": "Sinxron kod hozirgi ishni tugatib keyingisiga o‘tadi.\nsetTimeout(fn(), 1000) fn ni hozir chaqiradi.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Boshlash/to‘xtatish tugmali sanagich qiling. Boshlash ikki marta bosilganda ikki interval yaratilmasin. 5 ga yetganda to‘xtasin.\n\nQo‘shimcha savollar:\nAvval A chiqaring, 500 ms dan keyin B chiqishini rejalashtiring, keyin C chiqaring. Natija tartibini oldindan yozing. So‘ng 5 gacha sanaydigan va to‘xtaydigan interval yarating.",
     "resources": [
       {
         "title": "MDN: setTimeout",
         "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout"
       }
-    ]
+    ],
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "(async () => {\n  const id = setTimeout(() => console.log(\"chiqmaydi\"), 0);\n  clearTimeout(id);\n  console.log(\"A\");\n  await new Promise(resolve => setTimeout(resolve, 0));\n  console.log(\"B\");\n})();",
+    "exerciseExpected": [
+      "A",
+      "B"
+    ],
+    "exerciseRuntime": "async",
+    "exerciseAnswer": "1. \"A\" — bekor qilingan callback ishlamaydi\n2. \"B\" — kutish tugagach async davomi\n\nLoyihani yechish yo‘li: let timer=null saqlang. Start faqat timer===null bo‘lsa interval ochsin. Stop clearInterval(timer); timer=null qilsin. Limitga yetganda ham Stop ni chaqiring."
   },
   {
     "id": "class-private",
     "title": "Getter, setter va private maydonlar (#)",
     "question": "Obyekt ichki holatini qanday boshqaramiz?",
-    "explanation": "Getter xususiyatni o‘qishda, setter unga qiymat berishda ishlaydi. # bilan yozilgan private maydonga class tashqarisidan to‘g‘ridan-to‘g‘ri murojaat qilib bo‘lmaydi. Bu class ichidagi qoidalarni saqlashga yordam beradi.",
+    "explanation": "Getter xususiyatni o‘qishda ishlaydigan metod; setter qiymat berishda ishlaydi. #maydon classning tashqaridan to‘g‘ridan-to‘g‘ri ochilmaydigan ichki holati. _nom esa faqat kelishuv bo‘lib, til darajasida private emas.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Getter: xususiyat kabi o‘qish",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "qiymat=5 setterga boradi va tekshiruvdan keyin ichki #n yangilanadi. h.qiymat getter orqali 5 beradi. \"#n\" string kaliti esa private maydon emas.",
+        "code": "class Hisob {\n  #n = 0;\n  get qiymat() { return this.#n; }\n  set qiymat(v) {\n    if (!Number.isFinite(v) || v < 0) throw new RangeError(\"Noto‘g‘ri\");\n    this.#n = v;\n  }\n}\nconst h = new Hisob();\nh.qiymat = 5;\nconsole.log(h.qiymat);\nconsole.log(h[\"#n\"]);",
+        "expectedOutput": [
+          5,
+          {
+            "$undefined": true
+          }
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [5, undefined]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Getter: xususiyat kabi o‘qish",
         "text": "get nomidan keyin funksiya tanasi yoziladi, lekin uni o‘qishda () ishlatilmaydi. Natija ichki qiymatlardan hisoblanishi mumkin.",
         "code": "class Odam {\n  constructor(ism, familiya) {\n    this.ism = ism;\n    this.familiya = familiya;\n  }\n  get toliqIsm() {\n    return `${this.ism} ${this.familiya}`;\n  }\n}\nconst odam = new Odam(\"Ali\", \"Valiyev\");\nconsole.log(odam.toliqIsm); // Ali Valiyev"
       },
       {
-        "title": "2. Private maydon",
+        "title": "3. Private maydon",
         "text": "Maydon class tanasida # bilan e’lon qilinadi. Class metodlari uni this.#nom bilan ishlatishi mumkin. Tashqaridan yozishga urinish sintaksis xatosi bo‘ladi.",
         "code": "class Hisob {\n  #balans = 0;\n  get balans() { return this.#balans; }\n}\nconst hisob = new Hisob();\nconsole.log(hisob.balans); // 0\n// console.log(hisob.#balans); // SyntaxError"
       },
       {
-        "title": "3. Setter bilan tekshirish",
+        "title": "4. Setter bilan tekshirish",
         "text": "set bitta qiymat qabul qiladi. Ichki qiymatni yozishdan oldin talablarni tekshiramiz. Getter va setter uchun bir xil ochiq nomdan foydalanish mumkin.",
         "code": "class Hamyon {\n  #pul = 0;\n  get pul() { return this.#pul; }\n  set pul(qiymat) {\n    if (!Number.isFinite(qiymat) || qiymat < 0) {\n      throw new Error(\"Musbat son yoki 0 kiriting\");\n    }\n    this.#pul = qiymat;\n  }\n}\nconst h = new Hamyon();\nh.pul = 50;\nconsole.log(h.pul); // 50",
         "note": "Setter ichida this.pul = qiymat yozmang: u o‘zini qayta-qayta chaqiradi. Bu misolda ichki #pul ga yoziladi."
+      },
+      {
+        "title": "5. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Getterga () qo‘yilmaydi. Setter o‘z ochiq nomiga qayta yozsa cheksiz rekursiya bo‘lishi mumkin; ichki maydonga yozing. Private maydonga noto‘g‘ri instance yoki Proxy orqali murojaat TypeError berishi mumkin. #maydonni bola class bevosita o‘qiy olmaydi; ota taqdim etgan metoddan foydalanadi."
+      },
+      {
+        "title": "6. Kichik amaliy loyiha",
+        "text": "Harorat classi yozing: Selsiy private maydonda bo‘lsin, setter chekli sonni qabul qilsin. Fahrenheit getter hisoblasin. Qayta qiymat berganda getter yangilansin."
       }
     ],
-    "takeaway": "Getter o‘qishni, setter qiymat berishni boshqaradi. #maydonni faqat uni e’lon qilgan class kodi bevosita ishlata oladi.",
-    "exercise": "Harorat classini yarating. #c maydonini getter/setter orqali o‘qing va yangilang. Setter faqat chekli sonni qabul qilsin, get fahrenheit esa Selsiydan Farengeytga hisoblasin.",
+    "takeaway": "Getter xususiyatni o‘qishda ishlaydigan metod; setter qiymat berishda ishlaydi.\nGetterga () qo‘yilmaydi.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Harorat classi yozing: Selsiy private maydonda bo‘lsin, setter chekli sonni qabul qilsin. Fahrenheit getter hisoblasin. Qayta qiymat berganda getter yangilansin.\n\nQo‘shimcha savollar:\nHarorat classini yarating. #c maydonini getter/setter orqali o‘qing va yangilang. Setter faqat chekli sonni qabul qilsin, get fahrenheit esa Selsiydan Farengeytga hisoblasin.",
     "resources": [
       {
         "title": "MDN: private elementlar",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_elements"
       }
-    ]
+    ],
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "class C {\n  #x = 2;\n  get x() { return this.#x; }\n  set x(v) { this.#x = v; }\n}\nconst c = new C();\nconsole.log(c.x);\nc.x = 8;\nconsole.log(c.x);\nconsole.log(Object.keys(c));",
+    "exerciseExpected": [
+      2,
+      8,
+      []
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 2 — getter private qiymatni oldi\n2. 8 — setter private qiymatni o‘zgartirdi\n3. [] — private maydon enumerable ochiq kalit emas\n\nLoyihani yechish yo‘li: get fahrenheit() { return this.#c * 9 / 5 + 32; }. set c(v) Number.isFinite bilan tekshirsin. Tashqi kodga faqat kerakli ochiq interfeysni bering."
   },
   {
     "id": "memory-management",
     "title": "Garbage collection va xotira boshqaruvi",
     "question": "Keraksiz obyektlar xotiradan qachon o‘chadi? Memory leak nima?",
-    "explanation": "JavaScript qiymatlar uchun xotira ajratadi. Garbage collector dastur foydalana olmaydigan obyektlarning xotirasini avtomatik bo‘shatishi mumkin. Muhim tushuncha — obyektga faol koddan yetib borish mumkinmi, ya’ni u reachable holatdami.",
+    "explanation": "Xotira qiymatlar va obyektlar saqlanadigan resurs. JavaScript garbage collector bilan endi reachable bo‘lmagan obyektlarni yig‘ishi mumkin. Reachable — faol koddan reference lar zanjiri orqali unga yetib borish mumkin. “Scope tugadi” yoki “DOM dan o‘chdi” degan holat avtomatik aniq vaqtda tozalandi degani emas.\n\nMisollarni brauzer konsolida alohida sinang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Reference qolsa obyekt yashaydi",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "user null bo‘ldi, lekin boshqa reference saqladi. Kesh yana reference berdi; clear kesh yozuvini olib tashladi, boshqa o‘zgaruvchisi esa hanuz obyektni ushlab turadi.",
+        "code": "let user = { ism: \"Ali\" };\nconst boshqa = user;\nuser = null;\nconsole.log(boshqa.ism);\nconst kesh = new Map([[\"x\", boshqa]]);\nconsole.log(kesh.size);\nkesh.clear();\nconsole.log(kesh.size);",
+        "expectedOutput": [
+          "Ali",
+          1,
+          0
+        ],
+        "exampleRuntime": "javascript",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [\"Ali\", 1, 0]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Reference qolsa obyekt yashaydi",
         "text": "Bir o‘zgaruvchini null qilish obyektni darhol o‘chirish buyrug‘i emas. Boshqa reference bo‘lsa, obyektga hali murojaat qilish mumkin.",
         "code": "let user = { ism: \"Ali\" };\nlet nusxa = user;\nuser = null;\nconsole.log(nusxa.ism); // Ali\nnusxa = null; // Endi bu misolda obyektga reference qolmadi.",
         "note": "Garbage collection qachon bo‘lishini odatda dastur aniq belgilamaydi. null yozish darhol xotira bo‘shashini kafolatlamaydi."
       },
       {
-        "title": "2. Cheksiz yig‘iladigan ma’lumot",
+        "title": "3. Cheksiz yig‘iladigan ma’lumot",
         "text": "Uzoq yashaydigan massiv yoki Map ichida keraksiz obyektlarni ushlab turish xotirani ko‘paytiradi. Keshga hajm chegarasi yoki tozalash qoidasi kerak.",
         "code": "const kesh = new Map();\nkesh.set(\"user-1\", { ism: \"Ali\" });\n// Endi kerak bo‘lmasa:\nkesh.delete(\"user-1\");\n// Barcha yozuvlarni olib tashlash:\nkesh.clear();"
       },
       {
-        "title": "3. Taymer va listenerni tozalash",
+        "title": "4. Taymer va listenerni tozalash",
         "text": "Taymer callbacki va hodisa listeneri o‘zlari ishlatayotgan qiymatlarga reference saqlashi mumkin. Ish tugaganda taymer va listenerni olib tashlang.",
         "code": "const id = setInterval(() => console.log(\"tekshirish\"), 1000);\n// Bu ish endi kerak bo‘lmasa:\nclearInterval(id);\n\nfunction oynaOzgardi() { console.log(\"resize\"); }\nwindow.addEventListener(\"resize\", oynaOzgardi);\nwindow.removeEventListener(\"resize\", oynaOzgardi);",
         "note": "removeEventListener uchun o‘sha funksiya reference’i va mos capture qiymati kerak."
       },
       {
-        "title": "4. Aylanma reference o‘zi leak degani emas",
+        "title": "5. Aylanma reference o‘zi leak degani emas",
         "text": "Zamonaviy collector faqat reference sonini hisoblamaydi. Bir-biriga qaragan obyektlar guruhiga tashqi faol reference qolmasa, ular ham yig‘ilishi mumkin.",
         "code": "let a = {};\nlet b = {};\na.b = b;\nb.a = a;\na = null;\nb = null; // Yopiq guruhga tashqaridan yo‘l qolmadi."
+      },
+      {
+        "title": "6. Xotirani dalil bilan tekshirish",
+        "text": "DevTools Memory/heap snapshot bilan oldingi va keyingi holatni solishtiring. Detached DOM, o‘sayotgan Map va saqlanib qolgan callback larni izlang. O‘lchashning o‘zi ham vaqt va xotira oladi; bitta katta raqamdan darhol leak xulosasi chiqarmang.",
+        "code": "const kesh = new Map();\nfor (let i = 0; i < 3; i++) kesh.set(i, { i });\nconsole.log(kesh.size);\nkesh.clear();\nconsole.log(kesh.size);",
+        "expectedOutput": [
+          3,
+          0
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "7. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "JavaScript’da odatiy koddan “shu obyektni hozir yig‘” kafolati yo‘q. Uzoq yashaydigan kesh, closure, listener va taymerlar keraksiz ma’lumotni saqlashi mumkin. Aylanma reference o‘zi leak degani emas. delete property bilan obyekt xotirasini darhol bo‘shatish bir narsa emas."
+      },
+      {
+        "title": "8. Kichik amaliy loyiha",
+        "text": "Start/stop sanagich yarating: bir vaqtda bitta interval bo‘lsin. Listener va taymerlarni tozalash funksiyasini yozing. Keshga eng ko‘p nechta yozuv sig‘ishini belgilang."
       }
     ],
-    "takeaway": "Keraksiz ma’lumotni uzoq yashaydigan tuzilmalarda saqlamang. Taymer, listener va keshlarning hayot muddatini boshqaring.",
-    "exercise": "Har soniyada yozuv chiqaradigan start() funksiya va uni to‘xtatadigan stop() funksiya yarating. start() ikki marta chaqirilsa, ikkita interval ochilib ketmasin.",
+    "takeaway": "Xotira qiymatlar va obyektlar saqlanadigan resurs.\nJavaScript’da odatiy koddan “shu obyektni hozir yig‘” kafolati yo‘q.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Start/stop sanagich yarating: bir vaqtda bitta interval bo‘lsin. Listener va taymerlarni tozalash funksiyasini yozing. Keshga eng ko‘p nechta yozuv sig‘ishini belgilang.\n\nQo‘shimcha savollar:\nHar soniyada yozuv chiqaradigan start() funksiya va uni to‘xtatadigan stop() funksiya yarating. start() ikki marta chaqirilsa, ikkita interval ochilib ketmasin.",
     "resources": [
       {
         "title": "MDN: xotira boshqaruvi",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Memory_management"
       }
-    ]
+    ],
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const kesh = new Map();\nkesh.set(\"a\", { n: 1 });\nconsole.log(kesh.size);\nkesh.delete(\"a\");\nconsole.log(kesh.size);\nlet a = {}; let b = {}; a.b=b; b.a=a;\na=null; b=null;\nconsole.log(a);",
+    "exerciseExpected": [
+      1,
+      0,
+      null
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 1 — reference keshda saqlanadi\n2. 0 — yozuv olib tashlandi\n3. null — o‘zgaruvchi null, GC vaqtini bu log aytmaydi\n\nLoyihani yechish yo‘li: interval ID ni null bilan belgilang, Start uni tekshirsin. Stop intervalni bekor qilib ID ni null qilsin. Listener uchun ayni callback yoki AbortController saqlang."
   },
   {
     "id": "node-http",
     "title": "Node.js da oddiy HTTP server: Express ga kirish",
     "question": "Brauzer so‘roviga JavaScript qanday javob beradi?",
-    "explanation": "HTTP server so‘rovni qabul qilib, status, sarlavhalar va javob tanasini qaytaradi. Node.js ning node:http moduli bilan paket o‘rnatmasdan boshlash mumkin. Kod Node.js o‘rnatilgan kompyuter terminalida bajariladi; brauzer konsolida emas.",
+    "explanation": "HTTP server so‘rovni qabul qiladi va status, header, tana qaytaradi. req kiruvchi so‘rov, res javobni yozish vositasi. Route — method va URL yo‘liga mos ish. Avval route hisobini sof funksiya sifatida ko‘ramiz, keyin uni node:http yoki Express bilan ulaymiz.\n\nNode.js misollarini alohida .cjs yoki .mjs fayliga yozib, terminalda node bilan bajaring. Brauzer konsoli Node.js modullarini bermaydi. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. Birinchi server",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Bu misol port ochmaydi: route qoidasi alohida test qilinyapti. Quyidagi haqiqiy server misollari shu qarorni HTTP javobiga aylantiradi. GET uchun yozilgan route POST ga avtomatik mos kelmaydi.",
+        "code": "function route(method, path) {\n  if (method === \"GET\" && path === \"/api/salom\") {\n    return { status: 200, body: { xabar: \"Salom\" } };\n  }\n  return { status: 404, body: { xabar: \"Topilmadi\" } };\n}\nconsole.log(route(\"GET\", \"/api/salom\").status);\nconsole.log(route(\"POST\", \"/api/salom\").status);",
+        "expectedOutput": [
+          200,
+          404
+        ],
+        "exampleRuntime": "node",
+        "note": "Konsolga chiqadigan qiymatlar tartibi: [200, 404]. Har bir console.log bitta natija beradi."
+      },
+      {
+        "title": "2. Birinchi server",
         "text": "Quyidagi kodni server.cjs fayliga yozing. Terminalda node server.cjs bilan ishga tushiring. Keyin brauzerda http://127.0.0.1:3000 ni oching.",
         "code": "const { createServer } = require(\"node:http\");\n\nconst server = createServer((req, res) => {\n  res.writeHead(200, { \"Content-Type\": \"text/plain; charset=utf-8\" });\n  res.end(\"Salom, server!\");\n});\nserver.listen(3000, \"127.0.0.1\", () => {\n  console.log(\"http://127.0.0.1:3000\");\n});",
         "note": "Terminalda Ctrl+C serverni to‘xtatadi. 3000 porti band bo‘lsa, avval o‘sha serverni to‘xtating yoki boshqa port tanlang."
       },
       {
-        "title": "2. So‘rov va javob",
+        "title": "3. So‘rov va javob",
         "text": "req.url so‘ralgan yo‘lni, req.method usulni bildiradi. res.end javobni yakunlaydi. Bu misol birinchi serverdagi callback tanasi o‘rniga yoziladi.",
         "code": "if (req.url === \"/api/salom\" && req.method === \"GET\") {\n  res.writeHead(200, { \"Content-Type\": \"application/json; charset=utf-8\" });\n  res.end(JSON.stringify({ xabar: \"Salom\" }));\n} else {\n  res.writeHead(404, { \"Content-Type\": \"text/plain; charset=utf-8\" });\n  res.end(\"Topilmadi\");\n}",
         "note": "200 — muvaffaqiyat; 404 — mos manzil topilmadi. URL query bilan kelsa, yo‘lni URL orqali ajratish talab etiladi."
       },
       {
-        "title": "3. Express bilan tanishish",
+        "title": "4. Express bilan tanishish",
         "text": "Express yo‘llar va javoblarni yozishni soddalashtiradi. Alohida loyiha papkasida npm init -y, keyin npm install express buyrug‘ini bajaring. Quyidagi kodni app.cjs ga yozib node app.cjs bilan oching.",
         "code": "const express = require(\"express\");\nconst app = express();\napp.get(\"/\", (req, res) => {\n  res.send(\"Bosh sahifa\");\n});\napp.get(\"/api/salom\", (req, res) => {\n  res.json({ xabar: \"Salom\" });\n});\napp.listen(3000, \"127.0.0.1\");",
         "note": "Sinashdan oldin oldingi node:http serverini to‘xtating: ikkisi bir xil portni egallay olmaydi."
+      },
+      {
+        "title": "5. Express: middleware va JSON input",
+        "text": "npm install express dan keyin .cjs faylda sinang. express.json body ni parse qiladi. Input turini o‘zingiz tekshiring; noto‘g‘ri qiymatga 400 javob bering.",
+        "code": "const express = require(\"express\");\nconst app = express();\napp.use(express.json({ limit: \"10kb\" }));\napp.post(\"/api/ikki\", (req, res) => {\n  const n = req.body?.n;\n  if (!Number.isFinite(n)) return res.status(400).json({ xato: \"Son kerak\" });\n  res.json({ natija: n * 2 });\n});\napp.listen(3000, \"127.0.0.1\");"
+      },
+      {
+        "title": "6. Server hayot davri va javobni yakunlash",
+        "text": "Ishlab chiqishda port band bo‘lsa avval oldingi serverni tekshiring. server.close yangi ulanishlarni qabul qilishni to‘xtatish uchun ishlatiladi; mavjud ulanishlar va resurslar hayotini ham boshqaring. Xatoni faqat konsolda chiqarish foydalanuvchiga HTTP javob berishning o‘rnini bosmaydi.",
+        "code": "// Javobdagi bitta yo‘l:\n// res.writeHead(200, { \"Content-Type\": \"application/json\" });\n// res.end(JSON.stringify({ ok: true }));\n// Shu javob uchun yana res.end yoki res.send chaqirmang."
+      },
+      {
+        "title": "7. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "req.url query ni ham o‘z ichiga olishi mumkin: new URL(req.url, asos).pathname bilan ajrating. Bir javobni ikki marta end/send qilish headers-already-sent xatosiga olib keladi. JSON javobining Content-Type sini belgilang. Katta request body uchun hajm limiti va noto‘g‘ri JSON uchun 400 javob kerak. CORS autentifikatsiya o‘rnini bosmaydi."
+      },
+      {
+        "title": "8. Kichik amaliy loyiha",
+        "text": "GET /api/vaqt va GET /api/salom yo‘llarini yozing. Query param orqali ism oling, noma’lum yo‘lga 404 qaytaring. Alohida funksiyada route natijasini test qiling."
       }
     ],
-    "takeaway": "Server doimiy ishlaydi va so‘rov kutadi. Express ham Node.js ustida ishlaydigan paket. Kalitlarni brauzerga berish o‘rniga serverda saqlash mumkin.",
-    "exercise": "GET /api/vaqt yo‘lini qo‘shing. U { vaqt: yangi ISO sana } JSON javobini qaytarsin. Noma’lum yo‘l uchun 404 javob qaytishini ham tekshiring.",
+    "takeaway": "HTTP server so‘rovni qabul qiladi va status, header, tana qaytaradi.\nreq.url query ni ham o‘z ichiga olishi mumkin: new URL(req.url, asos).pathname bilan ajrating.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: GET /api/vaqt va GET /api/salom yo‘llarini yozing. Query param orqali ism oling, noma’lum yo‘lga 404 qaytaring. Alohida funksiyada route natijasini test qiling.\n\nQo‘shimcha savollar:\nGET /api/vaqt yo‘lini qo‘shing. U { vaqt: yangi ISO sana } JSON javobini qaytarsin. Noma’lum yo‘l uchun 404 javob qaytishini ham tekshiring.",
     "resources": [
       {
         "title": "Node.js: birinchi server",
@@ -4233,42 +6765,79 @@ window.lessons.push(...[
       {
         "title": "Express: birinchi ilova",
         "url": "https://expressjs.com/en/starter/hello-world/"
+      },
+      {
+        "title": "Rasmiy qo‘llanma va qo‘shimcha misollar",
+        "url": "https://nodejs.org/api/http.html"
       }
-    ]
+    ],
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "const u = new URL(\"/api/salom?ism=Ali\", \"http://localhost:3000\");\nconsole.log(u.pathname);\nconsole.log(u.searchParams.get(\"ism\"));\nconsole.log(JSON.stringify({ xabar: \"Salom\" }));",
+    "exerciseExpected": [
+      "/api/salom",
+      "Ali",
+      "{\"xabar\":\"Salom\"}"
+    ],
+    "exerciseRuntime": "node",
+    "exerciseAnswer": "1. \"/api/salom\" — query yo‘ldan ajratildi\n2. \"Ali\" — parametr matn sifatida olindi\n3. \"{\\\"xabar\\\":\\\"Salom\\\"}\" — javob tanasi JSON matniga aylantirildi\n\nLoyihani yechish yo‘li: Request yo‘lini new URL bilan parse qiling. Mos metod va pathname uchun 200/JSON, boshqa holat uchun 404/JSON. Node server callbackida sof route funksiyasining natijasini res ga yozing."
   },
   {
     "id": "lint-format",
     "title": "ESLint va Prettier: kod sifati",
     "question": "Koddagi muammolarni topish va formatni bir xil qilish qanday ishlaydi?",
-    "explanation": "ESLint qoidalarga zid yoki shubhali kodni aniqlaydi. Prettier chekinish, qavs va satrlarni bir xil formatga keltiradi. Ular testlarning o‘rnini bosmaydi: hisoblash natijasi to‘g‘riligini test bilan tekshiramiz. Buyruqlar Node.js va npm bor loyiha papkasida bajariladi.",
+    "explanation": "Kod sifati uchta alohida savol: ESLint shubhali kodni topadimi, Prettier ko‘rinishni bir xil qiladimi, test kerakli xulqni tasdiqlaydimi? Ularning biri boshqasining o‘rnini bosmaydi. Avval vositalarni loyiha ichiga o‘rnating va muhitini browser/Node deb moslang.\n\nBuyruqlar loyiha papkasida ochilgan terminalda bajariladi. JSON, HTML va JS namunalarini o‘z fayllariga joylang. Har misolda avval natijani taxmin qiling, keyin kodni bajaring va sababini tushuntiring.",
     "sections": [
       {
-        "title": "1. ESLint ni sozlash",
+        "title": "1. Birinchi misolni satrma-satr o‘qiymiz",
+        "text": "Birinchi buyruq ESLint konfiguratsiya savollarini beradi. Prettier loyiha ichida o‘rnatiladi. Tekshirish buyruqlari xatolarni ko‘rsatadi; --check fayllarni o‘zi qayta yozmaydi.",
+        "code": "npm init @eslint/config@latest\nnpm install --save-dev --save-exact prettier\nnpx eslint .\nnpx prettier . --check"
+      },
+      {
+        "title": "2. ESLint ni sozlash",
         "text": "Loyihada package.json bo‘lmasa npm init -y bajaring. So‘ng rasmiy sozlash yordamchisini ishga tushiring va kodingiz qayerda ishlashini tanlang: browser yoki Node.js.",
         "code": "npm init @eslint/config@latest\nnpx eslint .",
         "note": "Yordamchi loyiha uchun eslint.config.* faylini yaratadi. Uning savollariga loyiha turiga mos javob bering."
       },
       {
-        "title": "2. ESLint qanday muammo topadi?",
+        "title": "3. ESLint qanday muammo topadi?",
         "text": "Aniq qoidalar konfiguratsiyaga bog‘liq. Masalan, e’lon qilinmagan nomni ishlatish no-undef, ishlatilmagan o‘zgaruvchi esa no-unused-vars bilan belgilanadi. Avval xabarni o‘qing, keyin sababini tuzating.",
         "code": "const ism = \"Ali\";\nconsole.log(ismm); // ism deb yozilishi kerak",
         "note": "Linter nom xatosini topishi mumkin. Ammo algoritmingiz biznes talabiga to‘g‘ri javob berishini bilmaydi."
       },
       {
-        "title": "3. Prettier o‘rnatish",
+        "title": "4. Prettier o‘rnatish",
         "text": "Prettier ni loyiha ichiga devDependency sifatida o‘rnating. --check formatni tekshiradi, --write esa fayllarni qayta formatlaydi.",
         "code": "npm install --save-dev --save-exact prettier\nnpx prettier . --check\nnpx prettier . --write",
         "note": "Formatlashdan keyin git diff bilan o‘zgarishlarni ko‘ring. Paketning aniq versiyasi loyihada qayd etiladi."
       },
       {
-        "title": "4. Birgalikda ishlatish",
+        "title": "5. Birgalikda ishlatish",
         "text": "package.json ning scripts maydoniga quyidagi buyruqlarni yozish mumkin. Tekshirish buyruqlarini loyiha topshirishdan oldin ishlating.",
         "code": "\"scripts\": {\n  \"lint\": \"eslint .\",\n  \"format\": \"prettier . --write\",\n  \"format:check\": \"prettier . --check\"\n}\n\n# Terminalda:\nnpm run lint\nnpm run format:check",
         "note": "ESLint dagi format qoidalari Prettier bilan to‘qnashsa, rasmiy integratsiya yo‘riqnomasiga qarab moslang."
+      },
+      {
+        "title": "6. Flat config va muhit global nomlari",
+        "text": "Quyidagi browser .js misoli uchun npm install --save-dev eslint @eslint/js globals bajaring. Config ni eslint.config.mjs ga yozing. Node loyihasi uchun globals.node kabi mos to‘plamni tanlang.",
+        "code": "import js from \"@eslint/js\";\nimport globals from \"globals\";\nexport default [\n  js.configs.recommended,\n  { files: [\"**/*.js\"], languageOptions: { globals: globals.browser } }\n];"
+      },
+      {
+        "title": "7. Tekshirish bilan yozishni ajratish",
+        "text": "Avval check bilan farq borligini bilib oling. prettier --write o‘zgartiradi; keyin git diff bilan ko‘ring. Generated fayllar va build chiqishini kerak bo‘lsa ignore qiling.",
+        "code": "npx prettier . --check\nnpx prettier . --write\ngit diff\n# .prettierignore uchun misol:\n# dist/\n# coverage/"
+      },
+      {
+        "title": "8. Ko‘p uchraydigan xatolar va tekshirish tartibi",
+        "text": "Linter algoritmingiz to‘g‘riligini bilmaydi. --fix barcha muammoni xavfsiz tuzatib bermaydi: farqni ko‘ring va test qiling. Browser kodiga Node global sozlamasini yoki aksincha berish yolg‘on no-undef keltiradi. Prettier va ESLint format qoidalarini bir-biriga zid qilib qo‘ymang. Config sintaksisi o‘rnatilgan vosita versiyasiga mos bo‘lsin."
+      },
+      {
+        "title": "9. Kichik amaliy loyiha",
+        "text": "Oldingi kichik loyihaga lint, format:check va test skriptlarini qo‘shing. Bir ataylab noto‘g‘ri nom, bir format farqi va bir noto‘g‘ri hisob natijasini uchta vosita qanday topishini solishtiring."
       }
     ],
-    "takeaway": "Linter muammolarni izlaydi, formatter ko‘rinishni bir xil qiladi, test esa kutilgan xulqni tekshiradi.",
-    "exercise": "Alohida kichik loyihada ESLint va Prettier ni sozlang. Noto‘g‘ri yozilgan o‘zgaruvchi nomini linter topishini, chekinishlarni formatter tuzatishini tekshiring.",
+    "takeaway": "Kod sifati uchta alohida savol: ESLint shubhali kodni topadimi, Prettier ko‘rinishni bir xil qiladimi, test kerakli xulqni tasdiqlaydimi? Ularning biri boshqasining o‘rnini bosmaydi.\nLinter algoritmingiz to‘g‘riligini bilmaydi.",
+    "exercise": "Quyidagi kodni o‘qing. Har bir natijani va uning sababini yozing. Keyin javobni ochib tekshiring.\n\nMustaqil mashq: Oldingi kichik loyihaga lint, format:check va test skriptlarini qo‘shing. Bir ataylab noto‘g‘ri nom, bir format farqi va bir noto‘g‘ri hisob natijasini uchta vosita qanday topishini solishtiring.\n\nQo‘shimcha savollar:\nAlohida kichik loyihada ESLint va Prettier ni sozlang. Noto‘g‘ri yozilgan o‘zgaruvchi nomini linter topishini, chekinishlarni formatter tuzatishini tekshiring.",
     "resources": [
       {
         "title": "ESLint: boshlash",
@@ -4278,7 +6847,17 @@ window.lessons.push(...[
         "title": "Prettier: o‘rnatish",
         "url": "https://prettier.io/docs/install"
       }
-    ]
+    ],
+    "fullTextDefault": true,
+    "courseExpanded": 1,
+    "exerciseCode": "npm run lint\nnpm run format:check\nnpm test",
+    "exerciseExpected": [
+      "ESLint qoidalari tekshiriladi",
+      "Prettier format mosligini tekshiradi",
+      "Loyihadagi test scripti bajariladi"
+    ],
+    "exerciseRuntime": "terminal",
+    "exerciseAnswer": "1. \"ESLint qoidalari tekshiriladi\" — scripts da lint bo‘lishi kerak\n2. \"Prettier format mosligini tekshiradi\" — --check o‘zi formatlamaydi\n3. \"Loyihadagi test scripti bajariladi\" — test vositasi package.json da tanlanadi\n\nLoyihani yechish yo‘li: scripts ichida lint: eslint ., format:check: prettier . --check, test: vitest run kabi buyruqlarni belgilang. Tool ishlamasa o‘rnatilgan paket va muhit konfiguratsiyasini tekshiring."
   }
 ]);
 window.lessonStages = [

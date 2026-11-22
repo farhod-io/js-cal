@@ -84,3 +84,11 @@ Har bir mavzu alohida qadamlar bilan ochiladi: tanishish, kichik bo‘limlar (tu
 10. Patternlar va test — 3 mavzu.
 
 `window.lessonStages` tartibi sidebar, yo‘l xaritasi va oldingi/keyingi mavzu tugmalari uchun yagona manba. Mavjud mavzu ID’lari o‘zgarmagan, shuning uchun o‘qilgan belgilar va test natijalari saqlanadi. Yangi 10 mavzuning har birida tushuntirish, kodlar, mashq, qo‘shimcha manbalar va kamida bitta tayyor test bor. Har bosqich uchun mini-loyiha taklifi yo‘l xaritasida ko‘rsatiladi.
+
+## 7–62-darslarning kengaytirilgan mazmuni
+
+Qolgan 56 mavzuda boshlang‘ich izoh, satrma-satr tahlilli mustaqil misol, asosiy qoida va istisnolar, ko‘p uchraydigan xatolar, kichik amaliy loyiha va javobi ochiladigan mashq mavjud. Ular to‘liq matn bilan ochiladi; **Qadam-baqadam o‘rganish** orqali bitta bo‘limni alohida o‘qish ham mumkin. Eski mavzu ID’lari saqlangan.
+
+Misolning muhiti matnda ko‘rsatiladi: brauzer DOM, Node.js, ES modul yoki terminal. Modul namunalari nomi ko‘rsatilgan alohida fayllarga yoziladi. DOM misollarini Node.js konsolida bajarish mo‘ljallanmagan. Terminal buyruqlarining natijasi loyiha holatiga bog‘liq; mashq javoblari ularning vazifasini tushuntiradi.
+
+Darslardagi yangi mustaqil JavaScript/Node misollarining kutilgan natijalari `expectedOutput`, yakuniy mashqlarniki `exerciseExpected` bilan tekshiriladi. Bu tekshiruv ma’lumotlari foydalanuvchi interfeysida ko‘rsatilmaydi. Tekshirish: `node --test tests/*.test.cjs`.
