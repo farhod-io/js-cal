@@ -713,7 +713,7 @@ function scrollContentToTop() {
   const main = document.querySelector('main');
   if (window.innerWidth > 760) main.scrollTo(0, 0);
   else {
-    main.style.scrollMarginTop = `${topNav.offsetHeight + 12}px`;
+    main.style.scrollMarginTop = `${(topNav.closest('.site-topbar') || topNav).offsetHeight + 12}px`;
     main.scrollIntoView({ block: 'start' });
   }
 }

@@ -1,10 +1,11 @@
-const CACHE_NAME = 'js-daftar-cache-v4';
+const CACHE_NAME = 'js-daftar-cache-v5';
 
 const STATIC_ASSETS = [
   './',
   './index.html',
   './style.css',
   './app.js',
+  './theme.js',
   './data.js',
   './scope-demo.js',
   './truthy-demo.js',
@@ -50,7 +51,7 @@ self.addEventListener('fetch', event => {
   }
 
   // Sahifa navigatsiyasi: Network-first, oflaynda keshdan index.html
-  if (req.mode === 'navigate' || ['app.js', 'data.js', 'style.css'].includes(url.pathname.split('/').pop())) {
+  if (req.mode === 'navigate' || ['app.js', 'data.js', 'style.css', 'theme.js'].includes(url.pathname.split('/').pop())) {
     event.respondWith(
       fetch(req, { cache: 'no-cache' })
         .then(async res => {

@@ -14,6 +14,7 @@
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
   <link rel="alternate icon" href="favicon.ico">
+  <script src="theme.js"></script>
   <link rel="stylesheet" href="style.css">
   <script src="data.js" defer></script>
   <script src="scope-demo.js" defer></script>
@@ -21,7 +22,10 @@
   <script src="app.js" defer></script>
 </head>
 <body>
-  <nav id="top-nav" aria-label="Asosiy bo‘limlar"></nav>
+  <div class="site-topbar">
+    <nav id="top-nav" aria-label="Asosiy bo‘limlar"></nav>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Qorong‘i rejimga o‘tish" aria-pressed="false" title="Qorong‘i rejimga o‘tish"><span aria-hidden="true">🌙</span></button>
+  </div>
   <aside>
     <a class="brand" href="index.html"><b>JS</b> daftar<span>Intervyuga tayyorgarlik</span></a>
     <button id="pwa-install" class="pwa-install-btn" type="button" hidden>📱 Ilovani o‘rnatish</button>
