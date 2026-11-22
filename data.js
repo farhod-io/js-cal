@@ -140,43 +140,120 @@ window.lessons = [
   {
     "id": "typeof",
     "title": "typeof operatori",
-    "question": "typeof qanday ishlaydi? Nega null va [] uchun \"object\" qaytaradi?",
-    "explanation": "typeof qiymatning turini bildiradigan string qaytaradi. typeof 10 natijasi \"number\" — bu natijaning o‘zi ham string. typeof x va typeof(x) shakllari ishlaydi; typeof operator, oddiy funksiya emas.",
+    "question": "typeof nima qiladi? 20 bilan \"20\" ning turi nega boshqa? Qiymat va uning turini qanday ajrataman?",
+    "explanation": "typeof — qiymatning turini aniqlaydigan operator. Buni “bu qiymat sonmi, matnmi yoki boshqa turmi?” degan savol sifatida tushuning. Avval qiymatning o‘zini ko‘rishni, keyin uning turini ko‘rishni o‘rganamiz. Pastda barcha tushuntirishlar ketma-ket berilgan. Kodlarni alohida konsolda sinab ko‘ring.",
     "sections": [
       {
-        "title": "1. Asosiy turlar",
-        "text": "number, string, boolean, undefined, bigint va symbol qiymatlari quyidagicha tekshiriladi. NaN va Infinity ham number turiga kiradi.",
-        "code": "console.log(typeof 10);        // \"number\"\nconsole.log(typeof \"Hello\");   // \"string\"\nconsole.log(typeof true);      // \"boolean\"\nconsole.log(typeof undefined); // \"undefined\"\nconsole.log(typeof 123n);      // \"bigint\"\nconsole.log(typeof Symbol());  // \"symbol\"\nconsole.log(typeof NaN);       // \"number\"\nconsole.log(typeof Infinity);  // \"number\"\nconsole.log(typeof typeof 10); // \"string\""
+        "title": "1. Qiymat bilan tur bir xil narsa emas",
+        "text": "let yosh = 20 satrida yosh — nom, 20 — uning qiymati. console.log(yosh) qiymatni chiqaradi. console.log(typeof yosh) esa shu qiymat qaysi turga tegishli ekanini aytadi. number inglizcha “son” degani.",
+        "code": "let yosh = 20;\n\nconsole.log(yosh);        // 20 — qiymati\nconsole.log(typeof yosh); // \"number\" — turi",
+        "note": "1. yosh nomli o‘zgaruvchiga 20 berildi.\n2. yosh ni o‘qisak 20 olinadi.\n3. typeof yosh ni hisoblasak \"number\" matni olinadi.\n4. console.log shu natijani ko‘rsatadi. typeof qiymatni o‘zgartirmaydi."
       },
       {
-        "title": "2. null: tarixiy g‘alati holat",
+        "title": "2. Qo‘shtirnoq turga ta’sir qiladi",
+        "text": "20 — qo‘shtirnoqsiz son. \"20\" esa raqamlardan tuzilgan matn. typeof qiymatning qanday ko‘rinishiga emas, qaysi turga tegishli ekaniga qaraydi. string — matn degani.",
+        "code": "console.log(typeof 20);   // \"number\"\nconsole.log(typeof \"20\"); // \"string\"\nconsole.log(typeof \"Ali\"); // \"string\"",
+        "note": "\"20\" ichida raqamlar bo‘lishi uni number qilib qo‘ymaydi. Matn qo‘shtirnoq bilan yaratilgan. O‘zgaruvchi yosh deb nomlangani uchun ham uning turi avtomatik number bo‘lmaydi: let yosh = \"20\" bo‘lsa, typeof yosh natijasi \"string\"."
+      },
+      {
+        "title": "3. true bilan \"true\" ham farq qiladi",
+        "text": "Qo‘shtirnoqsiz true va false — boolean qiymatlar. Ular rost yoki yolg‘onni bildiradi. \"true\" yoki \"false\" qo‘shtirnoqda yozilsa, oddiy string bo‘ladi.",
+        "code": "let talaba = true;\nlet javob = \"false\";\n\nconsole.log(typeof talaba); // \"boolean\"\nconsole.log(typeof javob);  // \"string\"\nconsole.log(typeof false);  // \"boolean\"",
+        "note": "typeof javob qiymati false yoki true ekanini tekshirmaydi. U qiymatning turini aytadi. \"false\" so‘zining ma’nosi yolg‘on bo‘lsa ham, qo‘shtirnoqda yozilgani uchun uning turi string."
+      },
+      {
+        "title": "4. Qiymat berilmagan o‘zgaruvchi",
+        "text": "O‘zgaruvchini yaratib, unga qiymat bermasak, qiymati undefined bo‘ladi. typeof bunday qiymat uchun \"undefined\" matnini qaytaradi.",
+        "code": "let ism;\n\nconsole.log(ism);        // undefined — qiymati\nconsole.log(typeof ism); // \"undefined\" — turining nomi",
+        "note": "console.log dagi natijalar o‘xshab ko‘rinsa ham, undefined qiymati bilan \"undefined\" matni boshqa-boshqa narsalar."
+      },
+      {
+        "title": "5. typeof javobi doim matn bo‘ladi",
+        "text": "typeof 20 natijasi \"number\". Bu javobning o‘zi matn. Uni o‘zgaruvchiga saqlab ko‘rsak, farq yanada aniq bo‘ladi. typeof operator bo‘lib, typeof qiymat va typeof(qiymat) yozuvlari ishlaydi.",
+        "code": "const tur = typeof 20;\n\nconsole.log(tur);        // \"number\"\nconsole.log(typeof tur); // \"string\"\nconsole.log(typeof(20)); // \"number\"",
+        "note": "Ikkinchi qatordagi typeof tur sonni emas, tur ichidagi \"number\" matnini tekshiryapti. Shuning uchun \"string\" chiqadi. typeof typeof 20 ham shu tartibda hisoblanadi."
+      },
+      {
+        "title": "6. Barcha asosiy natijalarni bir joyda ko‘rish",
+        "text": "Oddiy holatlarni tushungach, quyidagi jadval bilan turlarni takrorlang. typeof natijalari kichik harflar bilan yoziladi. NaN va Infinity ham number turiga kiradi; ularning xususiyatini keyinroq ko‘ramiz.",
+        "code": "console.log(typeof 10);        // \"number\"\nconsole.log(typeof \"Hello\");   // \"string\"\nconsole.log(typeof true);      // \"boolean\"\nconsole.log(typeof undefined); // \"undefined\"\nconsole.log(typeof 123n);      // \"bigint\"\nconsole.log(typeof Symbol());  // \"symbol\"\nconsole.log(typeof NaN);       // \"number\"\nconsole.log(typeof Infinity);  // \"number\"\nconsole.log(typeof typeof 10); // \"string\"",
+        "table": {
+          "headers": [
+            "Qiymat",
+            "typeof natijasi"
+          ],
+          "rows": [
+            [
+              "20",
+              "\"number\""
+            ],
+            [
+              "\"Ali\"",
+              "\"string\""
+            ],
+            [
+              "true yoki false",
+              "\"boolean\""
+            ],
+            [
+              "undefined",
+              "\"undefined\""
+            ],
+            [
+              "123n",
+              "\"bigint\""
+            ],
+            [
+              "Symbol(\"id\")",
+              "\"symbol\""
+            ],
+            [
+              "null",
+              "\"object\" — maxsus holat"
+            ],
+            [
+              "{} yoki []",
+              "\"object\""
+            ],
+            [
+              "funksiya",
+              "\"function\""
+            ]
+          ]
+        }
+      },
+      {
+        "title": "7. null: tarixiy g‘alati holat",
         "text": "null — qiymat ataylab yo‘qligini bildiruvchi primitive qiymat. Ammo typeof null \"object\" qaytaradi. Bu JavaScript’ning dastlabki implementatsiyasidan qolgan tarixiy xususiyat; null aslida obyekt degani emas. null’ni aniq tekshirish uchun === null ishlat.",
         "code": "const user = null;\n\nconsole.log(typeof user);  // \"object\"\nconsole.log(user === null); // true"
       },
       {
-        "title": "3. Massiv: obyektning maxsus ko‘rinishi",
+        "title": "8. Massiv: obyektning maxsus ko‘rinishi",
         "text": "[] uchun \"object\" chiqishi xato emas: massiv JavaScript’da obyektning maxsus ko‘rinishi. typeof massivni oddiy obyektdan ajratmaydi. Buning uchun Array.isArray ishlatiladi.",
         "code": "console.log(typeof []);           // \"object\"\nconsole.log(typeof {});           // \"object\"\nconsole.log(Array.isArray([]));   // true\nconsole.log(Array.isArray({}));   // false\nconsole.log(Array.isArray(null)); // false",
         "note": "Demak, null va [] bir xil sababdan \"object\" qaytarmaydi: null — tarixiy g‘alati holat; massiv esa haqiqatan obyekt."
       },
       {
-        "title": "4. Funksiya uchun alohida natija",
+        "title": "9. Funksiya uchun alohida natija",
         "text": "Funksiyalar ham obyektlar, lekin typeof ularni \"function\" deb ajratib ko‘rsatadi.",
         "code": "function salom() {}\nconsole.log(typeof salom);       // \"function\"\nconsole.log(typeof (() => {})); // \"function\""
       },
       {
-        "title": "5. E’lon qilinmagan nom va TDZ farqi",
+        "title": "10. E’lon qilinmagan nom va TDZ farqi",
         "text": "typeof oddiy e’lon qilinmagan nom uchun \"undefined\" qaytaradi. Lekin shu scope ichidagi let/const nomi hali TDZ’da bo‘lsa, typeof ham ReferenceError beradi.",
         "code": "console.log(typeof mavjudEmas); // \"undefined\"\n\n{\n  // console.log(typeof yosh); // ReferenceError\n  let yosh = 20;\n  console.log(typeof yosh);   // \"number\"\n}"
       },
       {
-        "title": "6. Natijani string bilan solishtir",
+        "title": "11. Natijani string bilan solishtir",
         "text": "typeof natijasi har doim string bo‘lgani uchun uni \"number\", \"string\" kabi matn bilan solishtiramiz. typeof umumiy turni aytadi; qiymat to‘g‘riligini to‘liq tekshirmaydi. Masalan, NaN ham \"number\".",
         "code": "const yosh = 20;\nconsole.log(typeof yosh === \"number\"); // true\n\nconst qiymat = NaN;\nconsole.log(typeof qiymat);         // \"number\"\nconsole.log(Number.isNaN(qiymat));  // true\nconsole.log(Number.isFinite(20));   // true\nconsole.log(Number.isFinite(NaN));  // false\nconsole.log(Number.isFinite(Infinity)); // false"
       }
     ],
-    "takeaway": "typeof → string qaytaradi.\nnull’ni tekshirish → qiymat === null.\nMassivni tekshirish → Array.isArray(qiymat).\nFunksiya → typeof qiymat === \"function\".\nTDZ ichida typeof ham ReferenceError beradi.\nNaN ham number, shuning uchun typeof yagona validatsiya vositasi emas.",
-    "exercise": "Natijalarni taxmin qil:\n\n1) typeof \"10\"\n2) typeof null\n3) Array.isArray([1, 2])\n4) typeof typeof true\n5) typeof NaN\n\nQo‘shimcha: null bilan bo‘sh massivni qanday ajratasan?"
+    "takeaway": "console.log(qiymat) — qiymatning o‘zini chiqaradi.\ntypeof qiymat — uning turini matn qilib qaytaradi.\n20 → \"number\"; \"20\" → \"string\"; true → \"boolean\".\nnull → \"object\" — tarixiy maxsus holat, null obyekt emas.\nMassiv uchun typeof ham \"object\" qaytaradi; aniq tekshirish uchun Array.isArray ishlatiladi.\nNaN ham \"number\". typeof qiymatning to‘g‘riligini to‘liq tekshirmaydi.\nlet/const TDZ ichida typeof ham ReferenceError berishi mumkin.",
+    "exercise": "Har bir qatorda nima chiqishini avval o‘zingiz yozing. Qo‘shtirnoq bor-yo‘qligiga e’tibor bering. Keyin javobni ochib sababini tekshiring.",
+    "fullTextDefault": true,
+    "exerciseCode": "let yosh = 20;\nlet matn = \"20\";\nlet javob = \"false\";\nlet ism;\n\nconsole.log(typeof yosh);        // 1: ?\nconsole.log(typeof matn);        // 2: ?\nconsole.log(typeof javob);       // 3: ?\nconsole.log(typeof true);        // 4: ?\nconsole.log(typeof ism);         // 5: ?\nconsole.log(typeof null);        // 6: ?\nconsole.log(Array.isArray([]));  // 7: ?\nconsole.log(typeof typeof 20);   // 8: ?",
+    "exerciseAnswer": "1. \"number\" — 20 son.\n2. \"string\" — \"20\" qo‘shtirnoqdagi matn.\n3. \"string\" — \"false\" ham matn.\n4. \"boolean\" — true qo‘shtirnoqsiz boolean qiymat.\n5. \"undefined\" — ism ga hali qiymat berilmagan.\n6. \"object\" — null uchun tarixiy maxsus natija; null aslida primitive qiymat.\n7. true — [] massiv, Array.isArray shuni tekshiradi.\n8. \"string\" — ichki typeof 20 avval \"number\" matnini beradi, tashqi typeof shu matnning turini tekshiradi."
   },
   {
     "id": "coercion-equality",
