@@ -36,7 +36,7 @@ test('restores per-topic steps together with existing read markers and AI creden
   assert.equal(Object.keys(setup().api.progress.lessonSteps).length, 0);
 });
 
-test('curriculum covers 62 unique topics in the requested 10-stage order', () => {
+test('curriculum preserves the original 62 topics and adds an eight-topic core reading stage', () => {
   const ctx = setup();
   const stages = ctx.window.lessonStages;
   const expected = [
@@ -49,11 +49,12 @@ test('curriculum covers 62 unique topics in the requested 10-stage order', () =>
     'prototypes,classes,class-private,object-descriptors',
     'iterators-generators,symbol-bigint,weakmap-weakset,proxy-reflect,currying,memoization,memory-management',
     'node-basics,node-fs-path,node-streams,node-http',
-    'design-patterns,testing-basics,lint-format'
+    'design-patterns,testing-basics,lint-format',
+    'expressions-statements,execution-context-stack,lexical-environment,evaluation-order,functions-as-values,strict-mode-asi,object-to-primitive,debugger-code-reading'
   ];
-  assert.equal(stages.length, 10);
-  assert.equal(ctx.window.lessons.length, 62);
-  assert.equal(new Set(ctx.window.lessons.map(l => l.id)).size, 62);
+  assert.equal(stages.length, 11);
+  assert.equal(ctx.window.lessons.length, 70);
+  assert.equal(new Set(ctx.window.lessons.map(l => l.id)).size, 70);
   stages.forEach((stage, i) => {
     assert.equal(stage.ids.join(','), expected[i]);
     assert.ok(stage.project);

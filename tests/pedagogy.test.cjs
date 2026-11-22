@@ -10,7 +10,7 @@ vm.runInContext(fs.readFileSync('data.js','utf8'),ctx);
 vm.runInContext(fs.readFileSync('app.js','utf8').replace(/render\(\);\s*if \(location\.hash\) scrollContentToTop\(\);\s*$/,'')+'\nglobalThis.steps=buildLessonSteps;',ctx);
 const lessons=ctx.window.lessons;
 const normalize=v=>JSON.parse(JSON.stringify(v));
-test('62 lessons have earlier prerequisites, plain glossary and three graduated exercises',()=>{
+test('all 70 lessons have earlier prerequisites, plain glossary and three graduated exercises',()=>{
  for(const [i,l] of lessons.entries()){
   const g=l.learningGuide,p=l.learningPractice;
   assert.ok(g.goal && g.terms.length>=2,l.id);

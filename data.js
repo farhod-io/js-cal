@@ -1,4 +1,4 @@
-// Barcha o'quv ma'lumotlari bitta faylda: 62 dars, 66 test, 10 kod labi.
+// Barcha o'quv ma'lumotlari bitta faylda: 70 dars, 74 test, 18 kod labi.
 // Tartib: darslar 0 dan boshlab bosqichma-bosqich joylashtirilgan.
 
 window.lessons = [
@@ -10258,3 +10258,1737 @@ for (const id of ['dom-basics', 'functions', 'conditionals', 'destructuring-spre
     section.title = `${index + 1}. ${section.title.replace(/^\d+\.\s*/, '')}`;
   });
 }
+
+// JS core: kodni satrma-satr tushunish uchun qo‘shimcha yo‘l.
+window.lessons.push(...[
+  {
+    "id": "expressions-statements",
+    "title": "Expression va statement: kod qiymati va amali",
+    "question": "Ifodani buyruqdan ajratib, arrow funksiya va return natijasini o‘qiysiz.",
+    "explanation": "Kodni o‘qishda birinchi savol: bu bo‘lak qiymat hisoblayaptimi yoki bajariladigan ishni tashkil qilyaptimi? 2 + 3 — ifoda, const n = 2 + 3; esa deklaratsiya. Chaqirish ifoda bo‘lishi mumkin: funksiya aniq return bermasa, chaqirish qiymati undefined bo‘ladi. Console ko‘rsatgan har qanday yozuvni qaytuvchi qiymat deb olmang.\n\nHar bir misol mustaqil: Console ga bittadan joylang yoki alohida .js faylda bajaring. Avval natijani yozing, so‘ng ishga tushirib solishtiring.",
+    "fullTextDefault": true,
+    "coreReading": true,
+    "codeLabId": "lab-expressions-statements",
+    "sections": [
+      {
+        "title": "1. Birinchi misol: avval natijani taxmin qiling",
+        "text": "1-satrda a funksiyaning ifoda tanasi x + 1 ni qaytaradi. 2-satrda b tanasi blok: x + 1 hisoblanadi, ammo return yo‘q. 3-satr 3 ni oladi, 4-satr undefined oladi. Funksiya yaratish uning tanasini darhol bajarmaydi.",
+        "code": "const a = x => x + 1;\nconst b = x => { x + 1; };\nconsole.log(a(2));\nconsole.log(b(2));",
+        "expectedOutput": [
+          3,
+          {
+            "$undefined": true
+          }
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "2. Bajarilish yo‘li: satrma-satr kuzatamiz",
+        "text": "Kodning fayldagi joylashuvi bilan bajarilish tartibi bir xil bo‘lishi shart emas. Quyidagi jadvalni kod bilan yonma-yon o‘qing.",
+        "table": {
+          "headers": [
+            "Qadam / kod",
+            "Qiymat yoki holat",
+            "Keyingi ish / sabab"
+          ],
+          "rows": [
+            [
+              "a(2)",
+              "x = 2; x + 1 → 3",
+              "Ifoda tanasi 3 ni qaytaradi."
+            ],
+            [
+              "console.log(a(2))",
+              "Konsolda 3",
+              "a chaqirishi log argumentini berdi."
+            ],
+            [
+              "b(2)",
+              "x + 1 → 3, return yo‘q",
+              "Chaqirish qiymati undefined."
+            ],
+            [
+              "console.log(b(2))",
+              "Konsolda undefined",
+              "Hisoblangan 3 avtomatik qaytarilmadi."
+            ]
+          ]
+        }
+      },
+      {
+        "title": "3. Ifoda qayerlarda ishlatiladi?",
+        "text": "O‘ng tomon, argument, shart va return dan keyin ifoda bo‘lishi mumkin. Ifoda ichida qiymat berish ham yon ta’sir qiladi; uni shart bilan adashtirmang. if esa ifoda emas: qiymat kerak joyda ternary yozish mumkin.",
+        "code": "const n = 2 + 3;\nconst matn = n > 3 ? \"katta\" : \"kichik\";\nconsole.log(matn);",
+        "expectedOutput": [
+          "katta"
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "4. Blok bilan obyekt literalini ajrating",
+        "text": "Arrow dan keyingi { } odatda funksiya tanasi bo‘ladi. Obyekt ifodasini bevosita qaytarishda uni qavsga oling.",
+        "code": "const yarat = ism => ({ ism });\nconsole.log(yarat(\"Ali\").ism);",
+        "expectedOutput": [
+          "Ali"
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "5. console.log va return bir xil emas",
+        "text": "console.log konsolga yozadi va undefined qaytaradi. return esa chaqiruvchi kutayotgan qiymatni beradi. DevTools oxirgi ifoda natijasini alohida ko‘rsatishi mumkin: bu yana bir log emas.",
+        "code": "function qosh(a,b) { return a+b; }\nconst n = qosh(2,3);\nconsole.log(n * 2);",
+        "expectedOutput": [
+          10
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "6. Ko‘p uchraydigan xatolar",
+        "text": "Arrow blok tanasida return ni unutish; if ni ifoda o‘rniga ishlatish; console.log natijasini hisoblangan son deb olish. Assignment ifodasi qiymat ham beradi, holatni ham o‘zgartiradi; murakkab shartda uni alohida satrga ajratish o‘qishni osonlashtiradi."
+      },
+      {
+        "title": "7. Kichik amaliy loyiha",
+        "text": "Bir xil ikki funksiya yozing: biri ifoda tanali arrow, ikkinchisi return li blok. Ikkalasi berilgan narxga 10 qo‘shsin. Keyin obyekt qaytaradigan arrow yozing."
+      }
+    ],
+    "takeaway": "Ifoda qiymat hisoblaydi. Buyruq kod tuzilishi va bajarilishini tashkil qiladi. Arrow ning { } tanasida qiymat qaytarish uchun return kerak.",
+    "exercise": "Natijani yozing. Har bir qiymat qayerdan kelganini va keyingi qadamni tushuntiring.",
+    "exerciseCode": "const a = () => ({ n: 2 });\nconst b = () => { n: 2 };\nconsole.log(a().n);\nconsole.log(b());",
+    "exerciseExpected": [
+      2,
+      {
+        "$undefined": true
+      }
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 2 — qavs ichidagi obyekt qaytarildi, uning n maydoni o‘qildi.\n2. undefined — b tanasida n: belgilangan statement bor; bu qaytarilgan obyekt emas. return yozilmagan.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va chuqurroq izoh",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_operators"
+      }
+    ],
+    "learningGuide": {
+      "goal": "Ifodani buyruqdan ajratib, arrow funksiya va return natijasini o‘qiysiz.",
+      "prerequisites": [
+        "operators",
+        "functions"
+      ],
+      "terms": [
+        {
+          "term": "Expression — ifoda",
+          "meaning": "Hisoblanib qiymat beradigan kod: 2 + 3, ism yoki qosh(2,3)."
+        },
+        {
+          "term": "Statement — buyruq",
+          "meaning": "Kod bajarilishini tashkil qiladigan sintaksis: if, return, let deklaratsiyasi."
+        },
+        {
+          "term": "Implicit return",
+          "meaning": "Arrow funksiyaning ifoda tanasi qiymatni return yozmasdan qaytarishi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Kod ishlashidan oldin barcha console.log natijalarini tartib bilan yozing. Har bir funksiya uchun kiruvchi argument va qaytuvchi qiymatni belgilang.",
+      "debug": {
+        "task": "Kutilgan xulq: ikki(3) 6 qaytarsin.",
+        "brokenCode": "const ikki = x => { x * 2; };\nconsole.log(ikki(3));",
+        "fixedCode": "const ikki = x => { return x * 2; };\nconsole.log(ikki(3));",
+        "expectedOutput": [
+          6
+        ],
+        "runtime": "javascript",
+        "explanation": "Blok ichidagi hisoblash natijasi return orqali chaqiruvchiga uzatildi."
+      },
+      "write": {
+        "task": "Bir xil ikki funksiya yozing: biri ifoda tanali arrow, ikkinchisi return li blok. Ikkalasi berilgan narxga 10 qo‘shsin. Keyin obyekt qaytaradigan arrow yozing.",
+        "criteria": [
+          "0 kirganda ikkala funksiya 10 qaytaradi.",
+          "5 kirganda ikkala funksiya 15 qaytaradi.",
+          "Obyekt qaytaruvchi funksiya undefined emas, { jami: ... } beradi."
+        ],
+        "hint": "Avval x => x + 10, keyin x => { return x + 10; } yozing. Obyekt uchun x => ({ jami: x + 10 }) ishlating; log ni funksiya tashqarisida yozing."
+      }
+    }
+  },
+  {
+    "id": "execution-context-stack",
+    "title": "Execution context va call stack: kod qayerga qaytadi?",
+    "question": "Ichma-ich funksiya chaqirishlarini va return dan keyin davom etadigan qatorni kuzatasiz.",
+    "explanation": "Funksiya deklaratsiyasini ko‘rish uning tanasi hozir bajarilayotganini bildirmaydi. Tana chaqirish kelganda ishlaydi. Tashqi funksiya ichki funksiya natijasini kutayotganda uning ishlari saqlanadi; ichki chaqirish yakunlangach tashqi hisob davom etadi. Stackni pastdan yuqoriga chizib, ustiga kirgan chaqirishni avval tugating.\n\nHar bir misol mustaqil: Console ga bittadan joylang yoki alohida .js faylda bajaring. Avval natijani yozing, so‘ng ishga tushirib solishtiring.",
+    "fullTextDefault": true,
+    "coreReading": true,
+    "codeLabId": "lab-execution-context-stack",
+    "sections": [
+      {
+        "title": "1. Birinchi misol: avval natijani taxmin qiling",
+        "text": "Dastlab ikki va jami funksiyalari tayyorlanadi. Oxirgi satr jami(3) ni chaqiradi. jami ichida ikki(3) ishlaydi va 6 qaytaradi. Shundan so‘ng jami dagi + 1 hisoblanadi, 7 log ga uzatiladi.",
+        "code": "function ikki(n) {\n  return n * 2;\n}\nfunction jami(n) {\n  return ikki(n) + 1;\n}\nconsole.log(jami(3));",
+        "expectedOutput": [
+          7
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "2. Bajarilish yo‘li: satrma-satr kuzatamiz",
+        "text": "Kodning fayldagi joylashuvi bilan bajarilish tartibi bir xil bo‘lishi shart emas. Quyidagi jadvalni kod bilan yonma-yon o‘qing.",
+        "table": {
+          "headers": [
+            "Qadam / kod",
+            "Qiymat yoki holat",
+            "Keyingi ish / sabab"
+          ],
+          "rows": [
+            [
+              "jami(3) chaqirildi",
+              "Stack: script → jami; n = 3",
+              "return ifodasidagi ikki(n) kerak."
+            ],
+            [
+              "ikki(3) chaqirildi",
+              "Stack: script → jami → ikki; n = 3",
+              "3 * 2 hisoblanadi."
+            ],
+            [
+              "ikki return 6",
+              "Stack: script → jami",
+              "jami 6 + 1 ni hisoblaydi."
+            ],
+            [
+              "jami return 7",
+              "Stack: script",
+              "console.log 7 ni chiqaradi."
+            ]
+          ]
+        }
+      },
+      {
+        "title": "3. Har chaqirishning mahalliy qiymatlari",
+        "text": "Bir funksiyani ikki marta chaqirish bir xil parametr joyini umumiy hisoblagichga aylantirmaydi. Har chaqirishda alohida mahalliy bog‘lanishlar bor.",
+        "code": "function oshir(n) { n += 1; return n; }\nconsole.log(oshir(1));\nconsole.log(oshir(1));",
+        "expectedOutput": [
+          2,
+          2
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "4. Return tananing qolganini to‘xtatadi",
+        "text": "Oddiy tanada return dan keyingi satr ishlamaydi. try/finally bor bo‘lsa finally chiqishdan oldin ishlashi mumkin; uni oddiy misolga aralashtirmay, keyin alohida tekshiring.",
+        "code": "function ol() {\n  return 4;\n  console.log(\"yetib kelmaydi\");\n}\nconsole.log(ol());",
+        "expectedOutput": [
+          4
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "5. Rekursiyada qaytish yo‘li",
+        "text": "Har bosqich n * keyingiNatija ni kutadi. Asosiy shart qiymat bergach kutayotgan ko‘paytmalar teskari tartibda yakunlanadi. Juda chuqur rekursiya stack limitiga yetishi mumkin.",
+        "code": "function f(n) {\n  if (n === 1) return 1;\n  return n * f(n - 1);\n}\nconsole.log(f(3));",
+        "expectedOutput": [
+          6
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "6. Stack va asinxron kutishni aralashtirmang",
+        "text": "Bu dars oddiy sinxron chaqirishlar haqida. setTimeout funksiyani keyinga rejalaydi. await odatdagi chaqiruvchi stackni butun kutish davomida band ushlab turmaydi; davomi keyin rejalashtiriladi. Buni Event loop darsi bilan bog‘lang."
+      },
+      {
+        "title": "7. Ko‘p uchraydigan xatolar",
+        "text": "Fayldagi barcha funksiya tanalarini yuqoridan pastga bajarildi deb o‘qish; ichki funksiya qaytgach tashqi funksiya ham avtomatik tugaydi deb o‘ylash; return qiymatini global o‘zgaruvchi deb olish."
+      },
+      {
+        "title": "8. Kichik amaliy loyiha",
+        "text": "narx, chegirma va jami nomli uch funksiya yozing. jami ichida qolganlarini chaqiring. Bitta chaqirish uchun stack va qaytgan qiymatlar jadvalini tuzing."
+      }
+    ],
+    "takeaway": "Chaqirish → ichki ish → return → chaqirishdan keyingi davom. Stackdagi faol chaqirishlar tartibi lexical scope zanjiri bilan bir xil tushuncha emas.",
+    "exercise": "Natijani yozing. Har bir qiymat qayerdan kelganini va keyingi qadamni tushuntiring.",
+    "exerciseCode": "function a(n) { return n + 1; }\nfunction b(n) { return a(n) * 2; }\nconsole.log(b(4));",
+    "exerciseExpected": [
+      10
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 10 — b(4) a(4) ni kutadi; a 5 qaytaradi, b uni 2 ga ko‘paytirib 10 qaytaradi. Keyin log ishlaydi.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va chuqurroq izoh",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Execution_model"
+      }
+    ],
+    "learningGuide": {
+      "goal": "Ichma-ich funksiya chaqirishlarini va return dan keyin davom etadigan qatorni kuzatasiz.",
+      "prerequisites": [
+        "functions",
+        "recursion",
+        "expressions-statements"
+      ],
+      "terms": [
+        {
+          "term": "Execution context",
+          "meaning": "Bajarilayotgan kodning nomlar va boshqa kerakli holatlar bilan bog‘liq muhiti."
+        },
+        {
+          "term": "Call stack",
+          "meaning": "Faol chaqirishlar tartibi: oxirgi kirgan chaqirish avval yakunlanadi."
+        },
+        {
+          "term": "Stack frame",
+          "meaning": "Bitta faol chaqirish haqidagi ma’lumotni ifodalovchi qadam."
+        },
+        {
+          "term": "Return point",
+          "meaning": "Ichki chaqirish tugagach tashqi kod davom etadigan joy."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Kod ishlashidan oldin barcha console.log natijalarini tartib bilan yozing. Har bir funksiya uchun kiruvchi argument va qaytuvchi qiymatni belgilang.",
+      "debug": {
+        "task": "Kutilgan xulq: tashqi(3) 7 qaytarsin.",
+        "brokenCode": "function ichki(n) { n * 2; }\nfunction tashqi(n) { return ichki(n) + 1; }\nconsole.log(tashqi(3));",
+        "fixedCode": "function ichki(n) { return n * 2; }\nfunction tashqi(n) { return ichki(n) + 1; }\nconsole.log(tashqi(3));",
+        "expectedOutput": [
+          7
+        ],
+        "runtime": "javascript",
+        "explanation": "Ichki return bo‘lmasa undefined + 1 natijasi NaN. Tuzatishda ichki chaqirish 6 ni berdi, tashqi hisob 7 bo‘ldi."
+      },
+      "write": {
+        "task": "narx, chegirma va jami nomli uch funksiya yozing. jami ichida qolganlarini chaqiring. Bitta chaqirish uchun stack va qaytgan qiymatlar jadvalini tuzing.",
+        "criteria": [
+          "Ichki funksiyalarni alohida chaqirib natijasini tekshirasiz.",
+          "Tashqi chaqirishda hisoblash tartibini yozasiz.",
+          "Har return dan keyin kod qayerga qaytishini ko‘rsatasiz."
+        ],
+        "hint": "narx(dona) dona * 100, chegirma(summa) summa - 10 qaytarsin. jami(dona) ichida chegirma(narx(dona)) yozing. dona=2 uchun 200, keyin 190 chiqishini kuzating."
+      }
+    }
+  },
+  {
+    "id": "lexical-environment",
+    "title": "Lexical environment: qaysi o‘zgaruvchi o‘qiladi?",
+    "question": "Nomni ichki muhitdan tashqariga qidirib, shadowing va closure natijasini oldindan aytasiz.",
+    "explanation": "x ni o‘qiganda JavaScript shunchaki fayldagi eng yaqin yozilgan x ni olmaydi. Avval joriy scope tekshiriladi, so‘ng tashqi scope lar ketma-ket qaraladi. Funksiya boshqa joydan chaqirilsa ham uning yozilgan joyidagi tashqi muhit bog‘lanishi o‘zgarmaydi. Buni xotiraning aniq fizik chizmasi emas, nom qidirish modeli sifatida o‘rganing.\n\nHar bir misol mustaqil: Console ga bittadan joylang yoki alohida .js faylda bajaring. Avval natijani yozing, so‘ng ishga tushirib solishtiring.",
+    "fullTextDefault": true,
+    "coreReading": true,
+    "codeLabId": "lab-lexical-environment",
+    "sections": [
+      {
+        "title": "1. Birinchi misol: avval natijani taxmin qiling",
+        "text": "ol tashqi muhitda yaratilgan. ishgaTushir ichidagi x shu funksiyaning mahalliy nomi. ol() chaqirilganda uning tashqi muhitida x=\"tashqi\" topiladi; chaqiruvchining mahalliy x i olinmaydi.",
+        "code": "const x = \"tashqi\";\nfunction ol() { return x; }\nfunction ishgaTushir() {\n  const x = \"ichki\";\n  return ol();\n}\nconsole.log(ishgaTushir());",
+        "expectedOutput": [
+          "tashqi"
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "2. Bajarilish yo‘li: satrma-satr kuzatamiz",
+        "text": "Kodning fayldagi joylashuvi bilan bajarilish tartibi bir xil bo‘lishi shart emas. Quyidagi jadvalni kod bilan yonma-yon o‘qing.",
+        "table": {
+          "headers": [
+            "Qadam / kod",
+            "Qiymat yoki holat",
+            "Keyingi ish / sabab"
+          ],
+          "rows": [
+            [
+              "ishgaTushir()",
+              "Mahalliy x = \"ichki\"",
+              "ol() chaqiriladi."
+            ],
+            [
+              "ol ichida x so‘rovi",
+              "ol ning o‘zida x yo‘q",
+              "ol yaratilgan tashqi muhit tekshiriladi."
+            ],
+            [
+              "Tashqi x topildi",
+              "\"tashqi\"",
+              "ol shu qiymatni qaytaradi."
+            ],
+            [
+              "Log",
+              "\"tashqi\"",
+              "Chaqiruvchidagi x qidirish yo‘lini almashtirmadi."
+            ]
+          ]
+        }
+      },
+      {
+        "title": "3. Shadowing: ichki nom birinchi",
+        "text": "Blokdagi bir xil nom tashqisini berkitadi. Blok tugagach tashqi nom yana o‘qiladi.",
+        "code": "let x = 1;\n{ let x = 2; console.log(x); }\nconsole.log(x);",
+        "expectedOutput": [
+          2,
+          1
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "4. Closure qiymat suratini emas, binding ni ko‘radi",
+        "text": "Funksiya tashqi nom bilan bog‘lanishni saqlaydi. Shu binding yangilansa, keyingi chaqirish yangi qiymatni ko‘radi. const primitive uchun esa qayta qiymat berish mumkin emas.",
+        "code": "let n = 1;\nconst ol = () => n;\nn = 3;\nconsole.log(ol());",
+        "expectedOutput": [
+          3
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "5. Topilgan nom hali TDZ da bo‘lishi mumkin",
+        "text": "Ichki let topilgach tashqi nomga o‘tib ketilmaydi. Ichki nom hali initialized bo‘lmasa ReferenceError keladi.",
+        "code": "let x = 1;\ntry {\n  console.log(x);\n  let x = 2;\n} catch (e) { console.log(e.name); }",
+        "expectedOutput": [
+          "ReferenceError"
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "6. Har chaqirish alohida closure muhiti yaratadi",
+        "text": "Bir factory dan olingan ikki hisoblagich alohida n larni saqlashi mumkin. Bir factory chaqirishidan qaytgan ikki funksiya esa shu bitta muhitni bo‘lishadi.",
+        "code": "function yarat() { let n=0; return () => ++n; }\nconst a=yarat(), b=yarat();\nconsole.log(a());\nconsole.log(a());\nconsole.log(b());",
+        "expectedOutput": [
+          1,
+          2,
+          1
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "7. Ko‘p uchraydigan xatolar",
+        "text": "Scope zanjirini call stack bilan tenglashtirish; closure tashqi qiymatni doim muzlatib saqlaydi deb olish; ichki TDZ bo‘lsa tashqi nom ishlaydi deb o‘ylash."
+      },
+      {
+        "title": "8. Kichik amaliy loyiha",
+        "text": "Ikki mustaqil hisoblagich yarating. Birinchisini ikki marta, ikkinchisini bir marta chaqiring. Har n qaysi factory chaqirishiga tegishli ekanini yozing."
+      }
+    ],
+    "takeaway": "Nom qidirishda joriy scope → lexical tashqi scope lar. Chaqirilgan joy muhit zanjirini almashtirmaydi. Closure tashqi binding bilan bog‘liq.",
+    "exercise": "Natijani yozing. Har bir qiymat qayerdan kelganini va keyingi qadamni tushuntiring.",
+    "exerciseCode": "let n = 1;\nconst ol = () => n;\nfunction ish() { const n = 9; return ol(); }\nn = 2;\nconsole.log(ish());",
+    "exerciseExpected": [
+      2
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 2 — ol tashqi n binding ini ko‘radi. U 2 ga yangilangan; ish ichidagi 9 ol ning tashqi muhiti emas.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va chuqurroq izoh",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Closures"
+      }
+    ],
+    "learningGuide": {
+      "goal": "Nomni ichki muhitdan tashqariga qidirib, shadowing va closure natijasini oldindan aytasiz.",
+      "prerequisites": [
+        "scope",
+        "hoisting-tdz",
+        "closures",
+        "execution-context-stack"
+      ],
+      "terms": [
+        {
+          "term": "Binding — bog‘lanish",
+          "meaning": "Nom bilan qiymat saqlanadigan joy o‘rtasidagi bog‘lanish."
+        },
+        {
+          "term": "Lexical environment",
+          "meaning": "Mahalliy nomlar va tashqi muhit bilan bog‘lanishni tushuntiruvchi model."
+        },
+        {
+          "term": "Shadowing",
+          "meaning": "Ichki scope dagi bir xil nom tashqi nomni berkitishi."
+        },
+        {
+          "term": "Lexical scope",
+          "meaning": "Nom qidirish funksiya qayerda yozilganiga bog‘liq bo‘lishi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Kod ishlashidan oldin barcha console.log natijalarini tartib bilan yozing. Har bir funksiya uchun kiruvchi argument va qaytuvchi qiymatni belgilang.",
+      "debug": {
+        "task": "Kutilgan xulq: ish() ichidagi 5 ol ga aniq uzatilsin.",
+        "brokenCode": "const x=1;\nfunction ol() { return x; }\nfunction ish() { const x=5; return ol(); }\nconsole.log(ish());",
+        "fixedCode": "function ol(x) { return x; }\nfunction ish() { const x=5; return ol(x); }\nconsole.log(ish());",
+        "expectedOutput": [
+          5
+        ],
+        "runtime": "javascript",
+        "explanation": "Chaqiruvchining mahalliy qiymati avtomatik olinmaydi. Parametr va argument bilan u aniq uzatildi."
+      },
+      "write": {
+        "task": "Ikki mustaqil hisoblagich yarating. Birinchisini ikki marta, ikkinchisini bir marta chaqiring. Har n qaysi factory chaqirishiga tegishli ekanini yozing.",
+        "criteria": [
+          "Birinchi hisoblagich 1, keyin 2 beradi.",
+          "Ikkinchisi birinchi chaqirishda 1 beradi.",
+          "Tashqarida umumiy global n ishlatilmagan."
+        ],
+        "hint": "yarat ichida let n=0 saqlang va () => ++n qaytaring. a=yarat() va b=yarat() ikkita alohida chaqirish bo‘lsin."
+      }
+    }
+  },
+  {
+    "id": "evaluation-order",
+    "title": "Ifodaning bajarilish tartibi va short-circuit",
+    "question": "Operator guruhlanishi bilan operandlarning bajarilishini ajratib, qaysi funksiya chaqirilishini aniqlaysiz.",
+    "explanation": "2 + 3 * 4 yozuvi 2 + (3 * 4) bo‘lib guruhlanadi. Lekin funksiya chaqirishlari qatnashganda “ustun operatorning yonidagi hamma funksiya avval chaqiriladi” deb o‘ylamang. Oddiy binary ifodalarda operand ifodalari chapdan o‘ngga baholanadi; keyin guruhlashga muvofiq hisob yakunlanadi. Qisqa baholovchi operatorlar esa ayrim operandlarni butunlay tashlab ketadi.\n\nHar bir misol mustaqil: Console ga bittadan joylang yoki alohida .js faylda bajaring. Avval natijani yozing, so‘ng ishga tushirib solishtiring.",
+    "fullTextDefault": true,
+    "coreReading": true,
+    "codeLabId": "lab-evaluation-order",
+    "sections": [
+      {
+        "title": "1. Birinchi misol: avval natijani taxmin qiling",
+        "text": "Tashqi log argumenti tayyor bo‘lishi kerak. Avval chapdagi ol(2), keyin o‘ng tomondagi ko‘paytmaning ol(3) va ol(4) chaqirishlari ishlaydi. Ko‘paytma 12, yig‘indi 14 bo‘ladi. Oxirgi log shundan keyin yozadi.",
+        "code": "function ol(n) { console.log(n); return n; }\nconsole.log(ol(2) + ol(3) * ol(4));",
+        "expectedOutput": [
+          2,
+          3,
+          4,
+          14
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "2. Bajarilish yo‘li: satrma-satr kuzatamiz",
+        "text": "Kodning fayldagi joylashuvi bilan bajarilish tartibi bir xil bo‘lishi shart emas. Quyidagi jadvalni kod bilan yonma-yon o‘qing.",
+        "table": {
+          "headers": [
+            "Qadam / kod",
+            "Qiymat yoki holat",
+            "Keyingi ish / sabab"
+          ],
+          "rows": [
+            [
+              "ol(2)",
+              "Log 2; qaytish 2",
+              "Chap operand tayyor."
+            ],
+            [
+              "ol(3)",
+              "Log 3; qaytish 3",
+              "Ko‘paytmaning chap operandi."
+            ],
+            [
+              "ol(4)",
+              "Log 4; qaytish 4",
+              "3 * 4 → 12."
+            ],
+            [
+              "2 + 12",
+              "14",
+              "Tashqi console.log 14 chiqaradi."
+            ]
+          ]
+        }
+      },
+      {
+        "title": "3. &&, || va ?? qiymat qaytaradi",
+        "text": "&& chap falsy bo‘lsa o‘ngni tashlaydi. || chap truthy bo‘lsa o‘ngni tashlaydi. ?? chap null/undefined bo‘lmasa o‘ngni tashlaydi. Ular faqat true/false qaytarmaydi.",
+        "code": "function zaxira() { console.log(\"chaqirildi\"); return 9; }\nconsole.log(0 && zaxira());\nconsole.log(\"Ali\" || zaxira());\nconsole.log(0 ?? zaxira());",
+        "expectedOutput": [
+          0,
+          "Ali",
+          0
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "4. Ternary faqat tanlangan shoxni bajaradi",
+        "text": "Shartdan keyin ikkita shoxning ikkalasi emas, faqat tanlangani hisoblanadi. Qavslar maqsadni aniq ko‘rsatadi.",
+        "code": "const ok = false;\nconsole.log(ok ? \"ha\" : \"yo‘q\");\nconsole.log((0 || 2) + 3);",
+        "expectedOutput": [
+          "yo‘q",
+          5
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "5. ?? ni && yoki || bilan aralashtirish",
+        "text": "Qavssiz null ?? false || true kabi yozuv SyntaxError. Nima kerakligini qavs bilan aniq belgilang; qavs tanlovi natijaga ta’sir qiladi.",
+        "code": "console.log((null ?? false) || true);\nconsole.log(0 ?? (false || true));",
+        "expectedOutput": [
+          true,
+          0
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "6. ++ qiymati bilan yangi holatni ajrating",
+        "text": "Postfix eski qiymatni qaytaradi, lekin o‘zgaruvchini oshiradi. Prefix yangi qiymatni qaytaradi. Bir satrda ko‘p mutation qilish o‘qishni qiyinlashtiradi.",
+        "code": "let n = 1;\nconst old = n++;\nconsole.log(old);\nconsole.log(n);\nconsole.log(++n);",
+        "expectedOutput": [
+          1,
+          2,
+          3
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "7. Ko‘p uchraydigan xatolar",
+        "text": "Ustunlikni funksiya chaqirish tartibi bilan tenglashtirish; && doim boolean beradi deb o‘ylash; || bilan yaroqli 0 ni almashtirib yuborish; hamma shox ishlaydi deb o‘qish."
+      },
+      {
+        "title": "8. Kichik amaliy loyiha",
+        "text": "Qiymat qabul qiluvchi funksiya yozing: 0 saqlansin, null/undefined bo‘lsa hisobla() dan zaxira olinsin. hisobla necha marta ishlaganini sanang."
+      }
+    ],
+    "takeaway": "Avval guruhlashni, so‘ng operandlarning ketma-ket bajarilishini ko‘ring. Short-circuit bo‘lsa o‘ng operand umuman bajarilmasligi mumkin.",
+    "exercise": "Natijani yozing. Har bir qiymat qayerdan kelganini va keyingi qadamni tushuntiring.",
+    "exerciseCode": "let n = 0;\nconst a = 0 && ++n;\nconst b = 0 ?? ++n;\nconst c = 0 || ++n;\nconsole.log(a);\nconsole.log(b);\nconsole.log(c);\nconsole.log(n);",
+    "exerciseExpected": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. 0 — && o‘ngini bajarmadi.\n2. 0 — ?? chap 0 ni saqladi, o‘ng bajarilmadi.\n3. 1 — || uchun 0 falsy, ++n ishladi.\n4. 1 — n faqat bir marta oshdi.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va chuqurroq izoh",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_precedence"
+      }
+    ],
+    "learningGuide": {
+      "goal": "Operator guruhlanishi bilan operandlarning bajarilishini ajratib, qaysi funksiya chaqirilishini aniqlaysiz.",
+      "prerequisites": [
+        "operators",
+        "conditionals",
+        "functions",
+        "expressions-statements"
+      ],
+      "terms": [
+        {
+          "term": "Precedence — ustunlik",
+          "meaning": "Operatorlar ifodada qanday guruhlanishini belgilaydi: * odatda + dan oldin bog‘lanadi."
+        },
+        {
+          "term": "Evaluation — baholash",
+          "meaning": "Ifodani bajarib qiymatini olish jarayoni."
+        },
+        {
+          "term": "Short-circuit",
+          "meaning": "Natija ma’lum bo‘lgani uchun o‘ng operandni bajarmaslik."
+        },
+        {
+          "term": "Side effect — yon ta’sir",
+          "meaning": "Hisobdan tashqari log chiqarish yoki tashqi holatni o‘zgartirish."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Kod ishlashidan oldin barcha console.log natijalarini tartib bilan yozing. Har bir funksiya uchun kiruvchi argument va qaytuvchi qiymatni belgilang.",
+      "debug": {
+        "task": "Kutilgan xulq: 0 saqlansin, faqat null/undefined da zaxira ishlasin.",
+        "brokenCode": "const count=0;\nconsole.log(count || 10);",
+        "fixedCode": "const count=0;\nconsole.log(count ?? 10);",
+        "expectedOutput": [
+          0
+        ],
+        "runtime": "javascript",
+        "explanation": "|| barcha falsy qiymatlarni almashtiradi. ?? bu talab uchun 0 ni saqlaydi."
+      },
+      "write": {
+        "task": "Qiymat qabul qiluvchi funksiya yozing: 0 saqlansin, null/undefined bo‘lsa hisobla() dan zaxira olinsin. hisobla necha marta ishlaganini sanang.",
+        "criteria": [
+          "0 uchun hisobla chaqirilmaydi.",
+          "null uchun hisobla bir marta chaqiriladi.",
+          "Natija bilan chaqirish sonini alohida log qilib tushuntirasiz."
+        ],
+        "hint": "let calls=0; function hisobla(){ calls++; return 10; } yarating. const ol=x=>x ?? hisobla(); yozing, ol(0) va ol(null) ni sinang."
+      }
+    }
+  },
+  {
+    "id": "functions-as-values",
+    "title": "Funksiya qiymat sifatida: fn, fn() va return fn()",
+    "question": "Funksiyani uzatish, chaqirish va natijasini qaytarish orasidagi farqni koddan aniqlaysiz.",
+    "explanation": "const f = qosh yozuvi qosh ni bajarmaydi: o‘sha funksiya qiymati f orqali ham olinadi. const n = qosh(2,3) esa funksiyani hozir chaqirib, uning natijasini saqlaydi. Har uchragan () ni belgilang va shu chaqirish nimani qaytarishini yozing. Callback uzatilgan paytda uning tanasi albatta ishlaydi degan qoida yo‘q; uni qabul qilgan kod qachon chaqirsa, o‘shanda ishlaydi.\n\nHar bir misol mustaqil: Console ga bittadan joylang yoki alohida .js faylda bajaring. Avval natijani yozing, so‘ng ishga tushirib solishtiring.",
+    "fullTextDefault": true,
+    "coreReading": true,
+    "codeLabId": "lab-functions-as-values",
+    "sections": [
+      {
+        "title": "1. Birinchi misol: avval natijani taxmin qiling",
+        "text": "yarat(2) son emas, yangi arrow funksiya qaytaradi. f shu funksiyani saqlaydi. typeof f funksiya ekanini ko‘rsatadi. f() ichida saqlangan n=2 olinib, 3 qaytariladi. Bu yerda ikkita alohida chaqirish bor: yarat(2) va f().",
+        "code": "function yarat(n) {\n  return () => n + 1;\n}\nconst f = yarat(2);\nconsole.log(typeof f);\nconsole.log(f());",
+        "expectedOutput": [
+          "function",
+          3
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "2. Bajarilish yo‘li: satrma-satr kuzatamiz",
+        "text": "Kodning fayldagi joylashuvi bilan bajarilish tartibi bir xil bo‘lishi shart emas. Quyidagi jadvalni kod bilan yonma-yon o‘qing.",
+        "table": {
+          "headers": [
+            "Qadam / kod",
+            "Qiymat yoki holat",
+            "Keyingi ish / sabab"
+          ],
+          "rows": [
+            [
+              "yarat(2)",
+              "n = 2; yangi arrow yaratildi",
+              "Funksiya qiymati f ga saqlandi."
+            ],
+            [
+              "typeof f",
+              "\"function\"",
+              "f hali chaqirilmadi."
+            ],
+            [
+              "f()",
+              "n + 1 → 3",
+              "Ichki funksiya chaqirildi."
+            ],
+            [
+              "console.log(f())",
+              "3",
+              "Qaytgan son ko‘rsatildi."
+            ]
+          ]
+        }
+      },
+      {
+        "title": "3. fn bilan fn() ni taqqoslang",
+        "text": "Birinchisi funksiya qiymatini uzatadi, ikkinchisi chaqirish natijasini uzatadi. Funksiya natijasi yana funksiya bo‘lishi ham mumkin: faqat qavs borligiga qarab natija son deyish xato.",
+        "code": "function ikki(n) { return n * 2; }\nconst fn = ikki;\nconst natija = ikki(3);\nconsole.log(typeof fn);\nconsole.log(natija);",
+        "expectedOutput": [
+          "function",
+          6
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "4. Callbackni kim chaqiradi?",
+        "text": "run ga berilgan fn keyin run tanasida chaqiriladi. Agar run(ikki(3), 4) desak, fn ga 6 keladi va 6 funksiya emasligi uchun xato bo‘ladi.",
+        "code": "function ikki(n) { return n * 2; }\nfunction run(fn, qiymat) { return fn(qiymat); }\nconsole.log(run(ikki, 4));",
+        "expectedOutput": [
+          8
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "5. return fn va return fn()",
+        "text": "return fn funksiyaning o‘zini qaytaradi. return fn() uni hozir chaqiradi va natijani qaytaradi. Quyida biri function, ikkinchisi number.",
+        "code": "function ol() { return 7; }\nfunction a() { return ol; }\nfunction b() { return ol(); }\nconsole.log(typeof a());\nconsole.log(b());",
+        "expectedOutput": [
+          "function",
+          7
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "6. Funksiya identifikatsiyasi va this",
+        "text": "Ikki alohida arrow bir xil kodli bo‘lsa ham boshqa qiymat. Bir funksiyani boshqa nomga berish esa shu qiymatni saqlaydi. Metodni ajratib olish this ni avtomatik bog‘lamaydi; this darsidagi bind/call qoidalarini qo‘llang.",
+        "code": "const a = () => 1;\nconst b = a;\nconsole.log(a === b);\nconsole.log(a === (() => 1));",
+        "expectedOutput": [
+          true,
+          false
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "7. Ko‘p uchraydigan xatolar",
+        "text": "Callback o‘rniga uning natijasini yuborish; console.log qilgan funksiya kerakli sonni ham qaytaradi deb o‘ylash; factory qaytargan funksiyani chaqirmay son bilan qo‘shish; metodning this bog‘lanishini yo‘qotish."
+      },
+      {
+        "title": "8. Kichik amaliy loyiha",
+        "text": "ko‘paytiruvchi(n) yozing: u son qabul qiladigan yangi funksiya qaytarsin. Ikki va uchga ko‘paytiruvchilarni yarating. Callback oladigan run yordamida ularni ishlating."
+      }
+    ],
+    "takeaway": "fn — funksiya qiymati; fn() — hozirgi chaqirish natijasi. return fn va return fn() bir xil emas. Har bir qavsdan keyin natijaning turini yozing.",
+    "exercise": "Natijani yozing. Har bir qiymat qayerdan kelganini va keyingi qadamni tushuntiring.",
+    "exerciseCode": "function ol() { return 5; }\nfunction a() { return ol; }\nfunction b() { return ol(); }\nconsole.log(typeof a());\nconsole.log(a()());\nconsole.log(b());",
+    "exerciseExpected": [
+      "function",
+      5,
+      5
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. \"function\" — a ol funksiyasini qaytardi.\n2. 5 — birinchi () a ni, ikkinchisi qaytgan ol ni chaqirdi.\n3. 5 — b ichida ol hozir chaqirilib, uning natijasi qaytarildi.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va chuqurroq izoh",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions"
+      }
+    ],
+    "learningGuide": {
+      "goal": "Funksiyani uzatish, chaqirish va natijasini qaytarish orasidagi farqni koddan aniqlaysiz.",
+      "prerequisites": [
+        "functions",
+        "callbacks",
+        "closures",
+        "expressions-statements"
+      ],
+      "terms": [
+        {
+          "term": "Function value",
+          "meaning": "O‘zgaruvchiga yozish, argument sifatida uzatish yoki qaytarish mumkin bo‘lgan funksiya qiymati."
+        },
+        {
+          "term": "Invocation — chaqirish",
+          "meaning": "Funksiya nomi/ifodasidan keyingi () orqali tanani ishga tushirish."
+        },
+        {
+          "term": "Callback",
+          "meaning": "Boshqa kod chaqirishi uchun berilgan funksiya."
+        },
+        {
+          "term": "Factory",
+          "meaning": "Yangi obyekt yoki funksiya yaratib qaytaradigan funksiya."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Kod ishlashidan oldin barcha console.log natijalarini tartib bilan yozing. Har bir funksiya uchun kiruvchi argument va qaytuvchi qiymatni belgilang.",
+      "debug": {
+        "task": "Kutilgan xulq: run callbackni o‘zi chaqirib 6 olsin.",
+        "brokenCode": "function ikki(n) { return n * 2; }\nfunction run(fn) { return fn(3); }\nconsole.log(run(ikki(3)));",
+        "fixedCode": "function ikki(n) { return n * 2; }\nfunction run(fn) { return fn(3); }\nconsole.log(run(ikki));",
+        "expectedOutput": [
+          6
+        ],
+        "runtime": "javascript",
+        "explanation": "ikki(3) natijasi 6 bo‘lib, uni fn sifatida chaqirib bo‘lmaydi. ikki qiymati uzatilganda run fn(3) ni bajara oladi."
+      },
+      "write": {
+        "task": "ko‘paytiruvchi(n) yozing: u son qabul qiladigan yangi funksiya qaytarsin. Ikki va uchga ko‘paytiruvchilarni yarating. Callback oladigan run yordamida ularni ishlating.",
+        "criteria": [
+          "ikki(4) 8, uch(4) 12 qaytaradi.",
+          "run ga ikki funksiyasi () siz beriladi.",
+          "Factory qaytargan qiymat turini va ikkinchi chaqirish natijasini tushuntirasiz."
+        ],
+        "hint": "function kopaytiruvchi(n){return x=>x*n;} bilan boshlang. const ikki=kopaytiruvchi(2); function run(fn,x){return fn(x);} yozing."
+      }
+    }
+  },
+  {
+    "id": "strict-mode-asi",
+    "title": "Strict mode va ASI: yashirin xatolarni tushunish",
+    "question": "Strict rejimdagi xatolarni ajratib, return yonidagi yangi qator va nuqtali vergul ta’sirini tushuntirasiz.",
+    "explanation": "JavaScript har bir yangi qatorda buyruqni avtomatik tugatmaydi. Ba’zi joylarda ; qo‘shiladi, ba’zi joylarda keyingi qator oldingi ifodaning davomi bo‘lib qoladi. Strict mode esa ; qoidasi emas, bajarilish va sintaksisdagi ayrim cheklovlar rejimidir. Bu ikki tushunchani alohida kuzating. ES modullar va class tanalari avtomatik strict; oddiy script yoki oddiy funksiya uchun mos joyda \"use strict\" yoziladi.\n\nHar bir misol mustaqil: Console ga bittadan joylang yoki alohida .js faylda bajaring. Avval natijani yozing, so‘ng ishga tushirib solishtiring.",
+    "fullTextDefault": true,
+    "coreReading": true,
+    "codeLabId": "lab-strict-mode-asi",
+    "sections": [
+      {
+        "title": "1. Birinchi misol: avval natijani taxmin qiling",
+        "text": "return dan keyin darhol yangi qator kelgan. ASI bu yerda return; kabi ta’sir qiladi: qiymatsiz qaytish undefined. Keyingi 5; ifoda statement iga yetib kelinmaydi. Kod ishlaydi, ammo kutilgan 5 ni bermaydi.",
+        "code": "function ol() {\n  return\n    5;\n}\nconsole.log(ol());",
+        "expectedOutput": [
+          {
+            "$undefined": true
+          }
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "2. Bajarilish yo‘li: satrma-satr kuzatamiz",
+        "text": "Kodning fayldagi joylashuvi bilan bajarilish tartibi bir xil bo‘lishi shart emas. Quyidagi jadvalni kod bilan yonma-yon o‘qing.",
+        "table": {
+          "headers": [
+            "Qadam / kod",
+            "Qiymat yoki holat",
+            "Keyingi ish / sabab"
+          ],
+          "rows": [
+            [
+              "ol()",
+              "Funksiya tanasi boshlandi",
+              "return satriga o‘tadi."
+            ],
+            [
+              "return va yangi qator",
+              "return; sifatida tugaydi",
+              "Qiymatsiz qaytish undefined."
+            ],
+            [
+              "5;",
+              "Yetib kelinmaydi",
+              "ol allaqachon qaytdi."
+            ],
+            [
+              "console.log",
+              "undefined",
+              "Bu SyntaxError emas."
+            ]
+          ]
+        }
+      },
+      {
+        "title": "3. Strict: e’lon qilinmagan nomga yozish",
+        "text": "Tasodifan global nom yaratishga tayanmang. Quyidagi misolni alohida bajaring: strict funksiya ichidagi yo‘q nomga yozish ReferenceError beradi. typeof orqali tekshirayotgan xato turi konsolda ko‘rinadi.",
+        "code": "function sinov() {\n  \"use strict\";\n  try { jsCoreMissingName = 1; }\n  catch (e) { console.log(e.name); }\n}\nsinov();",
+        "expectedOutput": [
+          "ReferenceError"
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "4. Strict: oddiy chaqirishdagi this",
+        "text": "Oddiy f() chaqirishida strict funksiya this ni global obyektga almashtirmaydi. Metod chaqirish va arrow lexical this qoidalari alohida qoladi.",
+        "code": "function f() { \"use strict\"; return this; }\nconsole.log(f() === undefined);",
+        "expectedOutput": [
+          true
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "5. return bilan obyektni birga boshlang",
+        "text": "Obyekt qaytarish uchun return bilan ochuvchi qavsni bir qatorda yozing. Keyingi qatorlar qavs ichida davom etishi mumkin.",
+        "code": "function user() {\n  return {\n    ism: \"Ali\"\n  };\n}\nconsole.log(user().ism);",
+        "expectedOutput": [
+          "Ali"
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "6. Yangi qator har doim yangi buyruq emas",
+        "text": "Quyidagi (2 + 3) oldingi sonni chaqirishga urinishning davomi bo‘ladi: 1(2+3), natijada TypeError. Misol ichki Function orqali alohida parse qilinadi. Nuqtali vergulni qo‘yib tuzating.",
+        "code": "try {\n  new Function(\"const n = 1\\n(2 + 3)\")();\n} catch (e) { console.log(e.name); }\nconst n = 1;\nconsole.log(2 + 3);",
+        "expectedOutput": [
+          "TypeError",
+          5
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "7. Strict qayerda yoqiladi?",
+        "text": "Directive oddiy script yoki funksiya tanasining boshida bo‘lsin. ES modul va class ichida strict avtomatik. Default/rest/destructuring parametrli funksiya ichiga \"use strict\" directive yozish SyntaxError; kerak bo‘lsa tashqi script/modulda strict rejimni belgilang. Strict optimizatsiya tugmasi yoki barcha xatolarni topadigan vosita emas."
+      },
+      {
+        "title": "8. Ko‘p uchraydigan xatolar",
+        "text": "Har yangi qatorga ; qo‘shiladi deb o‘ylash; return bilan qiymatni turli qatorda boshlash; strict rejim barcha this larni undefined qiladi deb olish; \"use strict\" ni tananing o‘rtasiga yozib rejim yoqildi deb hisoblash."
+      },
+      {
+        "title": "9. Kichik amaliy loyiha",
+        "text": "Strict scriptda user yaratadigan funksiya yozing. Obyektni bir necha qatorli return bilan qaytaring. Keyin e’lon qilinmagan nomga yozishni try/catch bilan alohida sinang."
+      }
+    ],
+    "takeaway": "return qiymatini shu satrda boshlang. ASI grammatik qoidalarga bog‘liq. Strict mode e’lon qilinmagan nomga yozish kabi ayrim xatolarni aniq ko‘rsatadi.",
+    "exercise": "Natijani yozing. Har bir qiymat qayerdan kelganini va keyingi qadamni tushuntiring.",
+    "exerciseCode": "function a() { return\n  2;\n}\nfunction b() { return 2; }\nconsole.log(a());\nconsole.log(b());",
+    "exerciseExpected": [
+      {
+        "$undefined": true
+      },
+      2
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. undefined — a dagi return yangi qator bilan qiymatsiz tugadi.\n2. 2 — b qiymatni return bilan bir satrda boshladi.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va chuqurroq izoh",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode"
+      },
+      {
+        "title": "ASI: nuqtali vergul qo‘shish qoidalari",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar#automatic_semicolon_insertion"
+      }
+    ],
+    "learningGuide": {
+      "goal": "Strict rejimdagi xatolarni ajratib, return yonidagi yangi qator va nuqtali vergul ta’sirini tushuntirasiz.",
+      "prerequisites": [
+        "functions",
+        "this-keyword",
+        "errors-try-catch",
+        "expressions-statements"
+      ],
+      "terms": [
+        {
+          "term": "Strict mode",
+          "meaning": "Ba’zi noaniq yoki jim qoladigan holatlarni xatoga aylantiradigan til rejimi."
+        },
+        {
+          "term": "Directive",
+          "meaning": "Script yoki funksiya tanasi boshidagi \"use strict\" kabi maxsus satr."
+        },
+        {
+          "term": "ASI",
+          "meaning": "Automatic semicolon insertion: grammatik qoidalar bo‘yicha ; avtomatik qo‘shilishi."
+        },
+        {
+          "term": "Restricted production",
+          "meaning": "Ayrim kalit so‘zdan keyin yangi qatorga ruxsat bermaydigan grammatika qoidasi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Kod ishlashidan oldin barcha console.log natijalarini tartib bilan yozing. Har bir funksiya uchun kiruvchi argument va qaytuvchi qiymatni belgilang.",
+      "debug": {
+        "task": "Kutilgan xulq: ol() { n: 3 } obyektini qaytarsin.",
+        "brokenCode": "function ol() {\n  return\n    { n: 3 };\n}\nconsole.log(ol());",
+        "fixedCode": "function ol() {\n  return { n: 3 };\n}\nconsole.log(ol());",
+        "expectedOutput": [
+          {
+            "n": 3
+          }
+        ],
+        "runtime": "javascript",
+        "explanation": "Ochuvchi { return bilan bir qatorda bo‘lgani uchun obyekt ifodasi qaytariladi; return; ga aylanmaydi."
+      },
+      "write": {
+        "task": "Strict scriptda user yaratadigan funksiya yozing. Obyektni bir necha qatorli return bilan qaytaring. Keyin e’lon qilinmagan nomga yozishni try/catch bilan alohida sinang.",
+        "criteria": [
+          "user().ism berilgan ismga teng.",
+          "return dan keyingi ochuvchi qavs shu satrda.",
+          "Yo‘q nomga yozishda ReferenceError ushlanadi."
+        ],
+        "hint": "Fayl boshiga \"use strict\" yozing. function user(){ return { ism: \"Ali\" }; } yarating. Xato yozishni alohida try/catch da saqlang."
+      }
+    }
+  },
+  {
+    "id": "object-to-primitive",
+    "title": "Obyekt qanday primitive qiymatga aylanadi?",
+    "question": "Obyekt +, String va Number ichida ishlatilganda qiymat qayerdan kelishini kuzatasiz.",
+    "explanation": "Obyektning o‘zi son ham, string ham emas. Ayrim operatorlar undan primitive natija so‘raydi. Birinchi navbatda mavjud Symbol.toPrimitive chaqiriladi; u bo‘lmasa oddiy fallback metodlari sinab ko‘riladi. Olingan primitive keyin operator qoidalari bo‘yicha yana songa yoki matnga aylanishi mumkin. Demak, ToPrimitive bilan yakuniy Number/String aylantirish bir xil bosqich emas.\n\nHar bir misol mustaqil: Console ga bittadan joylang yoki alohida .js faylda bajaring. Avval natijani yozing, so‘ng ishga tushirib solishtiring.",
+    "fullTextDefault": true,
+    "coreReading": true,
+    "codeLabId": "lab-object-to-primitive",
+    "sections": [
+      {
+        "title": "1. Birinchi misol: avval natijani taxmin qiling",
+        "text": "narx + 2 odatiy obyekt uchun default yo‘nalishdan foydalanadi, fallback da valueOf oldin sinab ko‘riladi va 10 beradi. 10 + 2 sonli hisob bo‘ladi. String(narx) string yo‘nalishida toString ni avval sinaydi va \"narx\" oladi.",
+        "code": "const narx = {\n  valueOf() { return 10; },\n  toString() { return \"narx\"; }\n};\nconsole.log(narx + 2);\nconsole.log(String(narx));",
+        "expectedOutput": [
+          12,
+          "narx"
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "2. Bajarilish yo‘li: satrma-satr kuzatamiz",
+        "text": "Kodning fayldagi joylashuvi bilan bajarilish tartibi bir xil bo‘lishi shart emas. Quyidagi jadvalni kod bilan yonma-yon o‘qing.",
+        "table": {
+          "headers": [
+            "Qadam / kod",
+            "Qiymat yoki holat",
+            "Keyingi ish / sabab"
+          ],
+          "rows": [
+            [
+              "narx + 2",
+              "ToPrimitive: default",
+              "Oddiy obyektda valueOf → 10."
+            ],
+            [
+              "10 + 2",
+              "Ikkalasi son",
+              "Natija 12."
+            ],
+            [
+              "String(narx)",
+              "ToPrimitive: string",
+              "toString → \"narx\"."
+            ],
+            [
+              "console.log",
+              "12, so‘ng \"narx\"",
+              "Ikki mustaqil aylantirish bajarildi."
+            ]
+          ]
+        }
+      },
+      {
+        "title": "3. Oddiy fallback tartibi",
+        "text": "Symbol.toPrimitive yo‘q bo‘lsa, string hint da toString → valueOf; number hint da valueOf → toString. Har birida primitive olinsa to‘xtaydi. Oddiy obyekt default ni number kabi ko‘radi; Date default hint ni string kabi talqin qiladi. Massivning odatiy toString i elementlarni vergul bilan birlashtiradi.",
+        "code": "console.log([] + 1);\nconsole.log([2] + 1);\nconsole.log(Number([2]));",
+        "expectedOutput": [
+          "1",
+          "21",
+          2
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "4. Symbol.toPrimitive ustun keladi",
+        "text": "Maxsus metod bor bo‘lsa unga hint uzatiladi. U number hint da ham string qaytarishi mumkin, ammo qaytgan qiymat primitive bo‘lishi shart. Keyingi aylantirish alohida qoida.",
+        "code": "const o = {\n  [Symbol.toPrimitive](hint) {\n    return hint === \"string\" ? \"yorliq\" : 5;\n  }\n};\nconsole.log(String(o));\nconsole.log(Number(o));\nconsole.log(o + 1);",
+        "expectedOutput": [
+          "yorliq",
+          5,
+          6
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "5. + oldidan string paydo bo‘lsa",
+        "text": "+ ikkala operandni primitive ga aylantirgach, bittasi string bo‘lsa birlashtiradi. Bir xil ko‘ringan \"10\" va 10 shuning uchun boshqa natija beradi.",
+        "code": "const o = { valueOf() { return \"10\"; } };\nconsole.log(o + 2);\nconsole.log(Number(o) + 2);",
+        "expectedOutput": [
+          "102",
+          12
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "6. Metod obyekt qaytarsa nima bo‘ladi?",
+        "text": "Symbol.toPrimitive obyekt qaytarsa darhol TypeError: fallback ga o‘tilmaydi. Oddiy fallback da esa bir metod obyekt qaytarsa keyingisi sinab ko‘riladi; ikkalasi ham primitive bermasa TypeError.",
+        "code": "const o = { [Symbol.toPrimitive]() { return {}; } };\ntry { Number(o); } catch (e) { console.log(e.name); }",
+        "expectedOutput": [
+          "TypeError"
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "7. Ko‘p uchraydigan xatolar",
+        "text": "valueOf har safar toString dan oldin ishlaydi deb o‘ylash; Symbol.toPrimitive har qanday qiymat qaytarishi mumkin deyish; + doim sonli amal deb o‘qish; == dagi barcha obyektlarni primitive ga aylantirish deb tasavvur qilish — ikki obyekt odatda identifikatsiya bo‘yicha solishtiriladi."
+      },
+      {
+        "title": "8. Kichik amaliy loyiha",
+        "text": "Pul obyektini yarating: String bilan \"10 so‘m\", Number bilan 10 olinsin. Keyin + 2 natijasini taxmin qilib sababini yozing."
+      }
+    ],
+    "takeaway": "Avval ToPrimitive yo‘lini, keyin operator qoidasini kuzating. Symbol.toPrimitive bor bo‘lsa birinchi shu ishlaydi. Fallback tartibi hint ga bog‘liq; + string bilan birlashtirishi mumkin.",
+    "exercise": "Natijani yozing. Har bir qiymat qayerdan kelganini va keyingi qadamni tushuntiring.",
+    "exerciseCode": "const o = { valueOf() { return \"4\"; } };\nconsole.log(o + 1);\nconsole.log(Number(o) + 1);\nconsole.log(o === 4);",
+    "exerciseExpected": [
+      "41",
+      5,
+      false
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. \"41\" — primitive \"4\" string bo‘lgani uchun + birlashtirdi.\n2. 5 — Number string \"4\" ni songa aylantirdi, so‘ng 1 qo‘shildi.\n3. false — === tur o‘zgartirmaydi, obyekt son emas.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va chuqurroq izoh",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toPrimitive"
+      }
+    ],
+    "learningGuide": {
+      "goal": "Obyekt +, String va Number ichida ishlatilganda qiymat qayerdan kelishini kuzatasiz.",
+      "prerequisites": [
+        "coercion-equality",
+        "objects-basics",
+        "symbol-bigint",
+        "functions-as-values"
+      ],
+      "terms": [
+        {
+          "term": "ToPrimitive",
+          "meaning": "Obyektni primitive qiymatga aylantirish jarayoni."
+        },
+        {
+          "term": "Hint",
+          "meaning": "Aylantirishga berilgan yo‘nalish: string, number yoki default."
+        },
+        {
+          "term": "valueOf",
+          "meaning": "Oddiy fallback jarayonida primitive qiymat olish uchun sinab ko‘rilishi mumkin bo‘lgan metod."
+        },
+        {
+          "term": "Symbol.toPrimitive",
+          "meaning": "Obyektning primitive ga aylanishini boshqaruvchi maxsus metod kaliti."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Kod ishlashidan oldin barcha console.log natijalarini tartib bilan yozing. Har bir funksiya uchun kiruvchi argument va qaytuvchi qiymatni belgilang.",
+      "debug": {
+        "task": "Kutilgan xulq: Matn birlashtirish emas, 12 soni olinsin.",
+        "brokenCode": "const o = { valueOf() { return \"10\"; } };\nconsole.log(o + 2);",
+        "fixedCode": "const o = { valueOf() { return \"10\"; } };\nconsole.log(Number(o) + 2);",
+        "expectedOutput": [
+          12
+        ],
+        "runtime": "javascript",
+        "explanation": "Number aniq sonli aylantirishni bajardi. Endi + ning ikkala operandi son; natija 12."
+      },
+      "write": {
+        "task": "Pul obyektini yarating: String bilan \"10 so‘m\", Number bilan 10 olinsin. Keyin + 2 natijasini taxmin qilib sababini yozing.",
+        "criteria": [
+          "String(pul) \"10 so‘m\" beradi.",
+          "Number(pul) 10 beradi.",
+          "Default hint uchun tanlangan xulqni va pul + 2 natijasini izohlaysiz."
+        ],
+        "hint": "Symbol.toPrimitive(hint) ichida hint === \"string\" bo‘lsa \"10 so‘m\", boshqa hollarda 10 qaytaring. Shunda pul + 2 → 12."
+      }
+    }
+  },
+  {
+    "id": "debugger-code-reading",
+    "title": "Debugger: JavaScript kodini amalda kuzatish",
+    "question": "Breakpoint, Step Into/Over/Out, Scope va Call Stack bilan kodning ishlashini tekshirasiz.",
+    "explanation": "Natijani taxmin qilish yaxshi; debugger bilan taxminni tekshirish yanada foydali. Quyidagi mashqni Chrome da Sources paneli ochiq holda bajaring. debugger; satri DevTools ochiq va breakpointlar faol bo‘lganda to‘xtash imkonini beradi. DevTools yopiq bo‘lsa kod odatda oddiy davom etadi. Bu saytdagi kod bloklari avtomatik bajarilmaydi: misolni alohida demo.html ichidagi scriptga yoki Sources → Snippets ga ko‘chiring.\n\nHar bir misol mustaqil: Console ga bittadan joylang yoki alohida .js faylda bajaring. Avval natijani yozing, so‘ng ishga tushirib solishtiring.",
+    "fullTextDefault": true,
+    "coreReading": true,
+    "codeLabId": "lab-debugger-code-reading",
+    "sections": [
+      {
+        "title": "1. Birinchi misol: avval natijani taxmin qiling",
+        "text": "debugger satrida to‘xtaganda kirish allaqachon 3. ikki(kirish) oldida Step Into tanlansa ikki ichiga kiriladi: n=3, ko‘paytirishdan keyin natija=6. Step Out joriy chaqirishni yakunlaydi; javob assignment i tugagach tashqarida javob=6 ko‘rinadi. Log hali ishlamagan bo‘lsa konsolda natija chiqmagani xato emas.",
+        "code": "function ikki(n) {\n  const natija = n * 2;\n  return natija;\n}\nconst kirish = 3;\ndebugger;\nconst javob = ikki(kirish);\nconsole.log(javob);",
+        "expectedOutput": [
+          6
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "2. Bajarilish yo‘li: satrma-satr kuzatamiz",
+        "text": "Kodning fayldagi joylashuvi bilan bajarilish tartibi bir xil bo‘lishi shart emas. Quyidagi jadvalni kod bilan yonma-yon o‘qing.",
+        "table": {
+          "headers": [
+            "Qadam / kod",
+            "Qiymat yoki holat",
+            "Keyingi ish / sabab"
+          ],
+          "rows": [
+            [
+              "debugger; da pauza",
+              "kirish = 3",
+              "ikki chaqirishiga yetib boring."
+            ],
+            [
+              "ikki(kirish) → Step Into",
+              "Mahalliy n = 3",
+              "const natija = n * 2 qatori hali bajarilmagan bo‘lishi mumkin."
+            ],
+            [
+              "Ko‘paytirishdan keyin",
+              "natija = 6",
+              "Scope panelidan tekshiring."
+            ],
+            [
+              "Return va tashqi assignment tugagach",
+              "javob = 6",
+              "Keyin console.log 6 chiqaradi."
+            ]
+          ]
+        }
+      },
+      {
+        "title": "3. Mashqni brauzerda tayyorlash",
+        "text": "Chrome da bo‘sh sahifa oching va DevTools → Sources → Snippets dan yangi snippet yarating. Misol kodini joylang. Console dan ishlatish ham mumkin, lekin Sources ko‘rinishi satrlar va breakpointlarni kuzatishga qulay. Snippetni ishga tushirishdan oldin qayerda to‘xtashingiz va kutgan qiymatlarni yozing. Oddiy fayl yo‘li kerak bo‘lsa quyidagi HTML ni demo.html ga saqlang; birinchi misoldagi JS ni script ichiga qo‘ying.",
+        "code": "<!doctype html>\n<meta charset=\"utf-8\">\n<title>JS kuzatish mashqi</title>\n<script>\n// Birinchi misoldagi JavaScript kodini shu yerga yozing.\n</script>"
+      },
+      {
+        "title": "4. Pauza qatori hali bajarilmagan bo‘lishi mumkin",
+        "text": "Breakpoint odatda belgilangan qator bajarilishidan oldin pauza qiladi. const javob = ... oldida javob initialized emas; uni Console da o‘qish ReferenceError berishi mumkin. Keyingi qadamdan so‘ng tekshiring. Bir qatorda ko‘p ifoda bo‘lsa to‘xtash nuqtalari batafsilroq bo‘ladi."
+      },
+      {
+        "title": "5. Scope va Call Stack ni birga o‘qing",
+        "text": "Scope faol frame ning mahalliy va tashqi bog‘lanishlarini ko‘rsatadi. Call Stack esa faol chaqirishlarni ko‘rsatadi. Stackdagi boshqa frame ni tanlasangiz o‘sha chaqirishdagi qiymatlarni ko‘rasiz; bu kodni qaytadan bajarmaydi. Watch ga n yoki natija kabi mavjud nomlarni qo‘shing. Watch/Console da yon ta’sirli fn() ni yozish funksiyani yana bajarib holatni o‘zgartirishi mumkin."
+      },
+      {
+        "title": "6. Noto‘g‘ri natijadan sababga boring",
+        "text": "Avval kutilgan natijani yozing. Keyin noto‘g‘ri qiymat birinchi paydo bo‘lgan joyni toping: kirish turi, callback return i, umumiy reference yoki async tartib. Quyidagi xatoda konsoldagi \"21\" hisoblash emas, string birlashtirish natijasi.",
+        "code": "function oshir(n) { return n + 1; }\nconst kirish = \"2\";\nconsole.log(oshir(kirish));",
+        "expectedOutput": [
+          "21"
+        ],
+        "exampleRuntime": "javascript"
+      },
+      {
+        "title": "7. Pause on exceptions va asinxron chegaralar",
+        "text": "Xato chiqayotgan joyni topish uchun Sources dagi exception da to‘xtash sozlamasini yoqing. Caught exceptions ham kerak bo‘lsa alohida yoqiladi. Async kodda har step keyingi fayl satriga olib bormasligi mumkin; taymer/Promise davomi keyin ishlaydi. DevTools ko‘rsatgan async chaqirish tarixi barcha frame lar hozir faol stackda degani emas."
+      },
+      {
+        "title": "8. Ko‘p uchraydigan xatolar",
+        "text": "Pauza qatoridagi assignment allaqachon bajarilgan deb o‘ylash; Console da funksiyani qayta chaqirib holatni o‘zgartirish; Watch dagi yon ta’sirni unutish; Step Into bilan Step Over ni bir xil deb bilish."
+      },
+      {
+        "title": "9. Kichik amaliy loyiha",
+        "text": "String narx va dona qabul qiladigan hisob funksiyasini tekshiring. Breakpoint bilan kirish, aylantirish va jami natijasini kuzating. Topilgan bitta xatoni tuzatib, oldingi va keyingi holatni yozing."
+      }
+    ],
+    "takeaway": "Taxmin → breakpoint → Scope/Call Stack → bitta qadam → yangi qiymat. Natijani ko‘rish bilan cheklanmang: birinchi noto‘g‘ri qiymat qayerda paydo bo‘lganini aniqlang.",
+    "exercise": "Natijani yozing. Har bir qiymat qayerdan kelganini va keyingi qadamni tushuntiring.",
+    "exerciseCode": "function oshir(n) { return n + 1; }\nconst kirish = \"2\";\nconst javob = oshir(kirish);\nconsole.log(typeof kirish);\nconsole.log(javob);",
+    "exerciseExpected": [
+      "string",
+      "21"
+    ],
+    "exerciseRuntime": "javascript",
+    "exerciseAnswer": "1. \"string\" — kirish qo‘shtirnoqda berilgan.\n2. \"21\" — oshir ichidagi + stringni birlashtirdi. Step Into bilan n qiymati va turini tekshirib buni ko‘rish mumkin.",
+    "resources": [
+      {
+        "title": "Rasmiy qo‘llanma va chuqurroq izoh",
+        "url": "https://developer.chrome.com/docs/devtools/javascript/reference"
+      }
+    ],
+    "learningGuide": {
+      "goal": "Breakpoint, Step Into/Over/Out, Scope va Call Stack bilan kodning ishlashini tekshirasiz.",
+      "prerequisites": [
+        "execution-context-stack",
+        "lexical-environment",
+        "functions-as-values"
+      ],
+      "terms": [
+        {
+          "term": "Breakpoint",
+          "meaning": "Kod shu nuqtaga kelganda vaqtincha to‘xtaydigan belgi."
+        },
+        {
+          "term": "Step Over",
+          "meaning": "Joriy amalni bajarib, uning ichiga kirmay keyingi qadamga o‘tish."
+        },
+        {
+          "term": "Step Into",
+          "meaning": "Chaqirilayotgan funksiya tanasiga kirib kuzatish."
+        },
+        {
+          "term": "Step Out",
+          "meaning": "Joriy funksiyani yakunlab, chaqirgan joyga qaytish."
+        },
+        {
+          "term": "Watch",
+          "meaning": "Tanlangan ifoda qiymatini to‘xtashlarda kuzatish."
+        }
+      ]
+    },
+    "learningPractice": {
+      "predictPrompt": "Kod ishlashidan oldin barcha console.log natijalarini tartib bilan yozing. Har bir funksiya uchun kiruvchi argument va qaytuvchi qiymatni belgilang.",
+      "debug": {
+        "task": "Kutilgan xulq: Sonli kirish \"2\" uchun natija 3 bo‘lsin.",
+        "brokenCode": "function oshir(n) { return n + 1; }\nconst kirish = \"2\";\nconsole.log(oshir(kirish));",
+        "fixedCode": "function oshir(n) { return n + 1; }\nconst kirish = \"2\";\nconsole.log(oshir(Number(kirish)));",
+        "expectedOutput": [
+          3
+        ],
+        "runtime": "javascript",
+        "explanation": "Kirish chegarasida Number ishlatildi. Amaliy dasturda bo‘sh yoki yaroqsiz kirishni ham alohida validatsiya qiling."
+      },
+      "write": {
+        "task": "String narx va dona qabul qiladigan hisob funksiyasini tekshiring. Breakpoint bilan kirish, aylantirish va jami natijasini kuzating. Topilgan bitta xatoni tuzatib, oldingi va keyingi holatni yozing.",
+        "criteria": [
+          "Breakpointda kirish qiymati va turini aytasiz.",
+          "Step Into bilan hisob tanasiga kirasiz va return ni kuzatasiz.",
+          "0 va yaroqsiz kirish uchun kutilgan xulqni yozib tekshirasiz."
+        ],
+        "hint": "const narx=\"20\", dona=\"2\" bilan boshlang. Sonli aylantirishdan keyin Number.isFinite bilan tekshiring; bo‘sh matnni oldin rad eting. Watch ga faqat yon ta’sirsiz qiymatlar qo‘ying."
+      }
+    }
+  }
+]);
+window.lessonStages.push({
+  "title": "11-bosqich: JS core — kodni tushunish",
+  "desc": "Qiymat, nom, chaqirish va bajarilish tartibini satrma-satr kuzatish. Asosiy darslardan keyin shu yerda bilimni mustahkamlang.",
+  "project": "15–25 qatorli JavaScript kodni tanlang. Natija, o‘zgaruvchi qiymatlari va chaqirishlar jadvalini tuzing, debugger bilan tekshiring va bir xatoni tuzating.",
+  "ids": [
+    "expressions-statements",
+    "execution-context-stack",
+    "lexical-environment",
+    "evaluation-order",
+    "functions-as-values",
+    "strict-mode-asi",
+    "object-to-primitive",
+    "debugger-code-reading"
+  ]
+});
+window.interviewQuestions.push(...[
+  {
+    "id": "core-expressions-statements",
+    "lessonId": "expressions-statements",
+    "topic": "Expression va statement: kod qiymati va amali",
+    "level": "Asosiy",
+    "question": "Ikki log natijasi nima?",
+    "code": "const a = () => ({ n: 2 });\nconst b = () => { n: 2 };\nconsole.log(a().n);\nconsole.log(b());",
+    "options": [
+      "2, undefined",
+      "2, 2",
+      "undefined, 2",
+      "SyntaxError"
+    ],
+    "answer": 0,
+    "explain": "a obyekt ifodasini qaytaradi; b blokida return yo‘q.",
+    "walkthrough": [
+      "1. 2 — qavs ichidagi obyekt qaytarildi, uning n maydoni o‘qildi.",
+      "2. undefined — b tanasida n: belgilangan statement bor; bu qaytarilgan obyekt emas. return yozilmagan."
+    ]
+  },
+  {
+    "id": "core-execution-context-stack",
+    "lessonId": "execution-context-stack",
+    "topic": "Execution context va call stack: kod qayerga qaytadi?",
+    "level": "Asosiy",
+    "question": "b(4) qanday natija beradi?",
+    "code": "function a(n) { return n + 1; }\nfunction b(n) { return a(n) * 2; }\nconsole.log(b(4));",
+    "options": [
+      "5",
+      "8",
+      "10",
+      "undefined"
+    ],
+    "answer": 2,
+    "explain": "a(4) → 5, b ichidagi 5 * 2 → 10.",
+    "walkthrough": [
+      "1. 10 — b(4) a(4) ni kutadi; a 5 qaytaradi, b uni 2 ga ko‘paytirib 10 qaytaradi. Keyin log ishlaydi."
+    ]
+  },
+  {
+    "id": "core-lexical-environment",
+    "lessonId": "lexical-environment",
+    "topic": "Lexical environment: qaysi o‘zgaruvchi o‘qiladi?",
+    "level": "Asosiy",
+    "question": "ish() chaqirilganda qaysi n olinadi?",
+    "code": "let n = 1;\nconst ol = () => n;\nfunction ish() { const n = 9; return ol(); }\nn = 2;\nconsole.log(ish());",
+    "options": [
+      "1",
+      "2",
+      "9",
+      "ReferenceError"
+    ],
+    "answer": 1,
+    "explain": "ol tashqi binding bilan bog‘langan; u 2 ga yangilangan.",
+    "walkthrough": [
+      "1. 2 — ol tashqi n binding ini ko‘radi. U 2 ga yangilangan; ish ichidagi 9 ol ning tashqi muhiti emas."
+    ]
+  },
+  {
+    "id": "core-evaluation-order",
+    "lessonId": "evaluation-order",
+    "topic": "Ifodaning bajarilish tartibi va short-circuit",
+    "level": "Asosiy",
+    "question": "a, b, c, n qiymatlari nima?",
+    "code": "let n = 0;\nconst a = 0 && ++n;\nconst b = 0 ?? ++n;\nconst c = 0 || ++n;\nconsole.log(a);\nconsole.log(b);\nconsole.log(c);\nconsole.log(n);",
+    "options": [
+      "0, 0, 1, 1",
+      "false, 1, 2, 2",
+      "0, 1, 2, 2",
+      "0, 0, 0, 0"
+    ],
+    "answer": 0,
+    "explain": "&& va ?? o‘ngni tashladi; || ++n ni bajardi.",
+    "walkthrough": [
+      "1. 0 — && o‘ngini bajarmadi.",
+      "2. 0 — ?? chap 0 ni saqladi, o‘ng bajarilmadi.",
+      "3. 1 — || uchun 0 falsy, ++n ishladi.",
+      "4. 1 — n faqat bir marta oshdi."
+    ]
+  },
+  {
+    "id": "core-functions-as-values",
+    "lessonId": "functions-as-values",
+    "topic": "Funksiya qiymat sifatida: fn, fn() va return fn()",
+    "level": "Asosiy",
+    "question": "Uch log natijasi nima?",
+    "code": "function ol() { return 5; }\nfunction a() { return ol; }\nfunction b() { return ol(); }\nconsole.log(typeof a());\nconsole.log(a()());\nconsole.log(b());",
+    "options": [
+      "function, 5, 5",
+      "5, 5, 5",
+      "function, function, 5",
+      "TypeError"
+    ],
+    "answer": 0,
+    "explain": "a funksiyani, b uning natijasini qaytaradi; a()() ikki chaqirishdir.",
+    "walkthrough": [
+      "1. \"function\" — a ol funksiyasini qaytardi.",
+      "2. 5 — birinchi () a ni, ikkinchisi qaytgan ol ni chaqirdi.",
+      "3. 5 — b ichida ol hozir chaqirilib, uning natijasi qaytarildi."
+    ]
+  },
+  {
+    "id": "core-strict-mode-asi",
+    "lessonId": "strict-mode-asi",
+    "topic": "Strict mode va ASI: yashirin xatolarni tushunish",
+    "level": "Asosiy",
+    "question": "a va b natijalari nima?",
+    "code": "function a() { return\n  2;\n}\nfunction b() { return 2; }\nconsole.log(a());\nconsole.log(b());",
+    "options": [
+      "2, 2",
+      "undefined, 2",
+      "SyntaxError",
+      "null, 2"
+    ],
+    "answer": 1,
+    "explain": "ASI return va yangi qator orasida qiymatsiz qaytishga olib keldi.",
+    "walkthrough": [
+      "1. undefined — a dagi return yangi qator bilan qiymatsiz tugadi.",
+      "2. 2 — b qiymatni return bilan bir satrda boshladi."
+    ]
+  },
+  {
+    "id": "core-object-to-primitive",
+    "lessonId": "object-to-primitive",
+    "topic": "Obyekt qanday primitive qiymatga aylanadi?",
+    "level": "Asosiy",
+    "question": "Uch log natijasi nima?",
+    "code": "const o = { valueOf() { return \"4\"; } };\nconsole.log(o + 1);\nconsole.log(Number(o) + 1);\nconsole.log(o === 4);",
+    "options": [
+      "5, 5, true",
+      "41, 5, false",
+      "41, 41, false",
+      "TypeError"
+    ],
+    "answer": 1,
+    "explain": "String primitive + da birlashadi; Number aniq aylantiradi; === obyekt bilan sonni teng demaydi.",
+    "walkthrough": [
+      "1. \"41\" — primitive \"4\" string bo‘lgani uchun + birlashtirdi.",
+      "2. 5 — Number string \"4\" ni songa aylantirdi, so‘ng 1 qo‘shildi.",
+      "3. false — === tur o‘zgartirmaydi, obyekt son emas."
+    ]
+  },
+  {
+    "id": "core-debugger-code-reading",
+    "lessonId": "debugger-code-reading",
+    "topic": "Debugger: JavaScript kodini amalda kuzatish",
+    "level": "Asosiy",
+    "question": "Debugger da kirish turini tekshirsangiz nima topasiz?",
+    "code": "function oshir(n) { return n + 1; }\nconst kirish = \"2\";\nconst javob = oshir(kirish);\nconsole.log(typeof kirish);\nconsole.log(javob);",
+    "options": [
+      "number; javob 3",
+      "string; javob 21 matni",
+      "string; javob 3",
+      "ReferenceError"
+    ],
+    "answer": 1,
+    "explain": "\"2\" string bo‘lgani sabab + birlashtirdi; debugger kirish turini tekshirishga yordam beradi.",
+    "walkthrough": [
+      "1. \"string\" — kirish qo‘shtirnoqda berilgan.",
+      "2. \"21\" — oshir ichidagi + stringni birlashtirdi. Step Into bilan n qiymati va turini tekshirib buni ko‘rish mumkin."
+    ]
+  }
+]);
+window.codeLabs.push(...[
+  {
+    "id": "lab-expressions-statements",
+    "title": "Expression va statement: kod qiymati va amali",
+    "hint": "Avval har bir satrning vazifasini ayting. Keyin izohlar bilan solishtiring.",
+    "lines": [
+      {
+        "code": "const a = x => x + 1;",
+        "note": "a ga ifoda tanali arrow bog‘landi; hali chaqirilmadi."
+      },
+      {
+        "code": "const b = x => { x + 1; };",
+        "note": "b ga blok tanali arrow bog‘landi; return yo‘q."
+      },
+      {
+        "code": "console.log(a(2));",
+        "note": "a(2) 3 qaytaradi, log 3 chiqaradi."
+      },
+      {
+        "code": "console.log(b(2));",
+        "note": "b(2) undefined qaytaradi; hisoblangan 3 tashqariga uzatilmagan."
+      }
+    ],
+    "takeaway": "Ifoda qiymat hisoblaydi. Buyruq kod tuzilishi va bajarilishini tashkil qiladi. Arrow ning { } tanasida qiymat qaytarish uchun return kerak."
+  },
+  {
+    "id": "lab-execution-context-stack",
+    "title": "Execution context va call stack: kod qayerga qaytadi?",
+    "hint": "Avval har bir satrning vazifasini ayting. Keyin izohlar bilan solishtiring.",
+    "lines": [
+      {
+        "code": "function ikki(n) {",
+        "note": "ikki deklaratsiyasi; tana keyin chaqiriladi."
+      },
+      {
+        "code": "  return n * 2;",
+        "note": "ikki chaqirilganda n * 2 hisoblanib qaytariladi."
+      },
+      {
+        "code": "}",
+        "note": "ikki tanasi tugadi."
+      },
+      {
+        "code": "function jami(n) {",
+        "note": "jami deklaratsiyasi; hali tana ishlamaydi."
+      },
+      {
+        "code": "  return ikki(n) + 1;",
+        "note": "jami chaqirilsa ikki(n) tugagach +1 bajariladi."
+      },
+      {
+        "code": "}",
+        "note": "jami tanasi tugadi."
+      },
+      {
+        "code": "console.log(jami(3));",
+        "note": "jami(3) → ikki(3) → 6 → 7; konsolda 7."
+      }
+    ],
+    "takeaway": "Chaqirish → ichki ish → return → chaqirishdan keyingi davom. Stackdagi faol chaqirishlar tartibi lexical scope zanjiri bilan bir xil tushuncha emas."
+  },
+  {
+    "id": "lab-lexical-environment",
+    "title": "Lexical environment: qaysi o‘zgaruvchi o‘qiladi?",
+    "hint": "Avval har bir satrning vazifasini ayting. Keyin izohlar bilan solishtiring.",
+    "lines": [
+      {
+        "code": "const x = \"tashqi\";",
+        "note": "Tashqi x matni yaratildi."
+      },
+      {
+        "code": "function ol() { return x; }",
+        "note": "ol tashqi scope da yozilgan, x ni shu zanjirdan qidiradi."
+      },
+      {
+        "code": "function ishgaTushir() {",
+        "note": "ishgaTushir funksiyasi yaratildi."
+      },
+      {
+        "code": "  const x = \"ichki\";",
+        "note": "Bu x faqat ishgaTushir ning mahalliy nomi."
+      },
+      {
+        "code": "  return ol();",
+        "note": "ol ga parametr berilmadi; u lexical tashqi x ni oladi."
+      },
+      {
+        "code": "}",
+        "note": "Funksiya tanasi tugadi."
+      },
+      {
+        "code": "console.log(ishgaTushir());",
+        "note": "Natija tashqi: chaqirish joyidagi ichki x ol ning muhitini almashtirmaydi."
+      }
+    ],
+    "takeaway": "Nom qidirishda joriy scope → lexical tashqi scope lar. Chaqirilgan joy muhit zanjirini almashtirmaydi. Closure tashqi binding bilan bog‘liq."
+  },
+  {
+    "id": "lab-evaluation-order",
+    "title": "Ifodaning bajarilish tartibi va short-circuit",
+    "hint": "Avval har bir satrning vazifasini ayting. Keyin izohlar bilan solishtiring.",
+    "lines": [
+      {
+        "code": "function ol(n) { console.log(n); return n; }",
+        "note": "ol argumentini log qilib, aynan shu sonni qaytaradi."
+      },
+      {
+        "code": "console.log(ol(2) + ol(3) * ol(4));",
+        "note": "ol(2), ol(3), ol(4) ketma-ket log qiladi; so‘ng 3*4 va 2+12 hisoblanib 14 log qilinadi."
+      }
+    ],
+    "takeaway": "Avval guruhlashni, so‘ng operandlarning ketma-ket bajarilishini ko‘ring. Short-circuit bo‘lsa o‘ng operand umuman bajarilmasligi mumkin."
+  },
+  {
+    "id": "lab-functions-as-values",
+    "title": "Funksiya qiymat sifatida: fn, fn() va return fn()",
+    "hint": "Avval har bir satrning vazifasini ayting. Keyin izohlar bilan solishtiring.",
+    "lines": [
+      {
+        "code": "function yarat(n) {",
+        "note": "Factory funksiyasi yaratiladi."
+      },
+      {
+        "code": "  return () => n + 1;",
+        "note": "Chaqirilganda n bilan bog‘langan arrow qaytariladi."
+      },
+      {
+        "code": "}",
+        "note": "Factory tanasi tugadi."
+      },
+      {
+        "code": "const f = yarat(2);",
+        "note": "yarat(2) natijasi funksiya; f ga saqlandi."
+      },
+      {
+        "code": "console.log(typeof f);",
+        "note": "f ni bajarmay turi olindi: function."
+      },
+      {
+        "code": "console.log(f());",
+        "note": "f chaqirildi, 2+1 natijasi 3."
+      }
+    ],
+    "takeaway": "fn — funksiya qiymati; fn() — hozirgi chaqirish natijasi. return fn va return fn() bir xil emas. Har bir qavsdan keyin natijaning turini yozing."
+  },
+  {
+    "id": "lab-strict-mode-asi",
+    "title": "Strict mode va ASI: yashirin xatolarni tushunish",
+    "hint": "Avval har bir satrning vazifasini ayting. Keyin izohlar bilan solishtiring.",
+    "lines": [
+      {
+        "code": "function ol() {",
+        "note": "ol funksiyasi yaratiladi."
+      },
+      {
+        "code": "  return",
+        "note": "return dan keyin yangi qator: qiymatsiz return."
+      },
+      {
+        "code": "    5;",
+        "note": "5 ga yetib kelinmaydi."
+      },
+      {
+        "code": "}",
+        "note": "Funksiya tanasi tugadi."
+      },
+      {
+        "code": "console.log(ol());",
+        "note": "ol() undefined qaytaradi; log uni chiqaradi."
+      }
+    ],
+    "takeaway": "return qiymatini shu satrda boshlang. ASI grammatik qoidalarga bog‘liq. Strict mode e’lon qilinmagan nomga yozish kabi ayrim xatolarni aniq ko‘rsatadi."
+  },
+  {
+    "id": "lab-object-to-primitive",
+    "title": "Obyekt qanday primitive qiymatga aylanadi?",
+    "hint": "Avval har bir satrning vazifasini ayting. Keyin izohlar bilan solishtiring.",
+    "lines": [
+      {
+        "code": "const narx = {",
+        "note": "narx obyektini yaratish boshlandi."
+      },
+      {
+        "code": "  valueOf() { return 10; },",
+        "note": "valueOf keyin chaqirilsa 10 qaytaradi."
+      },
+      {
+        "code": "  toString() { return \"narx\"; }",
+        "note": "toString keyin chaqirilsa narx matnini qaytaradi."
+      },
+      {
+        "code": "};",
+        "note": "Obyekt yaratildi; metodlar hali ishlamadi."
+      },
+      {
+        "code": "console.log(narx + 2);",
+        "note": "Default fallback valueOf → 10; 10+2 → 12."
+      },
+      {
+        "code": "console.log(String(narx));",
+        "note": "String hint da toString → narx matni."
+      }
+    ],
+    "takeaway": "Avval ToPrimitive yo‘lini, keyin operator qoidasini kuzating. Symbol.toPrimitive bor bo‘lsa birinchi shu ishlaydi. Fallback tartibi hint ga bog‘liq; + string bilan birlashtirishi mumkin."
+  },
+  {
+    "id": "lab-debugger-code-reading",
+    "title": "Debugger: JavaScript kodini amalda kuzatish",
+    "hint": "Avval har bir satrning vazifasini ayting. Keyin izohlar bilan solishtiring.",
+    "lines": [
+      {
+        "code": "function ikki(n) {",
+        "note": "ikki funksiyasi yaratildi."
+      },
+      {
+        "code": "  const natija = n * 2;",
+        "note": "Chaqirilganda n * 2 natija ga yoziladi; bu qatordan oldin natija hali initialized emas."
+      },
+      {
+        "code": "  return natija;",
+        "note": "Mahalliy natija chaqiruvchiga qaytariladi."
+      },
+      {
+        "code": "}",
+        "note": "ikki tanasi tugadi."
+      },
+      {
+        "code": "const kirish = 3;",
+        "note": "kirish ga 3 yozildi."
+      },
+      {
+        "code": "debugger;",
+        "note": "DevTools ochiq va pauzalar faol bo‘lsa shu yerda to‘xtab tekshiring."
+      },
+      {
+        "code": "const javob = ikki(kirish);",
+        "note": "ikki(3) chaqiriladi, 6 qaytgach javob ga yoziladi."
+      },
+      {
+        "code": "console.log(javob);",
+        "note": "Konsolda 6; bu satrgacha log bajarilmagan edi."
+      }
+    ],
+    "takeaway": "Taxmin → breakpoint → Scope/Call Stack → bitta qadam → yangi qiymat. Natijani ko‘rish bilan cheklanmang: birinchi noto‘g‘ri qiymat qayerda paydo bo‘lganini aniqlang."
+  }
+]);

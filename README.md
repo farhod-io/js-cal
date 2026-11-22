@@ -6,7 +6,7 @@ Ochish: `index.html` faylini brauzerda oching. O‘rnatish talab qilinmaydi.
 
 ## Bo‘limlar
 
-- **Darslar** — 62 dars: tushuncha, kod misoli, natija, xulosa va mashq. Hamma narsa 0 dan tushuntirilgan. Har darsda **"O‘qilgan deb belgilash"** tugmasi bor.
+- **Darslar** — 70 dars: tushuncha, kod misoli, natija, xulosa va mashq. Hamma narsa 0 dan tushuntirilgan. Har darsda **"O‘qilgan deb belgilash"** tugmasi bor.
 - **🧠 AI test** — faqat o‘qilgan deb belgilagan darslaring bo‘yicha savol beradi. Xato javob bergan darslardan ko‘proq savol keladi (adaptiv). Shuningdek Gemini yoki DeepSeek API kaliti bilan o‘qilgan darslardan 1, 5 yoki 10 ta yangi savol yaratish mumkin. OpenAI-mos xizmatlar ham saqlangan.
 - **Intervyu testlari** — 66 ta A/B/C/D savol; javobdan keyin tushuntirish va kodni qadam-baqadam tahlil qilish.
 - **Kod o‘qish laboratoriyasi** — 10 ta misol, kod satr-ma-satr izohlangan.
@@ -37,7 +37,7 @@ Tuzilma ataylab oddiy: barcha o‘quv ma’lumotlari bitta faylda, interfeys bit
 
 - `index.html` — sahifa tuzilmasi.
 - `style.css` — moslashuvchan dizayn.
-- `data.js` — **barcha ma’lumotlar bitta faylda**: 62 dars, 66 test, 10 kod labi. Darslar 0 dan oxirigacha tartib bilan joylashgan.
+- `data.js` — **barcha ma’lumotlar bitta faylda**: 70 dars, 74 test, 18 kod labi. Darslar 0 dan oxirigacha tartib bilan joylashgan.
 - `scope-demo.js`, `truthy-demo.js` — interaktiv demolar.
 - `app.js` — sahifalar, test mexanikasi, yo‘l xaritasi, localStorage progressi, adaptiv va AI test, navigatsiya.
 - `manifest.webmanifest` — PWA ilova konfiguratsiyasi va o‘rnatish parametrlari.
@@ -95,6 +95,12 @@ Darslardagi yangi mustaqil JavaScript/Node misollarining kutilgan natijalari `ex
 
 ## Har bir darsdagi o‘rganish yo‘li
 
-62 mavzuning barchasida aniq maqsad, faqat oldingi darslarga havolali tayyorgarlik va oddiy tildagi atamalar lug‘ati bor. Keyinroq o‘tiladigan tushuncha zarur joylarda qisqa kirish misoli beriladi: tsikllardan oldin massiv, map/filter dan oldin callback va return, async iteratsiyadan oldin generator. DOM uchun HTML tayyorgarligi tanlash misollaridan oldin keladi.
+70 mavzuning barchasida aniq maqsad, faqat oldingi darslarga havolali tayyorgarlik va oddiy tildagi atamalar lug‘ati bor. Keyinroq o‘tiladigan tushuncha zarur joylarda qisqa kirish misoli beriladi: tsikllardan oldin massiv, map/filter dan oldin callback va return, async iteratsiyadan oldin generator. DOM uchun HTML tayyorgarligi tanlash misollaridan oldin keladi.
 
 Yakuniy mashqlar uch bosqichli: natijani taxmin qilish, xato kodni tuzatish va mezonlari berilgan mustaqil loyiha. Javoblar va yordam dastlab yopiq. Tuzatish mashqlari va tayyorgarlik misollarining natijalari ham avtomatik tekshiriladi.
+
+## 11-bosqich: JS core — kodni tushunish
+
+Asosiy 62 mavzuning tartibi saqlanib, 8 ta mustaqil dars qo‘shildi: expression/statement, execution context/call stack, lexical environment, ifoda bajarilishi/short-circuit, funksiya qiymat sifatida, strict mode/ASI, object-to-primitive va debugger. Har birida bajarilish jadvali, izohli misollar, uch darajali mashq, tayyor test va Kod o‘qish lab uchun satrli izohlar mavjud. Sidebar, yo‘l xaritasi va oldingi/keyingi navigatsiyada 70 dars bor.
+
+Kodni o‘qish usuli: kirish qiymati/turi → nomni qidirish → chaqirish → qaytgan qiymat → keyingi qadam. Darslardagi misol va mashqlarni `tests/core-reading.test.cjs` ham bajarib tekshiradi. Debugger mashqi DevTools ochiq holda foydalanuvchi tomonidan bajariladi; saytdagi kod bloklari avtomatik ishlamaydi.

@@ -182,6 +182,10 @@ function renderHome() {
     <p><b>${done} / ${lessons.length}</b> dars o‘qilgan · <b>${correct} / ${questions.length}</b> test to‘g‘ri · ${solved} ta javob berilgan.</p>
     ${done ? `<p class="note">AI test senga faqat o‘qigan ${done} darsing bo‘yicha savol beradi.</p>` : '<p class="note">Birinchi darsni ochib, o‘qib bo‘lgach “O‘qilgan deb belgilash” tugmasini bos.</p>'}
   </section>
+  <section class="card core-reading-intro"><h2 style="margin-top:0">Kodni ko‘rib tushunishni mashq qil</h2>
+  <p>11-bosqichdagi 8 ta JS core darsida qiymat, o‘zgaruvchi, funksiya chaqirishi va bajarilish tartibini kuzatasan. Har birida kodning bajarilish jadvali, uch bosqichli mashq va kod laboratoriyasida izohli misol bor.</p>
+  <p>Kod kelganda shu tartibda o‘qi: kirish qiymati va turi → qaysi nom o‘qiladi → qaysi funksiya chaqiriladi → nima qaytadi → qaysi qator davom etadi. Avval taxmin qil, keyin debugger bilan tekshir.</p>
+  <a class="cta" href="#expressions-statements">JS core: kodni tushunish</a></section>
   <section class="card"><h2 style="margin-top:0">Nega bu sayt?</h2>
   <p>Intervyuda ko‘pincha kod berishadi va "nima chiqaradi?" deb so‘rashadi. Bu yerda aynan shu ko‘nikma mashq qilinadi: kodni ko‘rganda tushunish va variantlar ichidan to‘g‘risini tanlash.</p></section>
   <p class="note">Har bir dars: savol → tushuntirish → kod → natija → xulosa → mashq.</p>`;
@@ -217,6 +221,7 @@ function renderLearningGuide(lesson) {
     ${prerequisites.length ? `<p class="learning-prerequisites"><b>Avval bilib oling:</b> ${prerequisites.map(item => `<a href="#${encodeURIComponent(item.id)}">${escapeHtml(item.title)}</a>`).join(' · ')}</p>` : ''}
     <h3>Yangi atamalar — oddiy tilda</h3>
     <dl class="lesson-terms">${guide.terms.map(item => `<div><dt>${escapeHtml(item.term)}</dt><dd>${escapeHtml(item.meaning)}</dd></div>`).join('')}</dl>
+    ${lesson.codeLabId ? `<p><a class="cta" href="#lab/${encodeURIComponent(lesson.codeLabId)}">Shu darsni kod laboratoriyasida mashq qilish</a></p>` : ''}
     ${guide.warmup ? `<div class="learning-warmup"><h3>${escapeHtml(guide.warmup.title)}</h3><p class="lesson-text">${escapeHtml(guide.warmup.text)}</p><pre><code>${escapeHtml(guide.warmup.code)}</code></pre><p class="lesson-text">${escapeHtml(guide.warmup.explanation)}</p></div>` : ''}
   </div>`;
 }
