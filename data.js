@@ -726,45 +726,149 @@ window.lessons = [
   {
     "id": "strings",
     "title": "Stringlar: noldan",
-    "question": "String qanday yaratiladi, nima uchun o‘zgartirib bo‘lmaydi va qaysi metodlar ishlatiladi?",
-    "explanation": "String — matn qiymati. U primitive: bir marta yaratilgach ichi o‘zgartirilmaydi. Har qanday \"o‘zgartirish\" aslida yangi string yaratadi. Kod o‘qiyotganda satrning uzunligini, indeksini va metod qaytargan yangi qiymatni kuzat.",
+    "question": "String nima? Matnni qanday yaratamiz, o‘qiymiz, qidiramiz va o‘zgartirilgan nusxasini olamiz? Metodlar nimani qaytaradi?",
+    "explanation": "String — matn qiymati. Ism, xabar, telefon raqami yoki foydalanuvchi yozgan izohni matn sifatida saqlash mumkin. Bu darsda oddiy qo‘shtirnoqdan boshlaymiz: avval matn va son farqi, keyin indeks, uzunlik va metodlarni o‘rganamiz. Har bir kod bo‘lagini alohida konsolda sinang. So‘nggi bo‘limlarda emoji va Unicode kabi chuqurroq holatlar bor; avval asosiy misollarni tushunib oling.",
     "sections": [
       {
-        "title": "1. Yaratish va uzunlik",
-        "text": "Stringni ' yoki \" yoki ` (backtick) bilan yozish mumkin. .length xususiyati belgilar sonini beradi. Bo‘sh string uzunligi 0.",
-        "code": "const a = 'Salom';\nconst b = \"Dunyo\";\nconst c = `Assalom`;\nconsole.log(a.length); // 5\nconsole.log(''.length); // 0",
-        "note": "Backtick bilan yozilgan stringga template literal deyiladi: ichiga ${...} bilan o‘zgaruvchi qo‘yish mumkin."
+        "title": "1. String — matn qiymat",
+        "text": "let ism = \"Ali\" satrida ism — o‘zgaruvchi nomi, \"Ali\" — uning matn qiymati. console.log qiymatni ko‘rsatadi, typeof esa uning turini bildiradi. Raqamlar ham qo‘shtirnoqda yozilsa matn bo‘ladi.",
+        "code": "let ism = \"Ali\";\nlet telefon = \"901234567\";\nlet yosh = \"20\";\n\nconsole.log(ism);        // \"Ali\"\nconsole.log(typeof ism); // \"string\"\nconsole.log(typeof yosh); // \"string\"",
+        "note": "Telefon raqami yoki kodni har doim hisoblash uchun son qilish shart emas. \"007\" stringi boshidagi nollarni saqlaydi; Number(\"007\") esa 7 beradi."
       },
       {
-        "title": "2. String o‘zgarmas (immutable)",
-        "text": "String ichidagi belgini almashtirib bo‘lmaydi. str[0] = \"X\" yozilsa xato bo‘lmaydi (oddiy rejimda), lekin hech narsa o‘zgar maydi. Yangi string yaratish uchun metodlar ishlatiladi.",
-        "code": "const s = 'Ali';\n// s[0] = 'B'; // ishlamaydi\nconsole.log(s[0]); // 'A'\nconsole.log(s); // 'Ali' — o'zgarmadi",
-        "note": "const bo‘lmasa ham string o‘zgarmaydi: bu turining xususiyati."
+        "title": "2. Uch xil qo‘shtirnoq va bo‘sh matn",
+        "text": "Stringni bir qo‘shtirnoq, ikki qo‘shtirnoq yoki backtick (`) bilan yaratamiz. Boshlanish va tugash belgisi bir xil bo‘lishi kerak. Bo‘sh string — ichida hech qanday belgi yo‘q matn. Bo‘sh joy esa alohida belgi.",
+        "code": "const a = 'Salom';\nconst b = \"Salom\";\nconst c = `Salom`;\nconst bosh = \"\";\nconst joy = \" \";\n\nconsole.log(a === b); // true\nconsole.log(bosh.length); // 0\nconsole.log(joy.length);  // 1",
+        "note": "Kodga oddiy ' yoki \" yozing. Matn muharriri ularni “aqlli qo‘shtirnoq” belgilariga almashtirsa, ular JavaScript’da string chegarasi bo‘lib ishlamaydi."
       },
       {
-        "title": "3. Template literal",
-        "text": "Backtick ichida ${} bilan ifoda qo‘yish mumkin. Bu satr birlashtirishni (+) osonlashtiradi. Ichida hisoblash ham ishlaydi.",
-        "code": "const ism = 'Ali';\nconst yosh = 20;\nconsole.log(`Men ${ism}, ${yosh} yoshman.`);\nconsole.log(`Keyingi yil ${yosh + 1} bo'laman.`);"
+        "title": "3. Qo‘shtirnoq, yangi satr va backslash",
+        "text": "Matn ichiga tashqi qo‘shtirnoqning o‘zini yozish uchun oldiga backslash (\\) qo‘yish mumkin. \\n yangi satr, \\t tab, \\\\ esa bitta backslash belgisini bildiradi. Bular escape ketma-ketliklari deyiladi.",
+        "code": "console.log(\"U \\\"Salom\\\" dedi.\");\nconsole.log('Bu Ali\\'ning kitobi.');\nconsole.log(\"Birinchi\\nIkkinchi\");\nconsole.log(\"Ism:\\tAli\");\nconsole.log(\"C:\\\\darslar\");",
+        "note": "Birinchi misolda matn ichida \"Salom\" ko‘rinadi. \\n ikkita yozuv belgisi bilan ifodalansa ham, string ichida bitta yangi satr belgisi bo‘ladi."
       },
       {
-        "title": "4. Ko‘p ishlatiladigan metodlar",
-        "text": "Metodlar yangi string qaytaradi, aslni o‘zgartirmaydi: toUpperCase/toLowerCase, trim (chetdagi bo‘shliqlarni olib tashlash), includes, startsWith, endsWith, indexOf, slice, replace, split, repeat.",
-        "code": "const s = '  Salom Dunyo  ';\nconsole.log(s.trim()); // 'Salom Dunyo'\nconsole.log(s.trim().toUpperCase()); // 'SALOM DUNYO'\nconsole.log(s.includes('Dunyo')); // true\nconsole.log(s.startsWith('Salom')); // false (boshida bo'shliq bor)\nconsole.log('Ali'.slice(1)); // 'li'\nconsole.log('a,b,c'.split(',')); // ['a','b','c']"
+        "title": "4. length va 0 dan boshlanadigan indeks",
+        "text": "length — string uzunligi xususiyati; undan keyin () yozilmaydi. Belgining joyi indeks deyiladi va 0 dan boshlanadi. Oddiy lotin harflarida \"Salom\" uzunligi 5, oxirgi indeks esa 4. Emoji uchun farqni oxirroqda ko‘ramiz.",
+        "code": "const matn = \"Salom\";\nconsole.log(matn.length); // 5\nconsole.log(matn[0]);     // \"S\"\nconsole.log(matn[1]);     // \"a\"\nconsole.log(matn[4]);     // \"m\"\nconsole.log(matn[matn.length - 1]); // \"m\"",
+        "note": "S → 0, a → 1, l → 2, o → 3, m → 4. .length xususiyat, .trim() esa metod. Metod — qiymat bilan bajariladigan tayyor amal."
       },
       {
-        "title": "5. indexOf va qidirish",
-        "text": "indexOf qidirilgan satrning birinchi indeksini qaytaradi, topmasa -1. includes esa true/false qaytaradi. Kod o‘qiyotganda \"topilganmi?\" degan savolga javob kerak bo‘lsa includes qulay.",
-        "code": "const s = 'JavaScript';\nconsole.log(s.indexOf('Script')); // 6\nconsole.log(s.indexOf('python')); // -1\nconsole.log(s.includes('Script')); // true\nconsole.log(s.indexOf('a')); // 1 (birinchi 'a')"
+        "title": "5. at, charAt va mavjud bo‘lmagan indeks",
+        "text": "at(-1) oxirgi birlikni, at(-2) undan oldingisini oladi. [] ichiga -1 berish esa oxirgi belgini qaytarmaydi. Chegaradan tashqarida [] va at undefined, charAt esa bo‘sh string qaytaradi.",
+        "code": "const s = \"Ali\";\nconsole.log(s.at(-1));   // \"i\"\nconsole.log(s.at(-2));   // \"l\"\nconsole.log(s[-1]);      // undefined\nconsole.log(s[99]);      // undefined\nconsole.log(s.at(99));   // undefined\nconsole.log(s.charAt(99)); // \"\"",
+        "note": "Bu usullar UTF-16 birliklari bilan ishlaydi. Bir ko‘rinadigan emoji bir nechta birlikdan iborat bo‘lishi mumkin."
       },
       {
-        "title": "6. String va son aralash",
-        "text": "+ operatori agar operandlardan biri string bo‘lsa, birlashtiradi. Shuning uchun \"5\" + 1 = \"51\", lekin \"5\" - 1 = 4 (son ga o‘zgartiriladi). Bu ko‘p xatolarga sabab bo‘ladi.",
-        "code": "console.log('5' + 1); // '51'\nconsole.log('5' - 1); // 4\nconsole.log('5' + +'1'); // '51' (oldin +'1' → 1, keyin birlashtirish)\nconsole.log(Number('5') + 1); // 6",
-        "note": "Unary + qiymatni songa o‘zgartiradi: +\"1\" = 1. Lekin bu usulni tushunish qiyin, Number() yaxshiroq."
+        "title": "6. String o‘zgarmas, lekin let ga yangi qiymat berish mumkin",
+        "text": "String primitive qiymat bo‘lib, ichidagi belgini joyida almashtirib bo‘lmaydi. Metodlar asl stringni tahrirlamaydi. let bilan yaratilgan o‘zgaruvchiga yangi string berish esa mumkin: bu ikki alohida ish.",
+        "code": "let ism = \"Ali\";\n// ism[0] = \"V\"; // stringni joyida o‘zgartirmaydi\n\nconst yangi = \"V\" + ism.slice(1);\nconsole.log(yangi); // \"Vli\"\nconsole.log(ism);   // \"Ali\"\n\nism = \"Vali\";\nconsole.log(ism);   // \"Vali\"",
+        "note": "Indeks orqali yozishga urinish oddiy rejimda e’tiborsiz qolishi, strict rejimda TypeError berishi mumkin. const ism bo‘lsa, ism ga yangi string ham berib bo‘lmaydi. Stringning o‘zgarmasligi faqat const ga bog‘liq emas."
+      },
+      {
+        "title": "7. Birlashtirish va template literal",
+        "text": "+ matnlarni birlashtiradi. Orada bo‘sh joy kerak bo‘lsa uni o‘zingiz yozasiz. Backtick ichidagi ${...} o‘zgaruvchi yoki ifoda qiymatini matnga qo‘shadi. Oddiy qo‘shtirnoq bu almashtirishni bajarmaydi.",
+        "code": "const ism = \"Ali\";\nconst yosh = 20;\nconsole.log(\"Salom, \" + ism + \"!\"); // \"Salom, Ali!\"\nconsole.log(`Men ${ism}, ${yosh} yoshman.`);\nconsole.log(`Keyingi yil ${yosh + 1} yosh.`);\nconsole.log(\"Salom, ${ism}\"); // \"Salom, ${ism}\"\n\nconst xabar = `Birinchi satr\nIkkinchi satr`;\nconsole.log(xabar);",
+        "note": "${yosh + 1} ichida avval hisoblash bajariladi, natija matnga joylanadi. Backtick haqiqiy yangi satrlarni ham saqlaydi."
+      },
+      {
+        "title": "8. Son va stringni aniq aylantirish",
+        "text": "String(qiymat) matnga, Number(matn) songa aylantiradi. + da matn bo‘lsa birlashtirish yuz berishi mumkin. Amallar chapdan o‘ngga bajarilishi ham natijaga ta’sir qiladi.",
+        "code": "console.log(\"5\" + 1);       // \"51\"\nconsole.log(\"5\" - 1);       // 4\nconsole.log(1 + 2 + \"3\");   // \"33\"\nconsole.log(\"1\" + 2 + 3);   // \"123\"\nconsole.log(Number(\"5\") + 1); // 6\nconsole.log(String(20));    // \"20\"\nconsole.log(String(null));  // \"null\"",
+        "note": "Number(\"\") natijasi 0, Number(\"abc\") esa NaN. String(null) bo‘sh matn bermaydi. new String(\"Ali\") odatiy string emas, obyekt yaratadi; matn uchun oddiy qo‘shtirnoq yoki String(...) yetarli."
+      },
+      {
+        "title": "9. Katta va kichik harflar",
+        "text": "toUpperCase() katta, toLowerCase() kichik harfli yangi matn qaytaradi. Natijani ishlatmasak, asl o‘zgaruvchi o‘zgarmaydi.",
+        "code": "const asl = \"Salom\";\nconsole.log(asl.toUpperCase()); // \"SALOM\"\nconsole.log(asl.toLowerCase()); // \"salom\"\nconsole.log(asl);               // \"Salom\"\n\nconst email = \"ALI@MISOL.UZ\";\nconst kichik = email.toLowerCase();\nconsole.log(kichik); // \"ali@misol.uz\"",
+        "note": "Ba’zi tillarda harf almashtirish locale ga bog‘liq. Tilga xos holatlarda toLocaleLowerCase va toLocaleUpperCase mavjud; oddiy lotin misollari uchun yuqoridagi metodlardan boshlang."
+      },
+      {
+        "title": "10. trim, trimStart va trimEnd",
+        "text": "trim() bosh va oxirdagi bo‘shliq belgilarini olib tashlaydi. O‘rtadagi bo‘shliqlarni o‘zgartirmaydi. trimStart faqat boshini, trimEnd faqat oxirini tozalaydi. Metodlarni ketma-ket chaqirish mumkin.",
+        "code": "const matn = \"  Salom Dunyo  \";\nconsole.log(matn.trim());      // \"Salom Dunyo\"\nconsole.log(matn.trimStart()); // \"Salom Dunyo  \"\nconsole.log(matn.trimEnd());   // \"  Salom Dunyo\"\nconsole.log(matn.trim().toLowerCase()); // \"salom dunyo\"\nconsole.log(matn); // \"  Salom Dunyo  \"",
+        "note": "String bo‘shligini tekshirish uchun matn.trim().length === 0 yozish mumkin. \"   \" ning asl length qiymati 3, tozalangan length esa 0."
+      },
+      {
+        "title": "11. includes, startsWith va endsWith",
+        "text": "includes matn ichida qidirilayotgan bo‘lak borligini aytadi. startsWith boshida, endsWith oxirida borligini tekshiradi. Ular boolean qaytaradi va katta-kichik harfni farqlaydi.",
+        "code": "const matn = \"JavaScript\";\nconsole.log(matn.includes(\"Script\")); // true\nconsole.log(matn.includes(\"script\")); // false\nconsole.log(matn.startsWith(\"Java\")); // true\nconsole.log(matn.endsWith(\"Script\")); // true\nconsole.log(matn.toLowerCase().includes(\"script\")); // true",
+        "note": "Bu metodlar yangi matn emas, true yoki false qaytaradi. includes(\"\") har qanday string uchun true; shu sababli bo‘sh qidiruv so‘zini kerak bo‘lsa oldin tekshiring."
+      },
+      {
+        "title": "12. indexOf va lastIndexOf: qayerdan topildi?",
+        "text": "indexOf birinchi mos bo‘lakning indeksini, lastIndexOf oxirgisining indeksini beradi. Topilmasa -1 qaytadi. 0 ham to‘g‘ri topilgan indeks: shunchaki boolean sifatida tekshirish xatoga olib kelishi mumkin.",
+        "code": "const matn = \"JavaScript\";\nconsole.log(matn.indexOf(\"Script\")); // 4\nconsole.log(matn.indexOf(\"Java\"));   // 0\nconsole.log(matn.indexOf(\"Python\")); // -1\nconsole.log(matn.indexOf(\"a\"));      // 1\nconsole.log(matn.lastIndexOf(\"a\"));  // 3\nconsole.log(matn.indexOf(\"Java\") !== -1); // true",
+        "note": "\"JavaScript\".indexOf(\"Script\") — 4, 6 emas. J → 0, a → 1, v → 2, a → 3, S → 4. Faqat “bor yoki yo‘qmi?” kerak bo‘lsa includes osonroq."
+      },
+      {
+        "title": "13. slice va substring: bo‘lak ajratish",
+        "text": "slice(boshi, oxiri) yangi bo‘lak qaytaradi. Boshlanish indeksi kiradi, oxirgi indeks kirmaydi. Oxirgi argument berilmasa, string oxirigacha olinadi. Manfiy indeks oxiridan sanaladi.",
+        "code": "const s = \"JavaScript\";\nconsole.log(s.slice(0, 4)); // \"Java\"\nconsole.log(s.slice(4));    // \"Script\"\nconsole.log(s.slice(-6));   // \"Script\"\nconsole.log(s.slice(4, 0)); // \"\"\nconsole.log(s.substring(4, 0)); // \"Java\"\nconsole.log(s.substring(-4, 4)); // \"Java\"",
+        "note": "substring manfiy indeksni 0 deb oladi, boshlanish oxiridan katta bo‘lsa ularni almashtiradi. slice bunday qilmaydi. Qaysi usulni tanlaganingizni bilib ishlating. Eski substr o‘rniga odatda slice ishlatiladi."
+      },
+      {
+        "title": "14. replace va replaceAll: almashtirilgan nusxa",
+        "text": "replace string bo‘lagini qidirganda faqat birinchi mos joyni almashtiradi. replaceAll barcha mos joylarni almashtiradi. Asl string o‘zgarmaydi.",
+        "code": "const matn = \"olma olma\";\nconsole.log(matn.replace(\"olma\", \"anor\")); // \"anor olma\"\nconsole.log(matn.replaceAll(\"olma\", \"anor\")); // \"anor anor\"\nconsole.log(matn); // \"olma olma\"\nconsole.log(\"a-a\".replace(/a/g, \"b\")); // \"b-b\"",
+        "note": "/a/g — muntazam ifoda (regex), g barcha mos joylarni olishni bildiradi. Regex alohida mavzuda chuqur o‘rganiladi. replaceAll ga regex berilganda unda g bayrog‘i bo‘lishi kerak. Qidiruv katta-kichik harfni farqlaydi."
+      },
+      {
+        "title": "15. split va join: matn bilan massiv orasida",
+        "text": "split ajratgich bo‘yicha stringni massivga bo‘ladi. join esa massiv elementlarini ajratgich bilan bitta matnga yig‘adi. join string metodi emas, massiv metodidir.",
+        "code": "const mevalar = \"olma,anor,uzum\".split(\",\");\nconsole.log(mevalar); // [\"olma\", \"anor\", \"uzum\"]\nconsole.log(mevalar.join(\" | \")); // \"olma | anor | uzum\"\nconsole.log(\"Ali\".split(\"\")); // [\"A\", \"l\", \"i\"]\nconsole.log(\"a,,b\".split(\",\")); // [\"a\", \"\", \"b\"]",
+        "note": "split(\"\") UTF-16 birliklariga ajratadi. Emoji yoki bir necha koddan tuzilgan belgilarni to‘g‘ri bo‘lish uchun bu usul yetarli emas; Unicode bo‘limini ko‘ring. Oddiy split murakkab CSV faylini ishonchli tahlil qiladigan vosita ham emas."
+      },
+      {
+        "title": "16. repeat, padStart va padEnd",
+        "text": "repeat matnni berilgan miqdorda takrorlaydi. padStart boshiga, padEnd oxiriga belgilar qo‘shib, kerakli uzunlikka yetkazadi. Asl matn yetarlicha uzun bo‘lsa kesib tashlamaydi.",
+        "code": "console.log(\"ha\".repeat(3));     // \"hahaha\"\nconsole.log(\"ha\".repeat(0));     // \"\"\nconsole.log(\"7\".padStart(3, \"0\")); // \"007\"\nconsole.log(\"Ali\".padEnd(5, \".\")); // \"Ali..\"\nconsole.log(\"1234\".padStart(2, \"0\")); // \"1234\"",
+        "note": "repeat manfiy yoki cheksiz miqdor bilan ishlamaydi: RangeError beradi. padStart(3, \"0\") 3 ta nol qo‘shish emas, jami uzunlikni kamida 3 ga yetkazish demak."
+      },
+      {
+        "title": "17. Solishtirish va tilga mos tartiblash",
+        "text": "=== ikkita stringdagi birliklar ketma-ketligi aynan tengligini tekshiradi. Katta-kichik harflar farq qiladi. < matnni son qilib emas, UTF-16 tartibida taqqoslaydi. Tilga mos tartiblashda localeCompare ishlatiladi: natijaning manfiy, musbat yoki 0 ekaniga qarang.",
+        "code": "console.log(\"Ali\" === \"Ali\"); // true\nconsole.log(\"Ali\" === \"ali\"); // false\nconsole.log(\"10\" < \"2\");      // true\nconsole.log(Number(\"10\") < Number(\"2\")); // false\nconsole.log(\"a\".localeCompare(\"b\", \"uz\") < 0); // true",
+        "note": "localeCompare har doim aynan -1 yoki 1 qaytarishini kutmang. Manfiy natija — oldin, musbat — keyin, 0 — tanlangan solishtirish qoidalariga ko‘ra teng."
+      },
+      {
+        "title": "18. Unicode: length har doim ko‘rinadigan belgi soni emas",
+        "text": "JavaScript stringlarni UTF-16 kod birliklari bilan ifodalaydi. Oddiy A bitta birlik, 😀 esa ikkita birlik egallaydi. Shu sababli length ni barcha matnlarda ekrandagi belgi soni deb qabul qilib bo‘lmaydi. Spread kodi Unicode code point larni ajratadi, ammo bu ham har doim ko‘rinadigan belgi bilan bir xil emas.",
+        "code": "console.log(\"A\".length);     // 1\nconsole.log(\"😀\".length);    // 2\nconsole.log([...\"😀\"].length); // 1\n\nconst a = \"é\";\nconst b = \"e\\u0301\";\nconsole.log(a === b); // false\nconsole.log(a.normalize(\"NFC\") === b.normalize(\"NFC\")); // true",
+        "note": "é bitta kod bilan ham, e va qo‘shiluvchi urg‘u belgisi bilan ham ifodalanishi mumkin. normalize(\"NFC\") mos ifodalarni bir ko‘rinishga keltirishga yordam beradi. Lekin u barcha o‘xshash yozuvlarni bir xil qilmaydi."
+      },
+      {
+        "title": "19. Ko‘rinadigan belgilar va kod nuqtalari",
+        "text": "Bir nechta code point birlashib bitta ko‘rinadigan belgi — grapheme hosil qilishi mumkin. Masalan, oilaviy emoji bir nechta qismdan tuzilgan. Zamonaviy muhitda Intl.Segmenter matnni grapheme bo‘yicha ajratishi mumkin. Bu boshlang‘ich metodlardan keyin o‘rganiladigan chuqurroq qism.",
+        "code": "const oila = \"👨‍👩‍👧‍👦\";\nconsole.log(oila.length);      // 11 — UTF-16 birliklari\nconsole.log([...oila].length); // 7 — code point lar\n\nconst ajrat = new Intl.Segmenter(\"uz\", { granularity: \"grapheme\" });\nconsole.log([...ajrat.segment(oila)].length); // 1\nconsole.log(\"😀\".codePointAt(0)); // 128512\nconsole.log(String.fromCodePoint(128512)); // \"😀\"",
+        "note": "charCodeAt UTF-16 kod birligini, codePointAt esa shu joydan boshlanadigan Unicode kod nuqtasini beradi. Eski muhitlarda Intl.Segmenter mavjudligini tekshirish yoki mos yordamchi kutubxona kerak bo‘lishi mumkin."
+      },
+      {
+        "title": "20. Ko‘p uchraydigan xatolar va amaliy mashq",
+        "text": "Natijani saqlamaslik, length ga () qo‘yish, indexOf ning 0 natijasini “topilmadi” deb olish va null ga metod chaqirish ko‘p uchraydi. Foydalanuvchi kiritgan qiymatni tozalashda qanday qiymat qabul qilinishi kerakligini oldin aniqlang.",
+        "code": "let ism = \"  ALI  \";\nism.trim();\nconsole.log(ism); // \"  ALI  \" — o‘zgarmadi\n\nism = ism.trim().toLowerCase();\nconsole.log(ism); // \"ali\"\n\nconst kirish = null;\n// kirish.trim(); // TypeError\nconst xavfsizMatn = String(kirish ?? \"\").trim();\nconsole.log(xavfsizMatn); // \"\"",
+        "note": "?? chapdagi qiymat null yoki undefined bo‘lsa o‘ngdagi bo‘sh matnni oladi. Bu misol boshqa turdagi qiymatlarni ham String bilan matnga aylantiradi; faqat matn qabul qilish kerak bo‘lsa typeof bilan alohida tekshiring. Mini-loyiha: \"  Ali Valiyev  \" ni tozalang, katta harfli ko‘rinishini va bosh harflarini A.V. shaklida oling."
       }
     ],
-    "takeaway": "String primitive va o‘zgarmas: ichi hech qachon o‘zgar maydi.\n.length uzunlik, [indeks] bitta belgi beradi.\nTemplate literal ${} bilan o‘zgaruvchi qo‘yadi.\nMetodlar yangi string qaytaradi: trim, toUpperCase, includes, slice, split.\nindexOf topmasa -1 qaytaradi.\n\"5\" + 1 = \"51\", \"5\" - 1 = 4 — + birlashtiradi, - son ga o‘zgartiradi.",
-    "exercise": "1) const s = \"Ali\"; s[0] = \"B\"; natijada s nima?\n2) \"5\" + 3 va \"5\" - 3 natijalari?\n3) \"JavaScript\".indexOf(\"Script\") nima?\n4) \"  salom  \".trim().toUpperCase() nima?\n5) \"a,b,c\".split(\",\") qanday massiv beradi?"
+    "takeaway": "String — primitive va o‘zgarmas matn. let ga boshqa string berish mumkin.\nlength — xususiyat, trim() kabi yozuvlar — metod.\nIndeks 0 dan boshlanadi; slice oxirgi indeksni kiritmaydi.\nTemplate literal backtick va ${...} bilan yoziladi.\nMatn metodlarining qaytarish turlari har xil: includes → boolean, indexOf → number, split → massiv, trim → string.\nMetod natijasini saqlamasangiz, asl matn o‘zgarmaydi.\nindexOf topmasa -1; boshidan topsa 0.\nlength UTF-16 birliklarini sanaydi; emoji uchun ko‘rinadigan belgilar soniga teng bo‘lmasligi mumkin.",
+    "exercise": "Quyidagi 15 ta natijani avval o‘zingiz toping. Har bir javobning turi string, number, boolean, massiv yoki undefined ekanini ham ayting. Keyin javoblarni ochib solishtiring. So‘ng 20-bo‘limdagi mini-loyihani bajaring.",
+    "fullTextDefault": true,
+    "exerciseCode": "const ism = \"  Ali  \";\nconsole.log(ism.trim());                 // 1: ?\nconsole.log(ism.length);                 // 2: ?\nconsole.log(\"Ali\"[0]);                   // 3: ?\nconsole.log(\"Ali\".at(-1));               // 4: ?\nconsole.log(\"JavaScript\".indexOf(\"Script\")); // 5: ?\nconsole.log(\"JavaScript\".includes(\"script\")); // 6: ?\nconsole.log(\"JavaScript\".slice(0, 4));    // 7: ?\nconsole.log(\"a-a\".replace(\"a\", \"b\"));     // 8: ?\nconsole.log(\"a-a\".replaceAll(\"a\", \"b\"));  // 9: ?\nconsole.log(\"a,b\".split(\",\").join(\"-\"));   // 10: ?\nconsole.log(\"7\".padStart(3, \"0\"));        // 11: ?\nconsole.log(\"5\" + 1);                    // 12: ?\nconsole.log(Number(\"5\") + 1);            // 13: ?\nconsole.log(\"😀\".length);                 // 14: ?\nconsole.log(\"Ali\"[99]);                  // 15: ?",
+    "exerciseAnswer": "1. \"Ali\" — trim chetdagi bo‘shliqlarni olib tashladi.\n2. 7 — asl ism o‘zgarmagan: 2 bo‘shliq + 3 harf + 2 bo‘shliq.\n3. \"A\" — indeks 0 dan boshlanadi.\n4. \"i\" — at(-1) oxirgi birlik.\n5. 4 — Script qismi S harfidan, 4-indeksdan boshlanadi.\n6. false — kichik s katta S bilan mos emas.\n7. \"Java\" — 0 kiradi, 4 kirmaydi.\n8. \"b-a\" — faqat birinchi mos a almashtirildi.\n9. \"b-b\" — barcha mos a almashtirildi.\n10. \"a-b\" — split massiv yaratdi, join uni tire bilan yig‘di.\n11. \"007\" — jami uzunlik 3 ga yetkazildi.\n12. \"51\" — matn birlashtirish.\n13. 6 — avval songa aylantirish, keyin qo‘shish.\n14. 2 — 😀 ikkita UTF-16 kod birligi.\n15. undefined — 99-indeks mavjud emas.\n\nMini-loyiha yechimlaridan biri:\nconst toza = \"  Ali Valiyev  \".trim();\nconst qismlar = toza.split(\" \");\nconsole.log(toza.toUpperCase()); // \"ALI VALIYEV\"\nconsole.log(qismlar[0][0] + \".\" + qismlar[1][0] + \".\"); // \"A.V.\"\nBu sodda yechim aynan ikkita, bittadan bo‘shliq bilan ajratilgan ism uchun. Ko‘proq bo‘shliqlar va qismlar bo‘lsa, ajratish qoidalarini kengaytiring.",
+    "resources": [
+      {
+        "title": "MDN: String va metodlar",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String"
+      },
+      {
+        "title": "MDN: length va UTF-16",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/length"
+      },
+      {
+        "title": "MDN: ko‘rinadigan belgilarni ajratish",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Segmenter"
+      }
+    ]
   },
   {
     "id": "operators",
