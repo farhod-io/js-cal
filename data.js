@@ -3630,44 +3630,129 @@ window.lessons.push(...[
   {
     "id": "data-types",
     "title": "Ma’lumot turlari: primitive va reference",
-    "question": "Qiymatning turi nima? Son, matn va obyekt nimasi bilan farq qiladi?",
-    "explanation": "Tur — qiymat bilan qanday ish bajarish mumkinligini bildiradi. Masalan, sonlar bilan hisoblaymiz, string bilan matn saqlaymiz. JavaScript’da primitive qiymatlar va obyektlar bor. Obyektga massiv va funksiya ham kiradi.",
+    "question": "Qiymat nima? Matn, son va rost/yolg‘on qanday saqlanadi? Nega ba’zi nusxalar bir-biriga ta’sir qiladi?",
+    "explanation": "Bu darsni noldan boshlaymiz. Avval qiymat va o‘zgaruvchi nima ekanini ko‘ramiz. Keyin matn, son, rost/yolg‘on hamda qiymat yo‘qligini o‘rganamiz. Shundan so‘ng primitive va reference so‘zlarini sodda misollar bilan tushunamiz. Har qadamdagi kodni alohida brauzer konsolida sinab ko‘ring: avval nima chiqishini taxmin qiling, keyin natijani tekshiring.",
     "sections": [
       {
-        "title": "1. Ko‘p ishlatiladigan primitive turlar",
-        "text": "string — matn, number — son, boolean — true yoki false. Qo‘shtirnoqdagi \"20\" matn bo‘lib, 20 sonidan farq qiladi.",
-        "code": "const ism = \"Ali\";       // string\nconst yosh = 20;         // number\nconst talaba = true;     // boolean\nconsole.log(yosh + 1);   // 21\nconsole.log(\"20\" + 1);   // \"201\""
+        "title": "1. Qiymat va o‘zgaruvchi nima?",
+        "text": "Dastur ma’lumot bilan ishlaydi. 20 — son qiymat, \"Ali\" — matn qiymat. O‘zgaruvchi shu qiymatga nom berishga yordam beradi. Quyidagi satrni o‘ngdan tushuning: 20 qiymatini yosh nomi bilan saqlaymiz.",
+        "code": "let yosh = 20;",
+        "note": "let — o‘zgaruvchi yaratish uchun yoziladi.\nyosh — biz tanlagan nom.\n= — o‘ngdagi qiymatni chapdagi o‘zgaruvchiga berish.\n20 — saqlanayotgan qiymat.\n; — shu buyruq tugaganini bildiradi. = bu yerda matematik tenglikni tekshirish emas."
       },
       {
-        "title": "2. undefined va null",
-        "text": "Qiymati berilmagan o‘zgaruvchi undefined bo‘ladi. null esa ataylab “hozir qiymat yo‘q” deb belgilash uchun ishlatiladi. Ikkalasi alohida primitive tur.",
-        "code": "let javob;\nconst tanlanganUser = null;\nconsole.log(javob);        // undefined\nconsole.log(tanlanganUser); // null"
+        "title": "2. Qiymatni qanday ko‘ramiz?",
+        "text": "console.log qiymatni brauzerning Console oynasiga chiqaradi. Qavs ichiga o‘zgaruvchining nomini bersak, uning ichidagi qiymat ko‘rinadi. Qo‘shtirnoq bilan yozsak, nomning o‘zi matn bo‘lib chiqadi.",
+        "code": "let yosh = 20;\n\nconsole.log(yosh);   // 20\nconsole.log(\"yosh\"); // \"yosh\"",
+        "note": "Birinchi console.log yosh nomidagi qiymatni o‘qidi. Ikkinchisi esa qo‘shtirnoqdagi tayyor matnni chiqardi. Misollarni bir konsolda qayta sinaganda let nomini qayta e’lon qilish xatosi chiqsa, sahifani yangilab sinang yoki boshqa nom tanlang."
       },
       {
-        "title": "3. Symbol va BigInt",
-        "text": "Primitive turlar jami yettita: string, number, boolean, undefined, null, symbol va bigint. Symbol noyob identifikator, BigInt esa katta butun sonlar uchun. Hozircha nomlarini bilish yetarli; keyin alohida dars bor.",
-        "code": "const kattaSon = 12345678901234567890n;\nconst belgi = Symbol(\"id\");\nconsole.log(typeof kattaSon); // bigint\nconsole.log(typeof belgi);    // symbol"
+        "title": "3. String — matn qiymat",
+        "text": "String matnni bildiradi. Ism, shahar va yozuvlar matn bo‘lishi mumkin. Matnni bir yoki ikki qo‘shtirnoq ichida yozamiz. Raqamni ham qo‘shtirnoqqa olsak, u matn bo‘ladi.",
+        "code": "let ism = \"Ali\";\nlet shahar = 'Samarqand';\nlet yozuv = \"20\";\n\nconsole.log(ism);    // \"Ali\"\nconsole.log(shahar); // \"Samarqand\"",
+        "note": "\"20\" ko‘rinishida raqamlar yozilgan bo‘lsa ham, qiymatning turi string. Konsolda matn qo‘shtirnoqsiz ko‘rinishi ham mumkin; koddagi qo‘shtirnoqlar matn chegarasini belgilaydi."
       },
       {
-        "title": "4. Obyekt va reference qiymati",
-        "text": "Obyekt bir nechta xususiyatni birlashtiradi. Obyekt o‘zgaruvchisini nusxalaganda ayni obyektga ishora qiluvchi reference qiymati ko‘chadi. Ikkita mustaqil obyekt yaratilmaydi.",
-        "code": "const user = { ism: \"Ali\" };\nconst boshqa = user;\nboshqa.ism = \"Vali\";\nconsole.log(user.ism); // Vali",
-        "note": "JavaScript argumentlarni ham qiymat bo‘yicha uzatadi. Obyekt bo‘lsa, uzatiladigan qiymat — shu obyektga ishora."
+        "title": "4. Number — son qiymat",
+        "text": "Number hisoblash uchun ishlatiladigan son. Sonni qo‘shtirnoqsiz yozamiz. Butun, kasr va manfiy sonlar number bo‘lishi mumkin. + sonlarni qo‘shadi, lekin string bilan ishlaganda matnlarni birlashtirishi mumkin.",
+        "code": "let yosh = 20;\nlet narx = 3.5;\nlet harorat = -5;\n\nconsole.log(yosh + 1); // 21\nconsole.log(\"20\" + 1); // \"201\"",
+        "note": "20 + 1 — ikkita son, natija 21.\n\"20\" + 1 — chapda matn bor, + birlashtiradi, natija \"201\".\n20 va \"20\" bir xil turdagi qiymat emas."
       },
       {
-        "title": "5. Primitive nusxasi mustaqil",
-        "text": "Primitive qiymatni boshqa o‘zgaruvchiga olganda, keyingi qayta qiymat berish birinchisiga ta’sir qilmaydi. Primitive qiymatlarning o‘zi o‘zgarmas.",
-        "code": "let a = 5;\nlet b = a;\nb = 9;\nconsole.log(a); // 5\nconsole.log(b); // 9"
+        "title": "5. Boolean — rost yoki yolg‘on",
+        "text": "Boolean turida faqat ikkita qiymat bor: true — rost, false — yolg‘on. Buni “ha yoki yo‘q” ma’lumoti deb tasavvur qiling. Masalan, foydalanuvchi talaba ekanini yoki chiroq yoqilganini saqlash mumkin.",
+        "code": "let talaba = true;\nlet chiroqYoniq = false;\n\nconsole.log(talaba);      // true\nconsole.log(chiroqYoniq); // false",
+        "note": "true va false qo‘shtirnoqsiz yoziladi. \"true\" esa boolean emas, to‘rtta harfdan iborat string. Savol: let tayyor = false; dagi qiymat matnmi yoki booleanmi? Javob: boolean."
+      },
+      {
+        "title": "6. undefined va null",
+        "text": "O‘zgaruvchini yaratib, unga hali qiymat bermasak, uning qiymati undefined bo‘ladi. null esa ataylab “hozircha qiymat yo‘q” deb belgilash uchun yoziladi.",
+        "code": "let javob;\nlet user = null;\n\nconsole.log(javob); // undefined\nconsole.log(user);  // null",
+        "note": "undefined — bu misolda qiymat hali berilmagan. null — qiymat yo‘qligi ataylab belgilangan. Ular alohida primitive turlardir."
+      },
+      {
+        "title": "7. Yettita primitive tur",
+        "text": "Hozir ko‘rgan string, number, boolean, undefined va null — primitive qiymatlar. Primitive so‘zini “oddiy, o‘zgarmas qiymat” deb tushuning. Jami yettita primitive tur bor. BigInt va Symbol uchun hozircha nomi va nima uchun ishlatilishini bilish yetarli; keyin alohida darslari bor.",
+        "table": {
+          "headers": [
+            "Tur",
+            "Misol",
+            "Ma’nosi"
+          ],
+          "rows": [
+            [
+              "string",
+              "\"Ali\"",
+              "Matn"
+            ],
+            [
+              "number",
+              "20, 3.5",
+              "Son"
+            ],
+            [
+              "boolean",
+              "true, false",
+              "Rost yoki yolg‘on"
+            ],
+            [
+              "undefined",
+              "let ism;",
+              "Hali qiymat berilmagan"
+            ],
+            [
+              "null",
+              "let user = null;",
+              "Ataylab qiymat yo‘qligi belgilangan"
+            ],
+            [
+              "bigint",
+              "12345678901234567890n",
+              "Katta butun son"
+            ],
+            [
+              "symbol",
+              "Symbol(\"id\")",
+              "Noyob identifikator"
+            ]
+          ]
+        },
+        "note": "Primitive qiymatning o‘zini tahrirlamaymiz. let bilan yaratilgan o‘zgaruvchiga esa boshqa qiymat bera olamiz. Buning farqini keyingi qadamdagi a va b misolida ko‘ramiz."
+      },
+      {
+        "title": "8. Primitive qiymatning nusxasi",
+        "text": "Primitive qiymatni boshqa o‘zgaruvchiga bersak, qiymat nusxalanadi. Keyin ikkinchi o‘zgaruvchiga boshqa qiymat berish birinchisiga ta’sir qilmaydi.",
+        "code": "let a = 5;\nlet b = a;\n\nb = 10;\n\nconsole.log(a); // 5\nconsole.log(b); // 10",
+        "note": "1. a ga 5 berildi.\n2. b ga ham 5 qiymati olindi.\n3. b ning qiymati 10 ga almashtirildi.\n4. a o‘zgarishsiz, 5 bo‘lib qoldi. Primitive qiymatning o‘zi o‘zgartirilmadi; b ga yangi qiymat berildi."
+      },
+      {
+        "title": "9. Obyekt: bir nechta ma’lumot birga",
+        "text": "Obyekt bir nechta ma’lumotni birlashtiradi. Masalan, bitta odamning ismi va yoshini bitta obyektga joylaymiz. Obyekt ichidagi ism va yosh uning xususiyatlari deyiladi. user.ism yozuvi ism xususiyatini o‘qiydi.",
+        "code": "const user = {\n  ism: \"Ali\",\n  yosh: 20\n};\n\nconsole.log(user.ism); // \"Ali\"\nconsole.log(user.yosh); // 20"
+      },
+      {
+        "title": "10. Reference: bitta obyektga ikkita ishora",
+        "text": "Reference — obyektga ishora. user va boshqa ni bitta daftarni ko‘rsatayotgan ikkita belgi deb tasavvur qiling. Daftardagi ismni o‘zgartirsak, ikkala belgi bilan ham yangilangan ismni ko‘ramiz. const boshqa = user yozuvi ikkinchi mustaqil obyekt yaratmaydi; ayni obyektga ishora qiymatini nusxalaydi.",
+        "code": "const user = { ism: \"Ali\" };\nconst boshqa = user;\n\nboshqa.ism = \"Vali\";\n\nconsole.log(user.ism);   // \"Vali\"\nconsole.log(boshqa.ism); // \"Vali\"",
+        "diagram": "user   ───┐\n          ├──→ { ism: \"Vali\" }\nboshqa ───┘",
+        "note": "boshqa orqali umumiy obyektning ism xususiyati yangilandi. user ham shu obyektga ishora qilgani uchun yangi qiymatni ko‘radi. const o‘zgaruvchiga boshqa qiymat berishni cheklaydi; obyekt ichidagi xususiyatni o‘zgartirishni cheklamaydi. JavaScript argumentlarni ham qiymat bo‘yicha uzatadi; obyekt uchun shu qiymat reference hisoblanadi."
+      },
+      {
+        "title": "11. Massiv ham obyekt",
+        "text": "Massiv — bir nechta qiymatni tartib bilan saqlaydigan obyekt. Massivni = bilan boshqa o‘zgaruvchiga bersak ham ayni massivga ishora nusxalanadi. push oxiriga yangi element qo‘shadi.",
+        "code": "const a = [1, 2];\nconst b = a;\n\nb.push(3);\n\nconsole.log(a); // [1, 2, 3]\nconsole.log(b); // [1, 2, 3]",
+        "note": "Faqat b nomi orqali o‘zgartirish kiritdik, lekin a va b bitta massivga qarayotgani uchun ikkalasida ham uchta element ko‘rinadi. Funksiyalar ham obyekt hisoblanadi."
       }
     ],
-    "takeaway": "Primitive nusxalari mustaqil qiymatlar. Obyektni oddiy = bilan nusxalash yangi obyekt yaratmaydi.",
-    "exercise": "let a = 10; let b = a; b = 30; natijasida a nimaga teng? Keyin ikkita o‘zgaruvchini bitta obyektga bog‘lab, xususiyatni o‘zgartiring va farqni tushuntiring.",
+    "takeaway": "String — matn; number — son; boolean — true yoki false. undefined va null qiymat yo‘qligini turlicha bildiradi. Bular primitive qiymatlar. Primitive nusxasiga boshqa qiymat berish asl o‘zgaruvchini o‘zgartirmaydi. Obyekt va massivni = bilan olganda esa bir obyektga reference nusxalanadi: uning ichidagi o‘zgarishni ikkala nom orqali ham ko‘rish mumkin.",
+    "exercise": "1. Birinchi console.log dagi a ning qiymati nima?\n2. Ikkinchi console.log dagi x.son ning qiymati nima?\nHar ikkala javobni va sababini o‘zingiz ayting. Keyin pastdagi javobni ochib solishtiring.",
     "resources": [
       {
         "title": "MDN: ma’lumot turlari",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures"
       }
-    ]
+    ],
+    "exerciseCode": "let a = 10;\nlet b = a;\nb = 30;\n\nconst x = { son: 10 };\nconst y = x;\ny.son = 30;\n\nconsole.log(a);     // ?\nconsole.log(x.son); // ?",
+    "exerciseAnswer": "Birinchi natija: 10. Ikkinchi natija: 30.\n\na dagi 10 primitive qiymati b ga nusxalandi. b ga 30 berish a ni o‘zgartirmadi.\n\nx va y esa bitta obyektga ishora qiladi. y.son = 30 umumiy obyektning son xususiyatini o‘zgartirdi, shuning uchun x.son ham 30."
   },
   {
     "id": "iife-pure",

@@ -98,3 +98,9 @@ nav button.done::before{content:'✓ ';font-weight:700}
 .pwa-install-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px 14px;margin:6px 0 16px;font:inherit;font-size:13px;font-weight:600;color:#314b20;background:#eaf0e4;border:1px solid #bbc9b0;border-radius:9px;cursor:pointer;transition:background .2s,border-color .2s}
 .pwa-install-btn:hover{background:#dce7d4;border-color:#8aa56b}
 .pwa-install-btn[hidden]{display:none!important}
+
+.lesson-diagram{margin:24px 0}
+.lesson-diagram figcaption{font-size:13px;color:#65715e}
+.lesson-diagram pre{white-space:pre;font-family:ui-monospace,monospace}
+.exercise-answer{padding:16px 18px;background:#eaf0e4;border-radius:12px;margin:22px 0}
+.exercise-answer summary{cursor:pointer;font-weight:600;color:#314b20}
