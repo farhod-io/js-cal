@@ -12768,6 +12768,34 @@ window.lessonStages.push({
 });
 window.interviewQuestions.push(...[
   {
+  "id": "q-core-event-loop-complex-chain",
+  "lessonId": "core-event-loop-deep",
+  "topic": "Event Loop: microtask va macrotask chuqur tahlili",
+  "level": "qiyin",
+  "question": "Ushbu kod konsolga qanday ketma-ketlikda natija chiqaradi?",
+  "code": "console.log('1');\n\nasync function foo() {\n  console.log('2');\n  await bar();\n  console.log('3');\n}\n\nasync function bar() {\n  console.log('4');\n}\n\nsetTimeout(() => {\n  console.log('5');\n}, 0);\n\nfoo();\n\nnew Promise((resolve) => {\n  console.log('6');\n  resolve();\n}).then(() => {\n  console.log('7');\n});\n\nconsole.log('8');",
+  "options": [
+    "1, 2, 4, 6, 8, 3, 7, 5",
+    "1, 2, 4, 3, 6, 7, 8, 5",
+    "1, 6, 8, 2, 4, 7, 3, 5",
+    "1, 2, 4, 6, 8, 7, 3, 5"
+  ],
+  "answer": 0,
+  "explain": "Sinxron qism (1, 2, 4, 6, 8) Call Stackda darhol bajariladi. New Promise konstruktori sinxron ishlaydi (6 chiqadi). foo ichidagi await bar() dan keyingi qator (3) microtask 1 bo'ladi, promise.then (7) microtask 2 bo'ladi. setTimeout (5) esa macrotask bo'lib eng oxirida chiqadi.",
+  "walkthrough": [
+    "console.log(1) sinxron ishlaydi → 1 chiqadi.",
+    "foo() chaqiriladi: console.log(2) ishlaydi → 2 chiqadi.",
+    "bar() chaqiriladi: console.log(4) sinxron ishlaydi → 4 chiqadi.",
+    "await bar() tufayli console.log(3) Microtask 1 navbatiga qo'shiladi.",
+    "setTimeout callbacki Macrotask navbatiga tashlanadi.",
+    "new Promise executor sinxron ishlaydi: console.log(6) → 6 chiqadi.",
+    ".then callbacki console.log(7) Microtask 2 navbatiga qo'shiladi.",
+    "console.log(8) sinxron ishlaydi → 8 chiqadi. Call Stack bo'shadi.",
+    "Microtasklar navbati ketma-ket bajariladi: 3, keyin 7 chiqadi.",
+    "Macrotask navbati bajariladi: 5 chiqadi. Natija: 1, 2, 4, 6, 8, 3, 7, 5."
+  ]
+},
+  {
     "id": "q-core-event-loop-deep",
     "lessonId": "core-event-loop-deep",
     "topic": "Event Loop: microtask va macrotask chuqur tahlili",

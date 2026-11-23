@@ -17,7 +17,7 @@ test('eight core lessons have execution tables, quizzes and runnable annotated l
  assert.equal(core.length,8);
  assert.deepEqual(normalize(lessonStages[10].ids),normalize(core.map(l=>l.id)));
  assert.equal(codeLabs.length, 24);
- assert.equal(interviewQuestions.length, 80);
+ assert.equal(interviewQuestions.length, 81);
  for(const l of core){
   assert.ok(l.fullTextDefault,l.id);
   assert.ok(l.sections.length>=7,l.id);

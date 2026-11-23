@@ -37,7 +37,7 @@ Tuzilma ataylab oddiy: barcha o‘quv ma’lumotlari bitta faylda, interfeys bit
 
 - `index.html` — sahifa tuzilmasi.
 - `style.css` — moslashuvchan dizayn.
-- `data.js` — **barcha ma’lumotlar bitta faylda**: 76 dars, 80 test, 24 kod labi. Darslar 0 dan oxirigacha tartib bilan joylashgan.
+- `data.js` — **barcha ma’lumotlar bitta faylda**: 76 dars, 81 test, 24 kod labi. Darslar 0 dan oxirigacha tartib bilan joylashgan.
 - `scope-demo.js`, `truthy-demo.js` — interaktiv demolar.
 - `app.js` — sahifalar, test mexanikasi, yo‘l xaritasi, localStorage progressi, adaptiv va AI test, navigatsiya.
 - `manifest.webmanifest` — PWA ilova konfiguratsiyasi va o‘rnatish parametrlari.
