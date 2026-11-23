@@ -23,10 +23,12 @@
 </head>
 <body>
   <div class="site-topbar">
+    <button id="sidebar-toggle" class="sidebar-toggle" type="button" aria-label="Mavzular panelini yashirish yoki ko‘rsatish" aria-expanded="true" title="Sidebar (Menyuni ochish/yopish)"><span aria-hidden="true">☰</span></button>
     <nav id="top-nav" aria-label="Asosiy bo‘limlar"></nav>
     <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Qorong‘i rejimga o‘tish" aria-pressed="false" title="Qorong‘i rejimga o‘tish"><span aria-hidden="true">🌙</span></button>
   </div>
-  <aside>
+  <aside id="sidebar">
+    <button id="sidebar-close-btn" class="sidebar-close-btn" type="button" aria-label="Panelni yopish" title="Panelni yopish">✕</button>
     <a class="brand" href="index.html"><b>JS</b> daftar<span>Intervyuga tayyorgarlik</span></a>
     <button id="pwa-install" class="pwa-install-btn" type="button" hidden>📱 Ilovani o‘rnatish</button>
     <label for="search">Darsni qidirish</label>

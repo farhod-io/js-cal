@@ -113,9 +113,16 @@ nav button.done::before{content:'✓ ';font-weight:700}
 :root{color-scheme:light}
 .site-topbar{grid-column:1/-1;position:relative;display:flex;align-items:center;justify-content:center;min-height:68px;padding:12px 76px;background:#fff;border-bottom:1px solid #e0e5dc}
 .site-topbar #top-nav{padding:0;border:0;background:transparent;position:static}
+.sidebar-toggle{position:absolute;left:20px;top:12px;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border:1px solid #dce2d6;border-radius:12px;background:#fafbf8;color:#314b20;font:inherit;font-size:20px;cursor:pointer;transition:background .2s,border-color .2s;z-index:10}
+.sidebar-toggle:hover{background:#eaf0e4}
+.sidebar-close-btn{display:none;position:absolute;right:16px;top:16px;width:36px;height:36px;border:1px solid #dce2d6;border-radius:10px;background:#fafbf8;color:#55614e;font:inherit;font-size:16px;align-items:center;justify-content:center;cursor:pointer}
+.sidebar-close-btn:hover{background:#eaf0e4;color:#314b20}
+body.sidebar-hidden{grid-template-columns:1fr !important}
+body.sidebar-hidden aside{display:none !important}
+body.sidebar-hidden main{max-width:1400px}
 .theme-toggle{position:absolute;right:20px;top:12px;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border:1px solid #dce2d6;border-radius:12px;background:#fafbf8;color:#314b20;font:inherit;font-size:20px;cursor:pointer}
 .theme-toggle:hover{background:#eaf0e4}
-@media(max-width:760px){.site-topbar{position:sticky;top:0;z-index:10;padding:10px 60px;min-height:64px}.theme-toggle{right:12px;top:10px}}
+@media(max-width:760px){.site-topbar{position:sticky;top:0;z-index:10;padding:10px 60px;min-height:64px}.theme-toggle{right:12px;top:10px}.sidebar-toggle{left:12px;top:10px}.sidebar-close-btn{display:inline-flex}aside{position:relative}}
 
 :root[data-theme="dark"]{color-scheme:dark;color:#e6eee2;background:#131b15}
 :root[data-theme="dark"] :is(aside,.site-topbar,.card,.lesson-outline,.app-update-notice,.steps div){background:#1c271f;border-color:#394a3b}
@@ -124,13 +131,13 @@ nav button.done::before{content:'✓ ';font-weight:700}
 :root[data-theme="dark"] .brand b{color:#252d20}
 :root[data-theme="dark"] :is(nav button,.lesson-outline button){color:#c2cebb}
 :root[data-theme="dark"] :is(nav button.active,#top-nav button:hover){background:#30432b;color:#d6edc6}
-:root[data-theme="dark"] :is(input,select,.ai-controls select,.ai-settings input,.ai-settings select,.theme-toggle){background:#152019;color:#e6eee2;border-color:#52674b}
+:root[data-theme="dark"] :is(input,select,.ai-controls select,.ai-settings input,.ai-settings select,.theme-toggle,.sidebar-toggle,.sidebar-close-btn){background:#152019;color:#e6eee2;border-color:#52674b}
 :root[data-theme="dark"] input::placeholder{color:#a4b49e}
 :root[data-theme="dark"] :is(.cta,.scope-controls button,.truthy-options button,.option){background:#253329;color:#e1ecd9;border-color:#52674b}
 :root[data-theme="dark"] :is(.cta.primary,.mark-btn,.scope-controls button[aria-pressed="true"]){background:#b4d39b;color:#162110;border-color:#b4d39b}
 :root[data-theme="dark"] :is(.read-bar,.scope-map div,.score-bar,.stage-project,.takeaway,.hint,.exercise-answer,.quiz-teaser,.pwa-install-btn){background:#243626;color:#d1dfc8;border-color:#48603f}
 :root[data-theme="dark"] :is(.read-bar.is-done,.feedback.good,.option.correct){background:#253e2b;color:#c0e9b6;border-color:#6a965f}
-:root[data-theme="dark"] :is(.is-done .mark-btn,.theme-toggle:hover){background:#30432b;color:#d6edc6;border-color:#6a965f}
+:root[data-theme="dark"] :is(.is-done .mark-btn,.theme-toggle:hover,.sidebar-toggle:hover,.sidebar-close-btn:hover){background:#30432b;color:#d6edc6;border-color:#6a965f}
 :root[data-theme="dark"] :is(.feedback.bad,.option.wrong){background:#462b29;color:#ffd1c6;border-color:#a66356}
 :root[data-theme="dark"] :is(.option.chosen,.truthy-options button[aria-pressed="true"]){background:#30432b;color:#d6edc6;border-color:#9ab67a}
 :root[data-theme="dark"] .option.correct{background:#253e2b;color:#c0e9b6;border-color:#6a965f}

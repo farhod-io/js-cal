@@ -811,6 +811,72 @@ function scrollContentToTop() {
   }
 }
 
+function initSidebar() {
+  try {
+    if (typeof document === 'undefined' || !document.querySelector) return;
+    const toggleBtn = document.querySelector('#sidebar-toggle');
+    const closeBtn = document.querySelector('#sidebar-close-btn');
+    if (!toggleBtn || !toggleBtn.addEventListener) return;
+    const isDesktop = typeof window !== 'undefined' && typeof window.innerWidth === 'number' ? window.innerWidth > 760 : true;
+    let saved = null;
+    try {
+      if (typeof localStorage !== 'undefined' && localStorage.getItem) {
+        saved = localStorage.getItem('jsdaftar_sidebar_collapsed');
+      }
+    } catch (_) {}
+    let isHidden = saved !== null ? saved === 'true' : !isDesktop;
+    function updateUI() {
+      try {
+        if (document.body && document.body.classList) {
+          if (isHidden) {
+            document.body.classList.add('sidebar-hidden');
+          } else {
+            document.body.classList.remove('sidebar-hidden');
+          }
+        }
+        if (toggleBtn.setAttribute) {
+          toggleBtn.setAttribute('aria-expanded', isHidden ? 'false' : 'true');
+          toggleBtn.setAttribute('title', isHidden ? 'Mavzular panelini ko‘rsatish (Sidebar)' : 'Mavzular panelini yashirish (Sidebar)');
+        }
+      } catch (_) {}
+    }
+    updateUI();
+    toggleBtn.addEventListener('click', () => {
+      isHidden = !isHidden;
+      try { if (typeof localStorage !== 'undefined' && localStorage.setItem) localStorage.setItem('jsdaftar_sidebar_collapsed', String(isHidden)); } catch (_) {}
+      updateUI();
+    });
+    if (closeBtn && closeBtn.addEventListener) {
+      closeBtn.addEventListener('click', () => {
+        isHidden = true;
+        try { if (typeof localStorage !== 'undefined' && localStorage.setItem) localStorage.setItem('jsdaftar_sidebar_collapsed', 'true'); } catch (_) {}
+        updateUI();
+      });
+    }
+    const list = document.querySelector('#lesson-list');
+    if (list && list.addEventListener) {
+      list.addEventListener('click', (e) => {
+        if (typeof window !== 'undefined' && window.innerWidth <= 760 && e && e.target && e.target.closest && e.target.closest('button')) {
+          isHidden = true;
+          try { if (typeof localStorage !== 'undefined' && localStorage.setItem) localStorage.setItem('jsdaftar_sidebar_collapsed', 'true'); } catch (_) {}
+          updateUI();
+        }
+      });
+    }
+    if (typeof document.addEventListener === 'function') {
+      document.addEventListener('keydown', (e) => {
+        if (e && (e.ctrlKey || e.metaKey) && e.key === 'b') {
+          if (e.preventDefault) e.preventDefault();
+          isHidden = !isHidden;
+          try { if (typeof localStorage !== 'undefined' && localStorage.setItem) localStorage.setItem('jsdaftar_sidebar_collapsed', String(isHidden)); } catch (_) {}
+          updateUI();
+        }
+      });
+    }
+  } catch (_) {}
+}
+initSidebar();
+
 window.addEventListener('hashchange', () => {
   render();
   scrollContentToTop();
