@@ -11242,10 +11242,130 @@ window.lessons = [
         ]
       }
     }
+  },
+  {
+    "id": "mdn-equality-sameness",
+    "title": "MDN: Equality Comparisons and Sameness (==, ===, Object.is)",
+    "question": "JavaScriptda ==, ===, Object.is() va SameValueZero taqqoslash algoritmlari bir-biridan qanday farq qiladi?",
+    "explanation": "JavaScriptda qiymatlarni solishtirish uchun 4 ta asosiy tenglik algoritmi mavjud: 1) IsLooselyEqual (==) — turlarni avtomatik o‘zgartiradi; 2) IsStrictlyEqual (===) — turlarni o‘zgartirmaydi, lekin NaN !== NaN va +0 === -0; 3) SameValue (Object.is) — to‘liq aniqlik: NaN bilan NaN teng, +0 va -0 esa farqli; 4) SameValueZero (includes, Set, Map) — NaN bilan NaN teng, lekin +0 va -0 ham bir xil deb hisoblanadi.",
+    "fullTextDefault": true,
+    "coreInterviewPillar": true,
+    "mdnAdvanced": true,
+    "sections": [
+      {
+        "title": "1. IsLooselyEqual (==) — Bo‘sh Tenglik va Coercion",
+        "text": "== operatori ikki operand har xil turda bo‘lsa, ularni maxsus qoidalar bo‘yicha yagona turga (odatda songa yoki primitive ga) o‘tkazib taqqoslaydi. null va undefined faqat o‘zaro teng (null == undefined → true), lekin 0 yoki false ga teng emas. Massivlar esa avval string ga, keyin songa aylanadi ([] == false → '' == 0 → 0 == 0 → true).",
+        "code": "console.log(5 == \"5\");       // true (string -> son)\nconsole.log(false == 0);     // true (boolean -> 0)\nconsole.log(null == undefined); // true (maxsus qoida)\nconsole.log([] == 0);        // true ([] -> '' -> 0)",
+        "note": "== kutilmagan coercion lari tufayli zamonaviy JavaScriptda (faqat x == null holatidan tashqari) deyarli ishlatilmaydi."
+      },
+      {
+        "title": "2. IsStrictlyEqual (===) — Qat’iy Tenglik",
+        "text": "=== operatori turlarni hech qachon avtomatik o‘zgartirmaydi. Agar turlar har xil bo‘lsa, darhol false qaytaradi. Biroq IEEE 754 suzuvchi vergulli sonlar standarti tufayli ikkita o‘ziga xos chegaraviy holati mavjud: 1) NaN hech qachon hech narsaga, hatto o‘ziga ham teng emas (NaN === NaN → false); 2) Musbat nol (+0) va manfiy nol (-0) o‘zaro teng hisoblanadi (+0 === -0 → true).",
+        "code": "console.log(5 === \"5\");     // false (turlar farqli)\nconsole.log(NaN === NaN);   // false (IEEE 754 standarti)\nconsole.log(+0 === -0);     // true",
+        "note": "Obyekt va massivlar uchun === ularning xotiradagi havolasi (reference) bir xil ekanini tekshiradi, ichki tarkibini emas."
+      },
+      {
+        "title": "3. SameValue: Object.is() — To‘liq Bir Xillik",
+        "text": "ES2015 (ES6) da qo‘shilgan Object.is(a, b) metodi SameValue algoritmini amalga oshiradi. U === dagi ikkita istisnoni tuzatadi: NaN ni o‘z-o‘ziga teng deb hisoblaydi (Object.is(NaN, NaN) === true) va +0 bilan -0 ni ikkita turli son deb ajratadi (Object.is(+0, -0) === false). React kutubxonasi useState va useMemo hooklarida o‘zgarishlarni aniqlash (shallow equality) uchun aynan Object.is algoritmidan foydalanadi.",
+        "code": "console.log(Object.is(NaN, NaN)); // true\nconsole.log(Object.is(+0, -0));   // false\nconsole.log(Object.is(5, 5));     // true\nconsole.log(Object.is({}, {}));   // false (turli referenslar)",
+        "note": "+0 va -0 amalda 1 / +0 === Infinity va 1 / -0 === -Infinity orqali matematik farqlanadi."
+      },
+      {
+        "title": "4. SameValueZero — Set, Map va includes() Qoidasi",
+        "text": "JavaScript kolleksiyalari (Set, Map, Array.prototype.includes) uchun to‘rtinchi algoritm — SameValueZero qo‘llaniladi. U Object.is kabi NaN ni o‘ziga teng deb biladi ([NaN].includes(NaN) === true), lekin +0 va -0 ni bir xil deb hisoblaydi. Shuning uchun Set ga +0 va -0 solinsa, ikkinchisi qabul qilinmaydi va o‘lcham 1 bo‘ladi.",
+        "code": "console.log([NaN].includes(NaN)); // true\nconst s = new Set([+0, -0]);\nconsole.log(s.size); // 1\nconst m = new Map();\nm.set(NaN, 'son emas');\nconsole.log(m.get(NaN)); // 'son emas'",
+        "note": "Agar [NaN].indexOf(NaN) qilsangiz, u === ishlatgani sababli -1 qaytaradi! Shu sababli yangi includes() SameValueZero bilan ancha qulay."
+      }
+    ],
+    "takeaway": "== turlarni o‘zgartiradi; === turlarni saqlaydi (lekin NaN !== NaN, +0 === -0); Object.is to‘liq matematik aniqlik beradi (NaN === NaN, +0 !== -0); SameValueZero (includes, Set, Map) esa NaN ni teng, +0/-0 ni ham teng deb hisoblaydi.",
+    "exercise": "==, ===, Object.is va includes() farqlarini hisoblang.",
+    "exerciseCode": "console.log(NaN === NaN);\nconsole.log(Object.is(NaN, NaN));\nconsole.log(+0 === -0);\nconsole.log(Object.is(+0, -0));\nconsole.log([NaN].includes(NaN));",
+    "exerciseExpected": [
+      false,
+      true,
+      true,
+      false,
+      true
+    ],
+    "exerciseRuntime": "node",
+    "exerciseAnswer": "Loyihani yechish yo‘li:\n1. NaN === NaN har doim false.\n2. Object.is(NaN, NaN) true qaytaradi.\n3. +0 === -0 true.\n4. Object.is(+0, -0) ishoralarni ajratgani uchun false.\n5. Array.prototype.includes SameValueZero ishlatgani sababli NaN ni topadi (true).",
+    "resources": [
+      {
+        "title": "MDN: Equality comparisons and sameness",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Equality_comparisons_and_sameness"
+      },
+      {
+        "title": "MDN: Object.is()",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is"
+      }
+    ],
+    "learningGuide": {
+      "goal": "JavaScriptdagi 4 ta tenglik algoritmi (==, ===, Object.is, SameValueZero) qoidalarini to‘liq o‘rganish.",
+      "prerequisites": [
+        "coercion-equality",
+        "operators",
+        "data-types"
+      ],
+      "terms": [
+        {
+          "term": "SameValue",
+          "meaning": "Object.is() algoritmi: NaN === NaN deb hisoblaydi va +0 bilan -0 ni farqlaydi."
+        },
+        {
+          "term": "SameValueZero",
+          "meaning": "includes(), Set va Map algoritmi: NaN === NaN, lekin +0 === -0 deb hisoblaydi."
+        },
+        {
+          "term": "IsStrictlyEqual",
+          "meaning": "=== operatori algoritmi: turlarni o‘zgartirmaydi, lekin NaN !== NaN va +0 === -0."
+        }
+      ]
+    },
+    "learningPractice": {
+      "debug": {
+        "brokenCode": "function solishtir(a, b) {\n  return a === b;\n}\nconsole.log(solishtir(NaN, NaN));",
+        "fixedCode": "function solishtir(a, b) {\n  return Object.is(a, b);\n}\nconsole.log(solishtir(NaN, NaN));",
+        "explanation": "=== operatori NaN ni o‘ziga teng emas deb biladi. Qiymatlarning ayni bir xilligini tekshirish uchun Object.is() ishlatiladi.",
+        "expectedOutput": [
+          true
+        ]
+      },
+      "write": {
+        "task": "Object.is ni o‘zingiz polyfill qilib yozing (=== orqali).",
+        "hint": "NaN ni aniqlash uchun x !== x, -0 ni aniqlash uchun 1 / x === -Infinity tekshiring.",
+        "criteria": [
+          "NaN holatini tekshirish",
+          "-0 va +0 holatini tekshirish",
+          "Oddiy qiymatlarda === ga tayanish"
+        ]
+      }
+    }
   }
 ];
 
 window.interviewQuestions = [
+  {
+    "id": "q-mdn-equality-sameness",
+    "lessonId": "mdn-equality-sameness",
+    "topic": "MDN Equality and Sameness",
+    "level": "qiyin",
+    "question": "Quyidagi taqqoslashlarning qaysilari true qaytaradi?\n1. Object.is(NaN, NaN)\n2. NaN === NaN\n3. Object.is(+0, -0)\n4. [+0].includes(-0)",
+    "options": [
+      "1 va 4",
+      "Faqat 1",
+      "1, 2 va 4",
+      "1, 3 va 4"
+    ],
+    "answer": 0,
+    "explain": "1. Object.is(NaN, NaN) true (SameValue algoritmi). 2. NaN === NaN false (IEEE 754). 3. Object.is(+0, -0) false (ishoralar farqlanadi). 4. Array.prototype.includes SameValueZero ishlatadi, unda +0 va -0 teng deb hisoblanadi → true.",
+    "walkthrough": [
+      "Object.is SameValue algoritmi bo'yicha NaN ni o'ziga teng deb biladi (1 - true).",
+      "=== NaN ni hech qachon o'ziga teng deb bilmaydi (2 - false).",
+      "Object.is +0 va -0 ni alohida son deb ajratadi (3 - false).",
+      "includes() SameValueZero ishlatadi, unda +0 va -0 teng (4 - true).",
+      "To'g'ri javob: 1 va 4."
+    ]
+  },
   {
     "id": "q-var-let-const-1",
     "lessonId": "var-let-const",
@@ -14614,7 +14734,8 @@ window.lessonStages = [
       "mdn-statements-declarations",
       "mdn-functions-deep",
       "mdn-web-workers-atomics",
-      "mdn-structured-clone"
+      "mdn-structured-clone",
+      "mdn-equality-sameness"
     ]
   }
 ];
