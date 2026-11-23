@@ -1,4 +1,4 @@
-const CACHE_NAME = 'js-daftar-cache-v13';
+const CACHE_NAME = 'js-daftar-cache-v14';
 
 const STATIC_ASSETS = [
   './',
