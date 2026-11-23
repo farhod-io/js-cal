@@ -8,7 +8,7 @@ Ochish: `index.html` faylini brauzerda oching. O‘rnatish talab qilinmaydi.
 
 - **Darslar** — 76 dars: tushuncha, kod misoli, natija, xulosa va mashq. Hamma narsa 0 dan tushuntirilgan. Har darsda **"O‘qilgan deb belgilash"** tugmasi bor.
 - **🧠 AI test** — faqat o‘qilgan deb belgilagan darslaring bo‘yicha savol beradi. Xato javob bergan darslardan ko‘proq savol keladi (adaptiv). Shuningdek Gemini yoki DeepSeek API kaliti bilan o‘qilgan darslardan 1, 5 yoki 10 ta yangi savol yaratish mumkin. OpenAI-mos xizmatlar ham saqlangan.
-- **Intervyu testlari** — 66 ta A/B/C/D savol; javobdan keyin tushuntirish va kodni qadam-baqadam tahlil qilish.
+- **Intervyu testlari** — 106 ta A/B/C/D savol (barcha 76 dars to‘liq qamrab olingan, mavzu va daraja filtri bilan); javobdan keyin tushuntirish va kodni qadam-baqadam tahlil qilish.
 - **Kod o‘qish laboratoriyasi** — 10 ta misol, kod satr-ma-satr izohlangan.
 - **Yo‘l xaritasi** — 10 bosqich va o‘zlashtirish belgilari.
 
@@ -37,7 +37,7 @@ Tuzilma ataylab oddiy: barcha o‘quv ma’lumotlari bitta faylda, interfeys bit
 
 - `index.html` — sahifa tuzilmasi.
 - `style.css` — moslashuvchan dizayn.
-- `data.js` — **barcha ma’lumotlar bitta faylda**: 76 dars, 81 test, 24 kod labi. Darslar 0 dan oxirigacha tartib bilan joylashgan.
+- `data.js` — **barcha ma’lumotlar bitta faylda**: 76 dars, 106 test, 24 kod labi. Darslar 0 dan oxirigacha tartib bilan joylashgan.
 - `scope-demo.js`, `truthy-demo.js` — interaktiv demolar.
 - `app.js` — sahifalar, test mexanikasi, yo‘l xaritasi, localStorage progressi, adaptiv va AI test, navigatsiya.
 - `manifest.webmanifest` — PWA ilova konfiguratsiyasi va o‘rnatish parametrlari.

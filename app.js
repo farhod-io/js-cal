@@ -7,6 +7,8 @@ const lessons = window.lessons || [];
 const lessonStages = window.lessonStages || [{ title: 'Darslar', ids: lessons.map(l => l.id) }];
 const questions = window.interviewQuestions || [];
 const labs = window.codeLabs || [];
+let interviewTopicFilter = "";
+let interviewLevelFilter = "";
 
 // ============================================================
 // 1. LOCALSTORAGE: o'qilgan darslar, test natijalari, AI sozlamalari
@@ -366,6 +368,12 @@ function renderInterview(filterId) {
     listQs = questions.filter(q => q.lessonId === filterId);
   } else {
     listQs = questions;
+    if (interviewTopicFilter) {
+      listQs = listQs.filter(q => q.topic === interviewTopicFilter || q.lessonId === interviewTopicFilter);
+    }
+    if (interviewLevelFilter) {
+      listQs = listQs.filter(q => (q.level || '').toLowerCase().startsWith(interviewLevelFilter.toLowerCase()));
+    }
   }
   const answered = listQs.filter(q => progress.answers[q.id] !== undefined).length;
   const correct = listQs.filter(q => progress.answers[q.id] === q.answer).length;
@@ -378,26 +386,75 @@ function renderInterview(filterId) {
       if (chosen === oi) cls += ' chosen';
       if (revealed && oi === q.answer) cls += ' correct';
       if (revealed && chosen === oi && !isCorrect) cls += ' wrong';
-      return `<button class="${cls}" data-q="${q.id}" data-o="${oi}"><span class="opt-letter">${'ABCD'[oi]}</span><span>${escapeHtml(opt)}</span></button>`;
+      return '<button class="' + cls + '" data-q="' + q.id + '" data-o="' + oi + '"><span class="opt-letter">' + 'ABCD'[oi] + '</span><span>' + escapeHtml(opt) + '</span></button>';
     }).join('');
-    return `<section class="card question" id="${q.id}">
-      <div class="q-head"><span class="q-num">${i + 1}/${listQs.length}</span><span class="badge">${escapeHtml(q.topic)}</span><span class="badge level">${escapeHtml(q.level)}</span></div>
-      <h3>${escapeHtml(q.question)}</h3>
-      ${q.code ? `<pre><code>${escapeHtml(q.code)}</code></pre>` : ''}
-      <div class="options">${options}</div>
-      ${revealed ? `<div class="feedback ${isCorrect ? 'good' : 'bad'}">
-        <b>${isCorrect ? '✓ To‘g‘ri!' : '✕ Noto‘g‘ri. To‘g‘ri javob: ' + 'ABCD'[q.answer]}</b>
-        <p>${escapeHtml(q.explain)}</p>
-        <div class="walkthrough"><b>Kodni o‘qish bosqichlari:</b><ol>${(q.walkthrough || []).map(w => `<li>${escapeHtml(w)}</li>`).join('')}</ol></div>
-      </div>` : ''}
-    </section>`;
+    return '<section class="card question" id="' + q.id + '">' +
+      '<div class="q-head"><span class="q-num">' + (i + 1) + '/' + listQs.length + '</span><span class="badge">' + escapeHtml(q.topic) + '</span><span class="badge level">' + escapeHtml(q.level) + '</span></div>' +
+      '<h3>' + escapeHtml(q.question) + '</h3>' +
+      (q.code ? '<pre><code>' + escapeHtml(q.code) + '</code></pre>' : '') +
+      '<div class="options">' + options + '</div>' +
+      (revealed ? '<div class="feedback ' + (isCorrect ? 'good' : 'bad') + '">' +
+        '<b>' + (isCorrect ? '✓ To‘g‘ri!' : '✕ Noto‘g‘ri. To‘g‘ri javob: ' + 'ABCD'[q.answer]) + '</b>' +
+        '<p>' + escapeHtml(q.explain) + '</p>' +
+        '<div class="walkthrough"><b>Kodni o‘qish bosqichlari:</b><ol>' + (q.walkthrough || []).map(w => '<li>' + escapeHtml(w) + '</li>').join('') + '</ol></div>' +
+      '</div>' : '') +
+    '</section>';
   }).join('');
-  content.innerHTML = `<span class="eyebrow">${filterId === 'ai' ? 'AI TEST REJIMI' : 'INTERVYU REJIMI'}</span><h1>${heading}</h1>
-  <p class="lead">${lead}</p>
-  <div class="score-bar"><div><b>${correct} / ${listQs.length}</b><span>to‘g‘ri</span></div><div><b>${answered} / ${listQs.length}</b><span>javoblandi</span></div>
-    <button class="cta" id="reset-quiz">↻ Qaytadan boshlash</button>
-    <button class="cta" onclick="location.hash='ai'">← AI test</button></div>
-  ${cards || '<section class="card">Bu ro‘yxatda savol yo‘q.</section>'}`;
+
+  const topicsList = Array.from(new Set(questions.map(q => q.topic))).filter(Boolean);
+  const filterBarHtml = (filterId && filterId !== 'ai') ? '' : (
+    '<div class="score-bar" style="padding:12px 18px;margin:18px 0;display:flex;flex-wrap:wrap;align-items:center;gap:12px;">' +
+      '<div style="display:flex;align-items:center;gap:6px;">' +
+        '<label for="interview-topic-filter" style="font-size:12px;font-weight:600;">Mavzu:</label>' +
+        '<select id="interview-topic-filter" class="cta" style="padding:6px 10px;font-size:12px;">' +
+          '<option value="">Barcha mavzular (' + questions.length + ' ta savol)</option>' +
+          topicsList.map(t => '<option value="' + escapeHtml(t) + '" ' + (interviewTopicFilter === t ? 'selected' : '') + '>' + escapeHtml(t) + '</option>').join('') +
+        '</select>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:6px;">' +
+        '<label for="interview-level-filter" style="font-size:12px;font-weight:600;">Daraja:</label>' +
+        '<select id="interview-level-filter" class="cta" style="padding:6px 10px;font-size:12px;">' +
+          '<option value="">Barcha darajalar</option>' +
+          '<option value="oson" ' + (interviewLevelFilter === 'oson' ? 'selected' : '') + '>Oson</option>' +
+          '<option value="o" ' + (interviewLevelFilter === 'o' ? 'selected' : '') + '>O‘rta</option>' +
+          '<option value="qiyin" ' + (interviewLevelFilter === 'qiyin' ? 'selected' : '') + '>Qiyin</option>' +
+        '</select>' +
+      '</div>' +
+      (interviewTopicFilter || interviewLevelFilter ? '<button class="cta" id="clear-interview-filters" style="padding:6px 10px;font-size:11px;">Tozalash ✕</button>' : '') +
+    '</div>'
+  );
+
+  content.innerHTML = '<span class="eyebrow">' + (filterId === 'ai' ? 'AI TEST REJIMI' : 'INTERVYU REJIMI') + '</span><h1>' + heading + '</h1>' +
+  '<p class="lead">' + lead + '</p>' +
+  (filterId !== 'ai' ? filterBarHtml : '') +
+  '<div class="score-bar"><div><b>' + correct + ' / ' + listQs.length + '</b><span>to‘g‘ri</span></div><div><b>' + answered + ' / ' + listQs.length + '</b><span>javoblandi</span></div>' +
+    '<button class="cta" id="reset-quiz">↻ Qaytadan boshlash</button>' +
+    '<button class="cta" onclick="location.hash=\'ai\'">← AI test</button></div>' +
+  (cards || '<section class="card">Bu ro‘yxatda savol yo‘q.</section>');
+
+  const topSel = content.querySelector('#interview-topic-filter');
+  if (topSel) {
+    topSel.onchange = e => {
+      interviewTopicFilter = e.target.value;
+      render();
+    };
+  }
+  const lvlSel = content.querySelector('#interview-level-filter');
+  if (lvlSel) {
+    lvlSel.onchange = e => {
+      interviewLevelFilter = e.target.value;
+      render();
+    };
+  }
+  const clrBtn = content.querySelector('#clear-interview-filters');
+  if (clrBtn) {
+    clrBtn.onclick = () => {
+      interviewTopicFilter = '';
+      interviewLevelFilter = '';
+      render();
+    };
+  }
+
   content.querySelectorAll('.option').forEach(btn => {
     btn.onclick = () => {
       const qid = btn.dataset.q;
@@ -417,9 +474,6 @@ function renderInterview(filterId) {
   };
 }
 
-// ============================================================
-// 7. KOD LABORATORIYASI
-// ============================================================
 function renderLab(filterId) {
   const labsList = filterId ? labs.filter(l => l.id === filterId) : labs;
   const cards = labsList.map(lab => `<section class="card lab">

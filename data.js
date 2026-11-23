@@ -12768,6 +12768,550 @@ window.lessonStages.push({
 });
 window.interviewQuestions.push(...[
   {
+  "id": "q-numbers-math",
+  "lessonId": "numbers-math",
+  "topic": "Sonlar va Math: noldan",
+  "level": "o‘rta",
+  "question": "Ushbu ikki ifoda qanday natija beradi?",
+  "code": "console.log(0.1 + 0.2 === 0.3);\nconsole.log(Math.max());",
+  "options": [
+    "false va -Infinity",
+    "true va 0",
+    "false va Infinity",
+    "false va NaN"
+  ],
+  "answer": 0,
+  "explain": "0.1 + 0.2 ikkilik suzuvchi nuqta (IEEE 754) sababli 0.30000000000000004 bo‘ladi, shuning uchun false. Math.max() argument berilmasa -Infinity qaytaradi (taqqoslashning neytral elementi).",
+  "walkthrough": [
+    "0.1 + 0.2 hisoblanadi → 0.30000000000000004.",
+    "0.30000000000000004 === 0.3 taqqoslanadi → false.",
+    "Math.max() argumentsiz chaqiriladi → -Infinity qaytadi.",
+    "Natija: false va -Infinity."
+  ]
+},
+  {
+  "id": "q-strings",
+  "lessonId": "strings",
+  "topic": "Stringlar: noldan",
+  "level": "o‘rta",
+  "question": "Ushbu kod konsolga nima chiqaradi?",
+  "code": "const str = 'salom';\nstr[0] = 'S';\nstr.length = 2;\nconsole.log(str);",
+  "options": [
+    "'Salom'",
+    "'sa'",
+    "'salom'",
+    "TypeError"
+  ],
+  "answer": 2,
+  "explain": "JavaScriptda String primitiv bo‘lib, o‘zgarmasdir (immutable). Indeks orqali belgi almashtirish yoki length xususiyatiga yozish xato bermaydi (strict mode bo‘lmasa), lekin hech qanday ta'sir qilmaydi.",
+  "walkthrough": [
+    "str ga 'salom' satri biriktiriladi.",
+    "str[0] = 'S' bajariladi, lekin primitivlar immutable bo‘lgani uchun e'tiborga olinmaydi.",
+    "str.length = 2 bajariladi, string length ni o‘zgartirib bo‘lmaydi.",
+    "console.log(str) asl o‘zgarmagan 'salom' ni chiqaradi."
+  ]
+},
+  {
+  "id": "q-operators",
+  "lessonId": "operators",
+  "topic": "Operatorlar: noldan",
+  "level": "qiyin",
+  "question": "Ushbu kod bajarilgach b ning qiymati necha bo‘ladi?",
+  "code": "let a = 1;\nlet b = a++ + ++a * a--;\nconsole.log(b);",
+  "options": [
+    "10",
+    "8",
+    "7",
+    "11"
+  ],
+  "answer": 0,
+  "explain": "Operatorlar ustunligida ko‘paytirish (*) qo‘shishdan (+) oldin bajariladi, lekin operandlar chapdan o‘ngga hisoblanadi. a++ 1 qaytaradi (a=2 bo‘ladi). Keyin ++a 3 qaytaradi (a=3 bo‘ladi). Keyin a-- 3 qaytaradi (a=2 bo‘ladi). 1 + (3 * 3) = 1 + 9 = 10.",
+  "walkthrough": [
+    "a = 1 bilan boshlanadi.",
+    "a++ ifodasi 1 ni qaytaradi, a xotirada 2 bo‘ladi.",
+    "++a a ni 3 ga oshiradi va 3 ni qaytaradi.",
+    "a-- hozirgi 3 ni qaytaradi, a xotirada 2 bo‘ladi.",
+    "Ko‘paytirish: 3 * 3 = 9. Qo‘shish: 1 + 9 = 10. Natija b = 10."
+  ]
+},
+  {
+  "id": "q-conditionals",
+  "lessonId": "conditionals",
+  "topic": "Shart operatorlari: if, else, switch",
+  "level": "o‘rta",
+  "question": "Ushbu switch ifodasi qaysi harfni chiqaradi?",
+  "code": "const val = '0';\nswitch (val) {\n  case 0: console.log('A'); break;\n  case false: console.log('B'); break;\n  case '0': console.log('C'); break;\n  default: console.log('D');\n}",
+  "options": [
+    "'A'",
+    "'B'",
+    "'C'",
+    "'D'"
+  ],
+  "answer": 2,
+  "explain": "switch operatori qiymatlarni qat'iy tenglik (===) bilan tekshiradi. '0' === 0 bu false, '0' === false bu false, faqat '0' === '0' true beradi va 'C' chiqadi.",
+  "walkthrough": [
+    "val = '0' (string turi).",
+    "case 0: '0' === 0 tekshiriladi → false (tur har xil).",
+    "case false: '0' === false tekshiriladi → false.",
+    "case '0': '0' === '0' tekshiriladi → true, 'C' konsolga chiqadi va break bilan to‘xtaydi."
+  ]
+},
+  {
+  "id": "q-loops",
+  "lessonId": "loops",
+  "topic": "Tsikllar: for, while, for...of, for...in",
+  "level": "qiyin",
+  "question": "Ushbu kod r1 va r2 massivlari uzunligi sifatida nimani chiqaradi?",
+  "code": "const arr = [10, 20];\narr.nom = 'test';\nconst r1 = [];\nfor (const x of arr) r1.push(x);\nconst r2 = [];\nfor (const x in arr) r2.push(x);\nconsole.log(r1.length, r2.length);",
+  "options": [
+    "2 va 2",
+    "2 va 3",
+    "3 va 2",
+    "3 va 3"
+  ],
+  "answer": 1,
+  "explain": "for...of faqat massivning raqamli elementlari ustida aylanadi (uzunligi 2). for...in esa obyektning barcha sanaladigan (enumerable) kalitlari, jumladan 'nom' xususiyatini ham aylanadi ('0', '1', 'nom' — uzunligi 3).",
+  "walkthrough": [
+    "arr massiviga 'nom' maxsus xususiyati qo‘shildi.",
+    "for...of iteratori faqat 10 va 20 qiymatlarini oladi → r1.length = 2.",
+    "for...in barcha enumerable kalitlarni ('0', '1', 'nom') oladi → r2.length = 3.",
+    "Natija: 2 va 3."
+  ]
+},
+  {
+  "id": "q-objects-basics",
+  "lessonId": "objects-basics",
+  "topic": "Obyektlar: noldan",
+  "level": "o‘rta",
+  "question": "Ushbu kod konsolda nima chiqaradi?",
+  "code": "const a = {};\nconst b = { key: 'b' };\nconst c = { key: 'c' };\na[b] = 123;\na[c] = 456;\nconsole.log(a[b]);",
+  "options": [
+    "123",
+    "456",
+    "undefined",
+    "TypeError"
+  ],
+  "answer": 1,
+  "explain": "Obyekt kalitlari stringga aylantiriladi. b va c obyekti stringga o‘tganda ikkalasi ham '[object Object]' bo‘ladi. a[c] amali a['[object Object]'] ni 456 qilib qayta yozadi.",
+  "walkthrough": [
+    "a[b] = 123 bajarilganda b stringga aylanadi: a['[object Object]'] = 123.",
+    "a[c] = 456 bajarilganda c stringga aylanadi: a['[object Object]'] = 456 (ustiga yozildi).",
+    "a[b] so‘ralganda a['[object Object]'] o‘qiladi va 456 qaytadi."
+  ]
+},
+  {
+  "id": "q-arrays-basics",
+  "lessonId": "arrays-basics",
+  "topic": "Massivlar: noldan",
+  "level": "o‘rta",
+  "question": "Ushbu kod konsolda nima chiqaradi?",
+  "code": "const sonlar = [1, 2, 3, 4, 5];\nsonlar.length = 2;\nsonlar.length = 4;\nconsole.log(sonlar[0], sonlar[2]);",
+  "options": [
+    "1 va undefined",
+    "1 va 3",
+    "1 va 0",
+    "undefined va undefined"
+  ],
+  "answer": 0,
+  "explain": "sonlar.length = 2 qilinganda massiv qisqartirilib, 3-5 elementlar xotiradan qaytarib bo‘lmaydigan qilib o‘chiriladi. Qayta length = 4 qilinganda esa yangi bo‘sh slotlar (empty slots) ochiladi, ularning qiymati undefined bo‘ladi.",
+  "walkthrough": [
+    "[1, 2, 3, 4, 5] ning length = 2 qilinadi → [1, 2]. 3, 4, 5 butunlay o‘chdi.",
+    "length = 4 qilinadi → [1, 2, <2 empty items>].",
+    "sonlar[0] 1 bo‘ladi, sonlar[2] esa bo‘sh slot bo‘lgani uchun undefined qaytaradi."
+  ]
+},
+  {
+  "id": "q-json-basics",
+  "lessonId": "json-basics",
+  "topic": "JSON: noldan",
+  "level": "qiyin",
+  "question": "Ushbu kodda JSON.stringify natijasi qanday bo‘ladi?",
+  "code": "const obj = {\n  a: undefined,\n  b: () => {},\n  c: Symbol('c'),\n  d: NaN\n};\nconsole.log(JSON.stringify(obj));",
+  "options": [
+    "'{\"d\":null}'",
+    "'{\"a\":null,\"d\":null}'",
+    "'{}'",
+    "TypeError"
+  ],
+  "answer": 0,
+  "explain": "JSON.stringify obyekt ichidagi undefined, funksiya va Symbol xususiyatlarini tashlab ketadi (inkor qiladi). NaN va Infinity esa null ga aylanadi. Shuning uchun faqat {\"d\":null} qoladi.",
+  "walkthrough": [
+    "a: undefined tashlab ketiladi.",
+    "b: () => {} (funksiya) tashlab ketiladi.",
+    "c: Symbol('c') tashlab ketiladi.",
+    "d: NaN JSON standartida yo‘qligi sababli null ga aylanadi.",
+    "Yakuniy qator: '{\"d\":null}'."
+  ]
+},
+  {
+  "id": "q-map-set",
+  "lessonId": "map-set",
+  "topic": "Map va Set: noldan",
+  "level": "qiyin",
+  "question": "Ushbu Set ning size (hajmi) necha bo‘ladi?",
+  "code": "const s = new Set();\ns.add({ id: 1 });\ns.add({ id: 1 });\ns.add(NaN);\ns.add(NaN);\nconsole.log(s.size);",
+  "options": [
+    "2",
+    "3",
+    "4",
+    "1"
+  ],
+  "answer": 1,
+  "explain": "{ id: 1 } har safar yangi xotira manziliga (reference) ega bo‘ladi, shuning uchun ikkala obyekt ham qo‘shiladi (2 ta). Lekin Set algoritmi (SameValueZero) NaN ni o‘ziga teng deb hisoblaydi, shuning uchun NaN faqat 1 marta qo‘shiladi. Jami: 3.",
+  "walkthrough": [
+    "Birinchi { id: 1 } yangi obyekt sifatida Setga qo‘shildi (size = 1).",
+    "Ikkinchi { id: 1 } boshqa xotira manzili bo‘lgani uchun yana qo‘shildi (size = 2).",
+    "Birinchi NaN qo‘shildi (size = 3).",
+    "Ikkinchi NaN mavjud deb topildi va qayta qo‘shilmadi.",
+    "s.size = 3."
+  ]
+},
+  {
+  "id": "q-callbacks",
+  "lessonId": "callbacks",
+  "topic": "Callback va yuqori darajali funksiyalar: noldan",
+  "level": "qiyin",
+  "question": "Ushbu kod konsolda nima chiqaradi?",
+  "code": "const arr = ['1', '2', '3'].map(parseInt);\nconsole.log(arr);",
+  "options": [
+    "[1, 2, 3]",
+    "[1, NaN, NaN]",
+    "[1, 2, NaN]",
+    "[NaN, NaN, NaN]"
+  ],
+  "answer": 1,
+  "explain": "map callbackga (element, index) argumentlarini uzatadi. parseInt(satr, sanoq_sistemasi) qabul qiladi. parseInt('1', 0) → 1 (0 asos 10 ga teng). parseInt('2', 1) → NaN (1 lik sanoq sistemasi yo‘q). parseInt('3', 2) → NaN (2 likda 3 raqami yo‘q). Natija: [1, NaN, NaN].",
+  "walkthrough": [
+    "1-iteratsiya: parseInt('1', 0) bajariladi → 1 qaytadi.",
+    "2-iteratsiya: parseInt('2', 1) bajariladi → radix 1 bo‘lgani uchun NaN.",
+    "3-iteratsiya: parseInt('3', 2) bajariladi → 2-lik asosda 3 yaroqsiz bo‘lgani uchun NaN.",
+    "Natija massivi: [1, NaN, NaN]."
+  ]
+},
+  {
+  "id": "q-closures",
+  "lessonId": "closures",
+  "topic": "Closure: noldan",
+  "level": "o‘rta",
+  "question": "Ushbu kod chaqirilganda konsolga nima chiqadi?",
+  "code": "function tashqi() {\n  let x = 10;\n  return function() {\n    x++;\n    return x;\n  };\n}\nconst a = tashqi();\nconst b = tashqi();\nconsole.log(a(), a(), b());",
+  "options": [
+    "11, 12, 13",
+    "11, 12, 11",
+    "11, 11, 11",
+    "12, 13, 11"
+  ],
+  "answer": 1,
+  "explain": "tashqi() har chaqirilganda x uchun yangi leksik muhit yaratiladi. a o‘zining x o‘zgaruvchisiga (10 dan 11, keyin 12), b esa butunlay yangi o‘z x o‘zgaruvchisiga (10 dan 11) ega bo‘ladi.",
+  "walkthrough": [
+    "const a = tashqi() → 1-leksik muhitda x = 10.",
+    "const b = tashqi() → 2-leksik muhitda alohida x = 10.",
+    "a() chaqirildi → 1-muhitdagi x 11 bo‘ldi va 11 qaytdi.",
+    "a() ikkinchi marta chaqirildi → 1-muhitdagi x 12 bo‘ldi va 12 qaytdi.",
+    "b() chaqirildi → 2-muhitdagi x 11 bo‘ldi va 11 qaytdi. Natija: 11, 12, 11."
+  ]
+},
+  {
+  "id": "q-errors-try-catch",
+  "lessonId": "errors-try-catch",
+  "topic": "Xatolar: try/catch, throw, finally",
+  "level": "qiyin",
+  "question": "Ushbu funksiya nima qaytaradi?",
+  "code": "function sinov() {\n  try {\n    return 1;\n  } finally {\n    return 2;\n  }\n}\nconsole.log(sinov());",
+  "options": [
+    "1",
+    "2",
+    "undefined",
+    "TypeError"
+  ],
+  "answer": 1,
+  "explain": "finally bloki har qanday holatda ham (try da return bo‘lsa ham) albatta bajariladi. Agar finally ichida return yozilsa, u try yoki catch dagi return ni ustiga yozadi (override qiladi).",
+  "walkthrough": [
+    "try bloki ishga tushadi va return 1 tayyorlanadi.",
+    "Lekin funksiyadan chiqishdan oldin majburiy finally bloki bajariladi.",
+    "finally blokida return 2 uchraydi va oldingi return 1 bekor qilinadi.",
+    "Funksiya 2 qaytaradi."
+  ]
+},
+  {
+  "id": "q-common-pitfalls",
+  "lessonId": "common-pitfalls",
+  "topic": "Ko‘p uchraydigan xatolar va tuzoqlar",
+  "level": "o‘rta",
+  "question": "Ushbu 3 ta console.log qanday natija beradi?",
+  "code": "console.log(typeof NaN);\nconsole.log(NaN === NaN);\nconsole.log(Object.is(NaN, NaN));",
+  "options": [
+    "'number', false, true",
+    "'NaN', true, true",
+    "'number', true, true",
+    "'undefined', false, false"
+  ],
+  "answer": 0,
+  "explain": "typeof NaN har doim 'number' dir. NaN JSda o‘z-o‘ziga teng bo‘lmagan yagona qiymatdir (=== bilan false). Lekin Object.is(NaN, NaN) ikkalasining ayni bir qiymat ekanini aniqlab true beradi.",
+  "walkthrough": [
+    "typeof NaN hisoblanadi → 'number'.",
+    "NaN === NaN taqqoslanadi → spetsifikatsiya bo‘yicha false.",
+    "Object.is(NaN, NaN) algoritmi chaqiriladi → true.",
+    "Natija: 'number', false, true."
+  ]
+},
+  {
+  "id": "q-modules",
+  "lessonId": "modules",
+  "topic": "Modullar: import/export",
+  "level": "qiyin",
+  "question": "ES modullarda import qilingan o‘zgaruvchiga qayta qiymat berilsa (reassign) nima sodir bo‘ladi?",
+  "code": "// a.js\nexport let ball = 100;\n\n// b.js\nimport { ball } from './a.js';\nball = 200;",
+  "options": [
+    "TypeError otiladi (import qilingan qiymatlar read-only bo‘ladi)",
+    "Normal ishlaydi va ball 200 ga aylanadi",
+    "ReferenceError otiladi",
+    "O‘zgaruvchi qiymati undefined bo‘lib qoladi"
+  ],
+  "answer": 0,
+  "explain": "ES modullardan import qilingan nomlar 'live read-only binding' hisoblanadi. Ularni import qilgan fayl o‘zgartira olmaydi (TypeError). Qiymat faqat uni export qilgan modul ichidan o‘zgarishi mumkin.",
+  "walkthrough": [
+    "a.js modulidan let ball export qilinmoqda.",
+    "b.js uni import qiladi: bu yerda ball o‘zgarmas bog‘lanish (read-only) shaklida bo‘ladi.",
+    "ball = 200 ga urinish TypeError: Assignment to constant variable xatosini keltirib chiqaradi."
+  ]
+},
+  {
+  "id": "q-events-advanced",
+  "lessonId": "events-advanced",
+  "topic": "Eventlar: chuqurroq",
+  "level": "o‘rta",
+  "question": "addEventListener da 3-argument sifatida { capture: true } (yoki true) berilsa nima bo‘ladi?",
+  "code": "element.addEventListener('click', handler, true);",
+  "options": [
+    "Hodisa Capturing (pasayish / tushish) fazasida ushlanadi",
+    "Hodisa faqat Bubbling (ko‘tarilish) fazasida ishlaydi",
+    "Hodisa bekor qilinadi va ishlamaydi",
+    "Hodisa faqat 1 marta bajariladi va o‘chiriladi"
+  ],
+  "answer": 0,
+  "explain": "Standart bo‘yicha hodisalar Bubbling (pastdan yuqoriga) fazasida ushlanadi. Uchinchi argument true yoki { capture: true } bo‘lsa, hodisa yuqoridan nishonga qarab tushish (Capturing) fazasida ushlanadi.",
+  "walkthrough": [
+    "DOM hodisasi 3 bosqichdan o‘tadi: Capturing → Target → Bubbling.",
+    "addEventListener uchinchi parametri capture flagini belgilaydi.",
+    "true berilganda handler Capturing bosqichida birinchi bo‘lib ishga tushadi."
+  ]
+},
+  {
+  "id": "q-storage",
+  "lessonId": "storage",
+  "topic": "localStorage va sessionStorage: noldan",
+  "level": "o‘rta",
+  "question": "Obyektni to‘g‘ridan-to‘g‘ri localStorage ga saqlab qayta o‘qilsa nima chiqadi?",
+  "code": "localStorage.setItem('user', { ism: 'Ali' });\nconst res = localStorage.getItem('user');\nconsole.log(res);",
+  "options": [
+    "'[object Object]'",
+    "{ ism: 'Ali' }",
+    "'{\"ism\":\"Ali\"}'",
+    "undefined"
+  ],
+  "answer": 0,
+  "explain": "localStorage faqat matn (string) saqlaydi. Unga obyekt uzatilganda avtomatik ravishda uning toString() metodi chaqiriladi va '[object Object]' matni saqlanadi. To‘g‘ri saqlash uchun JSON.stringify ishlatish kerak.",
+  "walkthrough": [
+    "localStorage.setItem('user', { ism: 'Ali' }) chaqirildi.",
+    "Obyekt avtomatik stringga aylantirildi: String({ ism: 'Ali' }) → '[object Object]'.",
+    "getItem orqali '[object Object]' matni qaytadi."
+  ]
+},
+  {
+  "id": "q-dates",
+  "lessonId": "dates",
+  "topic": "Date va vaqt bilan ishlash: noldan",
+  "level": "o‘rta",
+  "question": "Ushbu Date kodi konsolga necha chiqaradi?",
+  "code": "const sana = new Date(2026, 0, 15);\nconsole.log(sana.getMonth());",
+  "options": [
+    "0",
+    "1",
+    "15",
+    "NaN"
+  ],
+  "answer": 0,
+  "explain": "JavaScript Date obyektida oylar 0 dan boshlab indekslanadi: 0 — Yanvar, 1 — Fevral, ..., 11 — Dekabr. Shuning uchun 0 berilganda getMonth() ham 0 (Yanvar) qaytaradi.",
+  "walkthrough": [
+    "new Date(2026, 0, 15) konstruktorida 2026-yil, 0-oy (Yanvar), 15-kun yaratiladi.",
+    "sana.getMonth() metodi chaqiriladi.",
+    "0 qaytadi (Yanvar oyi)."
+  ]
+},
+  {
+  "id": "q-regex-basics",
+  "lessonId": "regex-basics",
+  "topic": "Regex: noldan",
+  "level": "qiyin",
+  "question": "Ushbu global Regex kodi qanday natija beradi?",
+  "code": "const reg = /test/g;\nconsole.log(reg.test('test'));\nconsole.log(reg.test('test'));",
+  "options": [
+    "true va true",
+    "true va false",
+    "false va true",
+    "false va false"
+  ],
+  "answer": 1,
+  "explain": "/g (global) bayrog‘iga ega bo‘lgan Regex o‘zining oxirgi topilgan joyini (lastIndex) saqlab boradi. Birinchi test() 'test' ni topadi va lastIndex 4 bo‘ladi. Ikkinchi test() 4-indeksdan qidirishni boshlaydi va hech narsa topolmay false qaytaradi.",
+  "walkthrough": [
+    "reg.lastIndex dastlab 0 ga teng.",
+    "1-chi test('test'): 0-indeksdan moslik topildi → true. lastIndex 4 ga teng bo‘ldi.",
+    "2-chi test('test'): qidirish 4-indeksdan boshlanadi → moslik yo‘q → false. lastIndex yana 0 ga qaytadi.",
+    "Natija: true va false."
+  ]
+},
+  {
+  "id": "q-web-apis",
+  "lessonId": "web-apis",
+  "topic": "Foydali Web API lar: noldan",
+  "level": "o‘rta",
+  "question": "AbortController yordamida so‘rov bekor qilinganda signal holati nima bo‘ladi?",
+  "code": "const controller = new AbortController();\ncontroller.abort();\nconsole.log(controller.signal.aborted);",
+  "options": [
+    "true",
+    "false",
+    "undefined",
+    "TypeError"
+  ],
+  "answer": 0,
+  "explain": "AbortController fetch yoki boshqa asinxron vazifalarni to‘xtatish uchun xizmat qiladi. abort() metodi chaqirilishi bilan uning controller.signal.aborted xususiyati true ga aylanadi.",
+  "walkthrough": [
+    "AbortController instansiyasi yaratiladi.",
+    "controller.abort() buyrug‘i beriladi.",
+    "signal.aborted bayrog‘i true ga o‘zgaradi va konsolga true chiqadi."
+  ]
+},
+  {
+  "id": "q-fetch-api",
+  "lessonId": "fetch-api",
+  "topic": "Fetch API: noldan",
+  "level": "o‘rta",
+  "question": "Agar server 404 (Topilmadi) yoki 500 (Server xatosi) qaytarsa, fetch Promise qanday holatga tushadi?",
+  "code": "fetch('https://api.example.com/not-found')\n  .then(() => console.log('Resolved'))\n  .catch(() => console.log('Rejected'));",
+  "options": [
+    "'Resolved' chiqadi (HTTP xatolar reject qilmaydi, response.ok false bo‘ladi)",
+    "'Rejected' chiqadi (catch ga tushadi)",
+    "Xatolik otilib kod to‘xtaydi",
+    "Promise cheksiz kutish (pending) holatida qoladi"
+  ],
+  "answer": 0,
+  "explain": "fetch Promise faqat tarmoq uzilishi (network failure) yoki so‘rov yuborish imkoni bo‘lmagandagina reject bo‘ladi. HTTP 404 yoki 500 javobida Promise resolve bo‘ladi, lekin response.ok qiymati false bo‘ladi.",
+  "walkthrough": [
+    "Server 404 kodi bilan javob qaytaradi.",
+    "fetch muvaffaqiyatli javob kelgani uchun Promise ni resolve qiladi.",
+    ".then bloki ishlaydi va 'Resolved' chiqadi (ishlovchi dasturchi response.ok ni o‘zi tekshirishi kerak)."
+  ]
+},
+  {
+  "id": "q-dynamic-import-async-iteration",
+  "lessonId": "dynamic-import-async-iteration",
+  "topic": "Dynamic import va async iteratsiya",
+  "level": "o‘rta",
+  "question": "Dinamik import(...) chaqirilganda qanday turdagi qiymat qaytadi?",
+  "code": "const res = import('./util.js');\nconsole.log(res instanceof Promise);",
+  "options": [
+    "true (import doim modul obyekti bilan resolve bo‘ladigan Promise qaytaradi)",
+    "false (modul darhol obyekt sifatida yuklanadi)",
+    "undefined",
+    "TypeError"
+  ],
+  "answer": 0,
+  "explain": "Dinamik import() asinxron yuklash uchun ishlatiladi va har doim Promise qaytaradi. U modul yuklangach, modulning barcha exportlarini o‘z ichiga olgan obyekt (namespace object) bilan resolve bo‘ladi.",
+  "walkthrough": [
+    "import('./util.js') chaqiriladi.",
+    "U asinxron Promise instansiyasini hosil qiladi.",
+    "res instanceof Promise tekshiruvi true qaytaradi."
+  ]
+},
+  {
+  "id": "q-prototypes",
+  "lessonId": "prototypes",
+  "topic": "Prototype va prototip zanjiri: noldan",
+  "level": "qiyin",
+  "question": "Ushbu prototip tekshiruvi konsolga qanday natija chiqaradi?",
+  "code": "function User(nom) { this.nom = nom; }\nUser.prototype.salom = function() { return 'Salom ' + this.nom; };\nconst u = new User('Ali');\nconsole.log(u.hasOwnProperty('salom'), 'salom' in u);",
+  "options": [
+    "false va true",
+    "true va true",
+    "true va false",
+    "false va false"
+  ],
+  "answer": 0,
+  "explain": "hasOwnProperty faqat obyektning o‘z shaxsiy xususiyatlarini (own properties) tekshiradi, salom esa prototipda joylashgani uchun false beradi. in operatori esa butun prototip zanjiri bo‘ylab qidiradi va true beradi.",
+  "walkthrough": [
+    "User.prototype da salom metodi yaratildi.",
+    "u = new User('Ali') instansiyasida faqat nom xususiyati o‘zida bo‘ladi.",
+    "u.hasOwnProperty('salom') → false (chunki salom u da emas, uning __proto__ sida).",
+    "'salom' in u → true (prototip zanjiridan topildi). Natija: false va true."
+  ]
+},
+  {
+  "id": "q-classes",
+  "lessonId": "classes",
+  "topic": "Class va meros: noldan",
+  "level": "qiyin",
+  "question": "Ushbu Class meros olish kodi qanday natija beradi?",
+  "code": "class Ota {\n  constructor() { console.log('A'); }\n}\nclass Bola extends Ota {\n  constructor() {\n    console.log('B');\n    super();\n  }\n}\nnew Bola();",
+  "options": [
+    "'B' keyin 'A' chiqadi",
+    "'A' keyin 'B' chiqadi",
+    "ReferenceError (super() dan oldin hech qanday kod yozish mumkin emas)",
+    "TypeError"
+  ],
+  "answer": 0,
+  "explain": "Derived (meros oluvchi) klassda super() dan oldin 'this' ga murojaat qilish ReferenceError beradi. Biroq, 'this' ishlatilmagan oddiy buyruqlar (masalan console.log('B')) super() dan oldin bemalol bajariladi. Shuning uchun avval B, keyin A chiqadi.",
+  "walkthrough": [
+    "new Bola() chaqiriladi.",
+    "Bola konstruktori boshlanadi: console.log('B') ishlaydi → 'B' chiqadi.",
+    "super() chaqiriladi: Ota klass konstruktori ishlaydi → 'A' chiqadi.",
+    "Natija ketma-ketligi: 'B' keyin 'A'."
+  ]
+},
+  {
+  "id": "q-iterators-generators",
+  "lessonId": "iterators-generators",
+  "topic": "Iterator va generator: noldan",
+  "level": "qiyin",
+  "question": "Ushbu generator massivga yoyilganda (spread) natija nima bo‘ladi?",
+  "code": "function* sonlar() {\n  yield 1;\n  return 2;\n  yield 3;\n}\nconsole.log([...sonlar()]);",
+  "options": [
+    "[1]",
+    "[1, 2]",
+    "[1, 2, 3]",
+    "[1, 3]"
+  ],
+  "answer": 0,
+  "explain": "Spread operator (...), for...of va boshqa iteratsiya mexanizmlari faqat done: false bo‘lgan yield qiymatlarini yig‘adi. Generator return qilganda done: true bo‘ladi va uning qaytargan qiymati (2) iteratsiyaga kirmaydi, generator darhol to‘xtaydi.",
+  "walkthrough": [
+    "yield 1 beriladi: { value: 1, done: false } → massivga 1 qo‘shildi.",
+    "return 2 bajariladi: { value: 2, done: true } → done true bo‘lgani uchun 2 massivga kirmaydi.",
+    "yield 3 ga yetib borilmaydi.",
+    "Yakuniy massiv: [1]."
+  ]
+},
+  {
+  "id": "q-proxy-reflect",
+  "lessonId": "proxy-reflect",
+  "topic": "Proxy va Reflect: noldan",
+  "level": "o‘rta",
+  "question": "Ushbu Proxy orqali proxy.x va proxy.y o‘qilganda nima chiqadi?",
+  "code": "const target = { x: 10 };\nconst proxy = new Proxy(target, {\n  get(t, prop) {\n    return prop in t ? t[prop] * 2 : 0;\n  }\n});\nconsole.log(proxy.x, proxy.y);",
+  "options": [
+    "20 va 0",
+    "10 va undefined",
+    "20 va undefined",
+    "TypeError"
+  ],
+  "answer": 0,
+  "explain": "Proxy ning get trapi xususiyat o‘qilishini tutib oladi. proxy.x uchun 'x' in t true bo‘lib 10 * 2 = 20 qaytadi. proxy.y uchun 'y' in t false bo‘lib 0 qaytadi.",
+  "walkthrough": [
+    "proxy.x chaqirildi → get trapi ishladi: 'x' targetda bor, 10 * 2 = 20 qaytdi.",
+    "proxy.y chaqirildi → get trapi ishladi: 'y' targetda yo‘q, 0 qaytdi.",
+    "Natija: 20 va 0."
+  ]
+},
+  {
   "id": "q-core-event-loop-complex-chain",
   "lessonId": "core-event-loop-deep",
   "topic": "Event Loop: microtask va macrotask chuqur tahlili",
