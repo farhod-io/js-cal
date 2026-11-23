@@ -1,4 +1,4 @@
-// Barcha o'quv ma'lumotlari bitta faylda: 81 dars, 111 test, 24 kod labi.
+// Barcha o'quv ma'lumotlari bitta faylda: 84 dars, 114 test, 24 kod labi.
 // Tartib: darslar 0 dan boshlab bosqichma-bosqich joylashtirilgan.
 
 window.lessons = [
@@ -10827,6 +10827,260 @@ window.lessons = [
         ]
       }
     }
+  },
+  {
+    "id": "mdn-operators-deep",
+    "title": "MDN: Operatorlar, Ifodalar va Bog‘lanish Qoidalari",
+    "question": "Mantiqiy tayinlovlar (&&=, ||=, ??=), Vergul operatori (,) va Unary operatorlar (+, -, ~, void) qanday ishlaydi?",
+    "explanation": "JavaScriptdagi har bir operator ifoda (expression) hosil qiladi. Zamonaviy JS da ||= o‘rniga ??= ishlatish 0 va bo‘sh satrlarni tasodifiy yo‘qotishdan asraydi. Vergul operatori (,) esa ifodalarni zanjirlab eng oxirgisini qaytaradi.",
+    "fullTextDefault": true,
+    "coreInterviewPillar": true,
+    "mdnAdvanced": true,
+    "sections": [
+      {
+        "title": "1. Mantiqiy Tayinlov Operatorlari (&&=, ||=, ??=)",
+        "text": "ES2021 da qo‘shilgan mantiqiy tayinlov operatorlari qisqa tutashuv (short-circuiting) tamoyilida ishlaydi. a &&= b faqat a truthy bo‘lsa ishlaydi. a ||= b faqat a falsy bo‘lsa ishlaydi. a ??= b esa faqat a null yoki undefined (nullish) bo‘lsagina b qiymatini yozadi (0 yoki bo‘sh satr bo‘lsa teginmaydi).",
+        "code": "let a = 0;\na ||= 10;\nconsole.log(a);\nlet b = 0;\nb ??= 20;\nconsole.log(b);",
+        "note": "0 soni falsy, lekin nullish emas. Shuning uchun ||= uni 10 ga almashtiradi, ??= esa 0 ligicha saqlaydi."
+      },
+      {
+        "title": "2. Vergul Operatori (,) va Qavslar",
+        "text": "Vergul operatori (comma operator) barcha ifodalarni chapdan o‘ngga qarab bajaradi va faqat eng oxirgi ifoda qiymatini qaytaradi. U ko‘pincha for sikllarida yoki ifoda joylarida qo‘shimcha amallarni bir satrda bajarish uchun ishlatiladi.",
+        "code": "let x = 1;\nlet y = (x++, x + 5);\nconsole.log(x);\nconsole.log(y);",
+        "note": "y ga x + 5 natijasi (2 + 5 = 7) yoziladi, lekin unga qadar x++ ishlab x ni 2 ga oshirgan bo‘ladi."
+      },
+      {
+        "title": "3. Unary Operatorlar: +, -, ~, void",
+        "text": "Unary plus (+) operandni songa o‘tkazadi (+true === 1, +null === 0). Unary negation (-) songa aylantirib manfiy qiladi. Bitwise NOT (~) qiymatni 32-bit butun songa aylantirib bitlarini teskari qiladi: ~n formulasi -(n + 1) ga teng. void operatori esa ifodani bajarib har doim undefined qaytaradi.",
+        "code": "console.log(+true);\nconsole.log(~(-1));\nconsole.log(void (5 + 5));",
+        "note": "~(-1) === 0 bo‘lgani sababli eski kodlarda if (~str.indexOf(x)) ko‘rinishida element mavjudligini tekshirish uchun ko‘p qo‘llanilgan."
+      }
+    ],
+    "takeaway": "Zamonaviy JS da ||= o‘rniga ??= ishlatish 0 va bo‘sh qator ('') kabi haqiqiy ma'lumotlarning yo‘qolib ketishidan himoya qiladi. Vergul operatori esa ifodalarni zanjirlashda oxirgi qiymatni qaytaradi.",
+    "exercise": "Mantiqiy tayinlov va vergul operatori natijasini tahlil qiling.",
+    "exerciseCode": "let val = null;\nval ??= \"boshlang'ich\";\nlet res = (val = \"yangi\", val.toUpperCase());\nconsole.log(res);",
+    "exerciseExpected": [
+      "YANGI"
+    ],
+    "exerciseRuntime": "node",
+    "exerciseAnswer": "Loyihani yechish yo‘li:\n1. val null bo‘lgani uchun ??= unga 'boshlang'ich' yuklaydi.\n2. Vergul operatorida avval val = 'yangi' bajariladi, so‘ng oxirgi val.toUpperCase() natijasi res ga yoziladi.\n3. Natija 'YANGI' bo‘ladi.",
+    "resources": [
+      {
+        "title": "MDN: Expressions and operators",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators"
+      }
+    ],
+    "learningGuide": {
+      "goal": "Mantiqiy tayinlovlar (&&=, ||=, ??=), vergul operatori va unary operatorlarning ishlash mexanizmini o‘rganish.",
+      "prerequisites": [
+        "operators",
+        "coercion-equality",
+        "conditionals"
+      ],
+      "terms": [
+        {
+          "term": "Logical Assignment",
+          "meaning": "&&=, ||= va ??= operatorlari; shart bajarilsagina o‘zgaruvchiga yangi qiymat yozuvchi qisqa tutashuvchi operatorlar."
+        },
+        {
+          "term": "Comma Operator (,)",
+          "meaning": "Qavs ichida bir nechta ifodani ketma-ket bajarib, faqat eng oxirgisining natijasini qaytaruvchi operator."
+        },
+        {
+          "term": "Unary Operator",
+          "meaning": "Faqat bitta operand bilan ishlovchi operatorlar (+, -, !, ~, typeof, void)."
+        }
+      ]
+    },
+    "learningPractice": {
+      "debug": {
+        "brokenCode": "let score = 0;\nscore = score || 100;\nconsole.log(score);",
+        "fixedCode": "let score = 0;\nscore ??= 100;\nconsole.log(score);",
+        "explanation": "O‘yinda yoki hisobda 0 haqiqiy ball hisoblanadi. || operatori 0 ni falsy deb bilib 100 ga o‘zgartirib yuboradi. ??= esa 0 ni saqlab qoladi.",
+        "expectedOutput": [
+          0
+        ]
+      },
+      "write": {
+        "task": "??= va ||= farqini ko‘rsatuvchi kod yozing.",
+        "hint": "0 qiymatli o‘zgaruvchiga ??= va ||= qo‘llang.",
+        "criteria": [
+          "0 qiymatini kiritish",
+          "??= operatori orqali tekshirish",
+          "Natijani konsolga chiqarish"
+        ]
+      }
+    }
+  },
+  {
+    "id": "mdn-statements-declarations",
+    "title": "MDN: Statement va Declaration Grammatik Farqi",
+    "question": "Nega 'if (true) let x = 1;' SyntaxError beradi, var esa statement hisoblanadi va blok skopi qanday ishlaydi?",
+    "explanation": "JavaScriptda Statement (harakat) va Declaration (nom bog‘lash) ikkita alohida grammatik toifadir. if yoki while tanasiga blocksiz yagona leksik deklaratsiya (let, const, class) yozish taqiqlangan.",
+    "fullTextDefault": true,
+    "coreInterviewPillar": true,
+    "mdnAdvanced": true,
+    "sections": [
+      {
+        "title": "1. Statement va Declaration Farqi",
+        "text": "JavaScript dasturlari statement va declaration lardan tashkil topgan. Declaration identifikatorni qiymatga bog‘laydi (let, const, function, class). Statement esa amalni bajaradi. MDN qoidasiga ko‘ra: 'if' yoki 'for' ning tana qismi faqat statement qabul qiladi.",
+        "code": "let a = 1; // declaration\na = a + 2; // expression statement\nif (a > 2) console.log(\"Katta\"); // statement",
+        "note": "Qavssiz if dan keyin leksik declaration yozilsa SyntaxError yuz beradi."
+      },
+      {
+        "title": "2. Nega 'if (true) let x = 1' SyntaxError?",
+        "text": "Agar siz 'if (shart) let x = 1;' deb yozsangiz, dvigatel 'SyntaxError: Lexical declaration cannot appear in a single-statement context' xatosini beradi. Chunki blok ({}) bo‘lmagani uchun x o‘sha satrning o‘zidayoq yo‘qoladi va unga hech qachon yetib bo‘lmaydi. Yechim: uni blok ichiga olish: if (shart) { let x = 1; }.",
+        "code": "// var esa statement bo'lgani uchun ishlaydi:\nif (true) var legal = \"Ruxsat\";\nconsole.log(legal);\n// let uchun esa blok shart:\nif (true) { let scoped = \"Blok\"; console.log(scoped); }",
+        "note": "var ning statement bo‘lishi uning funksiya ko‘lamiga ega bo‘lishi va blokdan tashqariga chiqishi bilan bog‘liqdir."
+      },
+      {
+        "title": "3. Labeled Statements va Bloklar",
+        "text": "Label (belgi) faqat statementlarga ulanishi mumkin: 'label: const x = 1;' xato hisoblanadi. Agar leksik o‘zgaruvchini belgilamoqchi bo‘lsangiz, uni albatta blok ({}) ichiga o‘rashingiz kerak: 'label: { const x = 1; }'.",
+        "code": "outerLoop: for (let i = 0; i < 3; i++) {\n  for (let j = 0; j < 3; j++) {\n    if (i === 1) break outerLoop;\n    console.log(i, j);\n  }\n}",
+        "note": "break label orqali ichki sikldan tashqi siklni ham to‘liq to‘xtatish mumkin."
+      }
+    ],
+    "takeaway": "Declarations (let, const, class) faqat blok doirasida yashaydi va yagona satrli if/while tanasiga to‘g‘ridan-to‘g‘ri yozilishi taqiqlanadi. Har doim {} blokidan foydalanish toza va xatosiz kod garovidir.",
+    "exercise": "Statement va blok ko‘lamining ishlashini tahlil qiling.",
+    "exerciseCode": "let score = 50;\nif (score >= 50) {\n  const bonus = 10;\n  score += bonus;\n}\nconsole.log(score);\nconsole.log(typeof bonus);",
+    "exerciseExpected": [
+      60,
+      "undefined"
+    ],
+    "exerciseRuntime": "node",
+    "exerciseAnswer": "Loyihani yechish yo‘li:\n1. score += bonus bajarilib score 60 ga yetadi.\n2. bonus blok doirasida e'lon qilingani uchun blokdan tashqarida mavjud emas (typeof 'undefined' beradi).",
+    "resources": [
+      {
+        "title": "MDN: Statements and declarations",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements"
+      }
+    ],
+    "learningGuide": {
+      "goal": "Statement va Declaration grammatik farqi hamda blok ko‘lamlarini to‘g‘ri boshqarishni o‘rganish.",
+      "prerequisites": [
+        "expressions-statements",
+        "var-let-const",
+        "scope"
+      ],
+      "terms": [
+        {
+          "term": "Declaration",
+          "meaning": "Nomni qiymatga bog‘lovchi grammatik konstruksiya (let, const, class, function)."
+        },
+        {
+          "term": "Statement",
+          "meaning": "Dasturda amalni bajaruvchi ko‘rsatma (if, while, return, break, var)."
+        },
+        {
+          "term": "Single-statement context",
+          "meaning": "if yoki while dan keyin blocksiz keladigan yagona buyruq joyi; bu yerda leksik deklaratsiyalar taqiqlanadi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "debug": {
+        "brokenCode": "let status;\nif (true) {\n  status = \"Bajarildi\";\n}\nconsole.log(status);\n// Xato tekshiruv",
+        "fixedCode": "let status;\nif (true) {\n  const msg = \"Bajarildi\";\n  status = msg;\n}\nconsole.log(status);",
+        "explanation": "Blok ichida e'lon qilingan const/let o‘zgaruvchisi tashqariga chiqmaydi, uning qiymatini tashqi o‘zgaruvchiga o‘zlashtirish xavfsizdir.",
+        "expectedOutput": [
+          "Bajarildi"
+        ]
+      },
+      "write": {
+        "task": "Blok statement orqali leksik ko‘lamni ajratish kodini yozing.",
+        "hint": "{} blok qavslari va let/const dan foydalaning.",
+        "criteria": [
+          "Blok ochish",
+          "Ichida let/const e'lon qilish",
+          "Natijani tashqariga chiqarish"
+        ]
+      }
+    }
+  },
+  {
+    "id": "mdn-functions-deep",
+    "title": "MDN: Funksiyalar Chuqur Tahlili va Non-Simple Parametrlar",
+    "question": "Non-simple parametrlar bilan 'use strict' ziddiyati, Named Function Expression ko‘lami va new Function() global chegaralari qanday ishlaydi?",
+    "explanation": "Funksiyada default (a = 1), rest yoki destructuring parametrlar bo‘lsa, tanasiga 'use strict' yozish taqiqlanadi. Named Function Expression nomi faqat ichki rekursiya uchun mavjud bo‘ladi, new Function() esa faqat global ko‘lamni ko‘radi.",
+    "fullTextDefault": true,
+    "coreInterviewPillar": true,
+    "mdnAdvanced": true,
+    "sections": [
+      {
+        "title": "1. Non-Simple Parametrlar va 'use strict' Tuzog‘i",
+        "text": "JavaScriptda agar funksiyada default parametr (a = 1), rest (...args) yoki destructuring ({ x }) bo‘lsa, uning tanasiga 'use strict' yozish qat'iyan taqiqlanadi va 'SyntaxError: Illegal use strict directive in function with non-simple parameter list' xatosini beradi. Chunki dvigatel parametrlarni o‘qiyotganda funksiya strict yoki yo‘qligini oldindan bilishi shart.",
+        "code": "function calc(a = 1, b = 2) {\n  // 'use strict' yozilsa SyntaxError beradi!\n  return a + b;\n}\nconsole.log(calc());\nconsole.log(calc(10, 20));",
+        "note": "Agar strict rejim kerak bo‘lsa, 'use strict' ni butun fayl yoki modul darajasida qo‘yish kerak."
+      },
+      {
+        "title": "2. Named Function Expression (NFE) Ko‘lami",
+        "text": "Funksiya ifodasiga nom berilganda (masalan, const fn = function worker() {}), worker nomi faqat funksiya ichida (rekursiya uchun) ko‘rinadi. Tashqi ko‘lamda esa u mavjud emas va ReferenceError beradi.",
+        "code": "const run = function worker() {\n  return typeof worker;\n};\nconsole.log(run());\nconsole.log(typeof worker);",
+        "note": "worker faqat o‘z ichida 'function' bo‘ladi, tashqarida esa undefined."
+      },
+      {
+        "title": "3. new Function() va Global Ko‘lam",
+        "text": "new Function('return secret;') konstruktori dinamik ravishda funksiya tuzadi. Lekin u HECH QACHON uni chaqirgan funksiyaning lokal closure ko‘lamiga kira olmaydi — u faqat global ko‘lamni ko‘radi.",
+        "code": "globalThis.val = \"Global\";\nfunction test() {\n  const val = \"Lokal\";\n  const fn = new Function(\"return val;\");\n  return fn();\n}\nconsole.log(test());",
+        "note": "Natija 'Global' bo‘ladi, chunki new Function lokal o‘zgaruvchilarni ko‘rmaydi."
+      }
+    ],
+    "takeaway": "Funksiyalarda non-simple parametrlar bilan lokal 'use strict' yozib bo‘lmaydi. NFE nomi faqat ichki rekursiya uchun saqlanadi, new Function() esa lokal o‘zgaruvchilarni ko‘rmasdan faqat global ko‘lam bilan ishlaydi.",
+    "exercise": "new Function va global ko‘lam bog‘lanishini tahlil qiling.",
+    "exerciseCode": "globalThis.count = 99;\nfunction wrapper() {\n  const count = 5;\n  const f = new Function(\"return count;\");\n  return f();\n}\nconsole.log(wrapper());",
+    "exerciseExpected": [
+      99
+    ],
+    "exerciseRuntime": "node",
+    "exerciseAnswer": "Loyihani yechish yo‘li:\n1. wrapper ichida lokal count = 5 bor.\n2. Lekin new Function lokal closure yaratmaydi va faqat globalThis.count ni o‘qiydi.\n3. Natijada 99 chiqadi.",
+    "resources": [
+      {
+        "title": "MDN: Functions",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions"
+      }
+    ],
+    "learningGuide": {
+      "goal": "Non-simple parametrlar, NFE rekursiv ko‘lami va new Function() ning xotira modelini o‘rganish.",
+      "prerequisites": [
+        "functions",
+        "functions-as-values",
+        "scope",
+        "strict-mode-asi"
+      ],
+      "terms": [
+        {
+          "term": "Non-simple parameters",
+          "meaning": "Default (a = 1), Rest (...args) yoki Destructuring ({ x }) parametrlariga ega ro‘yxat."
+        },
+        {
+          "term": "Named Function Expression",
+          "meaning": "O‘z nomiga ega bo‘lgan funksiya ifodasi; uning nomi faqat o‘z tanasi ichida ko‘rinadi."
+        },
+        {
+          "term": "Pass by Sharing",
+          "meaning": "Obyekt argument sifatida uzatilganda uning xususiyatlari mutatsiya qilinishi mumkin, lekin parametr qayta yuklansa tashqi havola o‘zgarmaydi."
+        }
+      ]
+    },
+    "learningPractice": {
+      "debug": {
+        "brokenCode": "const f = function helper() {\n  return 42;\n};\n// Xato: helper tashqarida mavjud emas\nconsole.log(typeof helper);",
+        "fixedCode": "const f = function helper() {\n  return 42;\n};\nconsole.log(typeof f);",
+        "explanation": "Named Function Expression nomi faqat o‘z tanasida rekursiya uchun mavjud bo‘ladi. Tashqarida uni chaqirish uchun f o‘zgaruvchisidan foydalaniladi.",
+        "expectedOutput": [
+          "function"
+        ]
+      },
+      "write": {
+        "task": "NFE funksiyasining ichki va tashqi ko‘rinishini tahlil qiling.",
+        "hint": "const fn = function name() {} dan foydalaning.",
+        "criteria": [
+          "NFE e'lon qilish",
+          "Ichida nom turini tekshirish",
+          "Tashqaridan f ni chaqirish"
+        ]
+      }
+    }
   }
 ];
 
@@ -13195,6 +13449,63 @@ window.interviewQuestions = [
       "Intl brauzer va OS ning rasmiy CLDR ma'lumotlar bazasiga tayanadi.",
       "Bu orqali har bir foydalanuvchiga o‘z tiliga mos format taqdim etiladi."
     ]
+  },
+  {
+    "id": "q-mdn-operators-deep",
+    "lessonId": "mdn-operators-deep",
+    "title": "Mantiqiy tayinlov (??= vs ||=)",
+    "question": "Quyidagi kodda console.log nima chiqaradi?\nlet count = 0;\ncount ||= 10;\nlet limit = 0;\nlimit ??= 50;\nconsole.log(count, limit);",
+    "options": [
+      "0, 0",
+      "10, 50",
+      "10, 0",
+      "0, 50"
+    ],
+    "answer": 2,
+    "explain": "count ||= 10 da 0 soni falsy bo‘lgani sababli count 10 ga o‘zgaradi. Ammo limit ??= 50 da 0 soni nullish (null/undefined) emas, shuning uchun ??= o‘zlashtirishni bajarmaydi va limit 0 ligicha qoladi.",
+    "walkthrough": [
+      "0 soni boolean kontekstda falsy hisoblanadi.",
+      "||= operatori falsy qiymatni ko‘rganda o‘ng tarafdagi 10 ni yuklaydi.",
+      "??= faqat null yoki undefined bo‘lgandagina ishlaydi, 0 ga teginmaydi."
+    ]
+  },
+  {
+    "id": "q-mdn-statements-declarations",
+    "lessonId": "mdn-statements-declarations",
+    "title": "Single-statement context va let deklaratsiyasi",
+    "question": "Nima sababdan 'if (true) let x = 1;' kodi SyntaxError beradi, lekin 'if (true) var x = 1;' xatosiz ishlaydi?",
+    "options": [
+      "let o‘zgaruvchisini if ichida e'lon qilish mumkin emas",
+      "var statement hisoblanadi, let esa declaration bo‘lib blocksiz yagona satrli kontekstda taqiqlanadi",
+      "var ga doimo xotiradan joy ajratiladi, let ga esa yo‘q",
+      "Faqat strict mode yoqilgani sababli"
+    ],
+    "answer": 1,
+    "explain": "JavaScript grammatikasida if tanasi faqat statement qabul qiladi. var - statement hisoblanadi. let/const/class esa lexical declaration bo‘lib, {} bloki bo‘lmagan yagona satrda e'lon qilinsa o‘sha zahoti o‘ladi. Dvigatel bunga yo‘l qo‘ymaydi va SyntaxError beradi.",
+    "walkthrough": [
+      "MDN grammatik qoidalariga ko‘ra statements va declarations alohida toifalardir.",
+      "if (condition) Statement qoidasiga ko‘ra blocksiz holatda faqat statement ruxsat etiladi.",
+      "To‘g‘ri ishlashi uchun {} blok qavslari bilan o‘ralishi kerak: if (true) { let x = 1; }."
+    ]
+  },
+  {
+    "id": "q-mdn-functions-deep",
+    "lessonId": "mdn-functions-deep",
+    "title": "Non-simple parametrlar va 'use strict'",
+    "question": "Quyidagi funksiyani bajarishda qanday natija yuz beradi?\nfunction greet(name = 'Mehmon') {\n  'use strict';\n  return 'Salom ' + name;\n}",
+    "options": [
+      "'Salom Mehmon' qaytaradi",
+      "SyntaxError: Illegal 'use strict' directive in function with non-simple parameter list",
+      "TypeError: Default parameters not allowed",
+      "undefined qaytaradi"
+    ],
+    "answer": 1,
+    "explain": "ES2016 standartiga ko‘ra, agar funksiyada default (name = 'Mehmon'), rest yoki destructuring parametrlar bo‘lsa, funksiya tanasiga 'use strict' yozish SyntaxError xatosini keltirib chiqaradi.",
+    "walkthrough": [
+      "name = 'Mehmon' non-simple parametr hisoblanadi.",
+      "Dvigatel parametrlarni parse qilganda funksiya strict yoki non-strict ekanini oldindan bilishi kerak.",
+      "Parametrlardan keyin tana ichida 'use strict' uchrashi taqiqlangan."
+    ]
   }
 ];
 
@@ -14099,7 +14410,10 @@ window.lessonStages = [
       "mdn-memory-management",
       "mdn-typed-arrays",
       "mdn-resource-management",
-      "mdn-intl"
+      "mdn-intl",
+      "mdn-operators-deep",
+      "mdn-statements-declarations",
+      "mdn-functions-deep"
     ]
   }
 ];
