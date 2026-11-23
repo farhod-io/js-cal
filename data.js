@@ -10854,6 +10854,30 @@ window.lessons = [
         "text": "Unary plus (+) operandni songa o‘tkazadi (+true === 1, +null === 0). Unary negation (-) songa aylantirib manfiy qiladi. Bitwise NOT (~) qiymatni 32-bit butun songa aylantirib bitlarini teskari qiladi: ~n formulasi -(n + 1) ga teng. void operatori esa ifodani bajarib har doim undefined qaytaradi.",
         "code": "console.log(+true);\nconsole.log(~(-1));\nconsole.log(void (5 + 5));",
         "note": "~(-1) === 0 bo‘lgani sababli eski kodlarda if (~str.indexOf(x)) ko‘rinishida element mavjudligini tekshirish uchun ko‘p qo‘llanilgan."
+      },
+      {
+        "title": "4. Relational Operatorlar: 'in' va 'instanceof'",
+        "text": "'in' operatori obyekt yoki uning prototip zanjirida berilgan xususiyat nomi mavjudligini tekshiradi (faqat obyektlar bilan ishlaydi, primitive bersangiz TypeError). 'instanceof' esa obyektning prototip zanjirida konstruktorning prototype xususiyati borligini tekshiradi (Constructor.prototype in Object.__proto__ zanjiri).",
+        "code": "const avto = { model: 'Cobalt' };\nconsole.log('model' in avto); // true\nconsole.log('toString' in avto); // true (prototipdan kelgan)\nconsole.log([] instanceof Array); // true\nconsole.log([] instanceof Object); // true",
+        "note": "Agar xususiyat faqat obyektning o‘ziga tegishli bo‘lishi shart bo‘lsa, 'in' o‘rniga Object.hasOwn(obj, 'prop') ishlatiladi."
+      },
+      {
+        "title": "5. Bitwise (Bit darajasidagi) Operatorlar: &, |, ^, ~, <<, >>, >>>",
+        "text": "Bitwise operatorlar sonlarni 32-bitli butun sonlar (two's complement) sifatida ko‘radi. & (AND), | (OR), ^ (XOR), ~ (NOT) bitlar ustida mantiqiy amallarni bajaradi. << (chapga surish) sonni 2 ga ko‘paytiradi, >> (o‘ngga surish ishorani saqlaydi), >>> (ishorasiz o‘ngga surish esa doim musbat 32-bit butun son beradi).",
+        "code": "console.log(5 & 1); // 1 (0101 & 0001 = 0001)\nconsole.log(5 | 2); // 7 (0101 | 0010 = 0111)\nconsole.log(5 ^ 1); // 4 (0101 ^ 0001 = 0100)\nconsole.log(4 << 1); // 8 (4 * 2)\nconsole.log(8 >> 1); // 4 (8 / 2)\nconsole.log(-1 >>> 0); // 4294967295 (maksimal 32-bit musbat son)",
+        "note": "Bitwise amallar yuqori tezlikdagi bitmask (bayroqlar / ruxsatlar) tizimlarida yoki grafik dasturlashda qo‘llaniladi."
+      },
+      {
+        "title": "6. Operator Precedence (Amallar Ustuvorligi) va Associativity",
+        "text": "MDN standartida operatorlar ustuvorligi 1 dan 18 gacha bo‘lgan darajalar bilan belgilanadi (18 — eng yuqori). Eng yuqori ustuvorlikka Primary va Member ifodalar ega: (), ., [], ?., new. Keyin ++, --, unary operatorlar (+, -, !, typeof, await), keyin arifmetika (**, *, /, %), solishtirishlar (<, >, in, instanceof, ===), mantiqiy (&&, ||, ??), shart (? :), va nihoyat tayinlovlar (=, +=, ??=). Bog‘lanish tartibi (associativity): arifmetika chapdan o‘ngga (left-to-right), lekin darajaga ko‘tarish (**) va tayinlovlar (=) o‘ngdan chapga (right-to-left) bajariladi: a = b = c avval b = c ni bajaradi.",
+        "code": "let a, b;\na = b = 5 + 3 * 2; // * avval (6), keyin + (11), keyin b = 11, keyin a = 11\nconsole.log(a, b); // 11 11\nconsole.log(2 ** 3 ** 2); // 2 ** 9 = 512 (o'ngdan chapga)\nconsole.log((2 ** 3) ** 2); // 8 ** 2 = 64 (qavs ustuvor)",
+        "note": "Har doim noaniqlik bo‘lganda qavslardan () foydalaning. Bu nafaqat xatolardan asraydi, balki kodni o‘qishni ancha osonlashtiradi."
+      },
+      {
+        "title": "7. Left-Hand-Side & Maxsus Operatorlar: delete, void, new.target",
+        "text": "delete operatori obyekt xususiyatini o‘chiradi (oddiy o‘zgaruvchilarni o‘chira olmaydi). void operatori ifodani hisoblab, qaytaruvchi qiymatini bekor qiladi va har doim undefined qaytaradi. new.target esa funksiya new orqali konstruktor sifatida chaqirilganini yoki oddiy funksiya sifatida chaqirilganini aniqlaydi.",
+        "code": "const foydalanuvchi = { ism: 'Ali', yosh: 25 };\ndelete foydalanuvchi.yosh;\nconsole.log(foydalanuvchi);\n\nfunction Mashina() {\n  if (!new.target) throw new Error(\"Mashina new bilan chaqirilishi kerak!\");\n}\nnew Mashina(); // ishlaydi",
+        "note": "delete xususiyatni xotiradan tozalaydi, lekin massiv elementida delete ishlatilsa faqat 'empty' (bo'shliq) qoldiradi, massiv uzunligi (length) o‘zgarmaydi."
       }
     ],
     "takeaway": "Zamonaviy JS da ||= o‘rniga ??= ishlatish 0 va bo‘sh qator ('') kabi haqiqiy ma'lumotlarning yo‘qolib ketishidan himoya qiladi. Vergul operatori esa ifodalarni zanjirlashda oxirgi qiymatni qaytaradi.",
