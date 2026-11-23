@@ -1,4 +1,4 @@
-// Barcha o'quv ma'lumotlari bitta faylda: 84 dars, 114 test, 24 kod labi.
+// Barcha o'quv ma'lumotlari bitta faylda: 86 dars, 116 test, 24 kod labi.
 // Tartib: darslar 0 dan boshlab bosqichma-bosqich joylashtirilgan.
 
 window.lessons = [
@@ -11081,6 +11081,167 @@ window.lessons = [
         ]
       }
     }
+  },
+  {
+    "id": "mdn-web-workers-atomics",
+    "title": "MDN: Web Workers, SharedArrayBuffer va Atomics",
+    "question": "Web Workers qanday qilib UI ni muzlashdan saqlaydi, postMessage va Atomics bilan poygasiz xotira almashish qanday ishlaydi?",
+    "explanation": "JavaScript asosiy oqimda (Main Thread) bitta oqimli bo‘lgani uchun og‘ir vazifalar Web Worker yordamida fonga o‘tkaziladi. Oqimlararo ma'lumot postMessage (nusxa) yoki SharedArrayBuffer va Atomics (poygasiz umumiy xotira) orqali boshqariladi.",
+    "fullTextDefault": true,
+    "coreInterviewPillar": true,
+    "mdnAdvanced": true,
+    "sections": [
+      {
+        "title": "1. Web Worker va UI ni Muzlashdan Himoyalash",
+        "text": "Asosiy oqimda og‘ir hisob-kitoblar bajarilsa, foydalanuvchi interfeysi (UI) qotib qoladi. Web Worker esa alohida fon oqimida ishlaydi va asosiy oqimni to‘xtatib qo‘ymaydi. Worker ichida window yoki document kabi DOM obyektlariga to‘g‘ridan-to‘g‘ri kirish cheklangan.",
+        "code": "console.log(\"Asosiy oqim o‘z ishini davom ettiradi\");\n// Fon oqimi Worker da ishlaydi",
+        "note": "Workerlar yordamida rasm/video filtrlash, katta fayllarni tahlil qilish va murakkab matematik hisob-kitoblar qilinadi."
+      },
+      {
+        "title": "2. postMessage va Ma'lumot Uzatish",
+        "text": "Worker va asosiy oqim o‘rtasida xabarlar postMessage orqali uzatiladi. Bunda qiymatlar Structured Clone algoritmi orqali chuqur nusxalanadi. Agar Transferable obyektlar (ArrayBuffer) ishlatilsa, xotira nusxalanmasdan bevosita boshqa oqimga o‘tkaziladi (zero-copy).",
+        "code": "const buf = new ArrayBuffer(16);\nconsole.log(buf.byteLength);",
+        "note": "Transferable qilingan bufer yuboruvchi oqimda nolga (detached) aylanadi."
+      },
+      {
+        "title": "3. SharedArrayBuffer va Atomics",
+        "text": "SharedArrayBuffer orqali bir nechta oqimlar bir xil xotira maydonidan foydalanishi mumkin. Poyga holati (race condition) ning oldini olish uchun Atomics obyekti (Atomics.store, Atomics.load, Atomics.add) orqali bo‘linmas atomar amallar bajariladi.",
+        "code": "const sab = new SharedArrayBuffer(4);\nconst i32 = new Int32Array(sab);\nAtomics.store(i32, 0, 10);\nAtomics.add(i32, 0, 5);\nconsole.log(Atomics.load(i32, 0));",
+        "note": "Atomics barcha oqimlarning bir vaqtda to‘qnash kelishini xavfsiz tartibga soladi."
+      }
+    ],
+    "takeaway": "Web Workers og‘ir operatsiyalarni asosiy oqimdan ajratadi. postMessage xavfsiz nusxa bilan ishlaydi, SharedArrayBuffer va Atomics esa yuqori tezlikdagi oqimlararo umumiy xotirani poygasiz boshqarish imkonini beradi.",
+    "exercise": "SharedArrayBuffer va Atomics amallarini tahlil qiling.",
+    "exerciseCode": "const sab = new SharedArrayBuffer(4);\nconst arr = new Int32Array(sab);\nAtomics.store(arr, 0, 100);\nAtomics.sub(arr, 0, 30);\nconsole.log(Atomics.load(arr, 0));",
+    "exerciseExpected": [
+      70
+    ],
+    "exerciseRuntime": "node",
+    "exerciseAnswer": "Loyihani yechish yo‘li:\n1. Atomics.store orqali arr[0] ga 100 yoziladi.\n2. Atomics.sub atomar tarzda 30 ni ayirib tashlaydi.\n3. Atomics.load natijasi 70 bo‘ladi.",
+    "resources": [
+      {
+        "title": "MDN: Web Workers API",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API"
+      }
+    ],
+    "learningGuide": {
+      "goal": "Web Workers, SharedArrayBuffer va Atomics orqali ko‘p oqimli hisob-kitoblarni o‘rganish.",
+      "prerequisites": [
+        "async-timers",
+        "mdn-typed-arrays",
+        "event-loop"
+      ],
+      "terms": [
+        {
+          "term": "Web Worker",
+          "meaning": "Alohida fon oqimida kod bajaruvchi brauzer skripti."
+        },
+        {
+          "term": "Atomics",
+          "meaning": "Umumiy xotirada poyga (race condition) oldini oluvchi atomar operatsiyalar."
+        }
+      ]
+    },
+    "learningPractice": {
+      "debug": {
+        "brokenCode": "const sab = new SharedArrayBuffer(4);\nconst arr = new Int32Array(sab);\narr[0] = 50;\nconsole.log(arr[0]);",
+        "fixedCode": "const sab = new SharedArrayBuffer(4);\nconst arr = new Int32Array(sab);\nAtomics.store(arr, 0, 50);\nconsole.log(Atomics.load(arr, 0));",
+        "explanation": "SharedArrayBuffer bilan ishlaganda race condition larning oldini olish uchun oddiy indeks o‘rniga Atomics.store va Atomics.load ishlatish xavfsiz hisoblanadi.",
+        "expectedOutput": [
+          50
+        ]
+      },
+      "write": {
+        "task": "SharedArrayBuffer ustida atomar amal bajaring.",
+        "hint": "Atomics.store va Atomics.add dan foydalaning.",
+        "criteria": [
+          "SharedArrayBuffer yaratish",
+          "Int32Array ulash",
+          "Atomics orqali qiymatni o‘qish"
+        ]
+      }
+    }
+  },
+  {
+    "id": "mdn-structured-clone",
+    "title": "MDN: Chuqur Klonlash va structuredClone Cheklovlari",
+    "question": "Sayoz nusxa ({ ...obj }) va structuredClone() farqi nimada, nega funksiyalar va DOM elementlarida DataCloneError yuz beradi?",
+    "explanation": "Sayoz nusxa ({ ...obj }) ichki obyektlarni umumiy havolada qoldiradi, JSON klonlash esa Date, Set, Map va aylanma havolalarni buzadi. structuredClone() murakkab turlar va aylanma havolalarni mukammal nusxalaydi, lekin Funksiyalar va DOM elementlarini nusxalash taqiqlangan.",
+    "fullTextDefault": true,
+    "coreInterviewPillar": true,
+    "mdnAdvanced": true,
+    "sections": [
+      {
+        "title": "1. Sayoz Nusxa vs JSON Klonlash Tuzoqlari",
+        "text": "{ ...obj } faqat birinchi darajani nusxalaydi, ichki obyektlar esa umumiy manzilga qarab qolaveradi. JSON.parse(JSON.stringify(obj)) esa Date ni stringga aylantiradi, undefined va NaN ni yo‘qotadi, aylanma havolalarda (circular reference) esa TypeError tashlaydi.",
+        "code": "const orig = { d: new Date(), s: new Set([1, 2]) };\nconst jsonCopy = JSON.parse(JSON.stringify(orig));\nconsole.log(typeof jsonCopy.d);\nconsole.log(jsonCopy.s);",
+        "note": "JSON klonlash Set ni bo‘sh {} obyektga, Date ni esa oddiy stringga aylantirib yuboradi."
+      },
+      {
+        "title": "2. structuredClone() Imkoniyatlari",
+        "text": "Rasmiy structuredClone() funksiyasi Date, Map, Set, ArrayBuffer va aylanma havolalarni (circular refs) buzmasdan to‘liq va xavfsiz deep copy qiladi.",
+        "code": "const circular = { name: \"Aylanma\" };\ncircular.self = circular;\nconst clone = structuredClone(circular);\nconsole.log(clone.name);\nconsole.log(clone.self === clone);",
+        "note": "clone.self === clone true bo‘ladi, lekin u original dan mustaqil yangi xotira manzilida joylashadi."
+      },
+      {
+        "title": "3. structuredClone Cheklovlari (DataCloneError)",
+        "text": "structuredClone() hamma narsani ham klonlay olmaydi. Unda 3 ta qat'iy cheklov bor: 1) Funksiyalar klonlanmaydi (DataCloneError tashlaydi), 2) DOM elementlari klonlanmaydi, 3) Prototip zanjiri saqlanmaydi (nusxa doimo oddiy Object.prototype ga aylanadi).",
+        "code": "try {\n  structuredClone({ fn: () => {} });\n} catch (e) {\n  console.log(e.name);\n}",
+        "note": "Funksiyalar va DOM tugunlari xavfsizlik va yopiq ko‘lam sababli structuredClone orqali uzatilishi taqiqlangan."
+      }
+    ],
+    "takeaway": "Sayoz nusxalar ({ ...obj }) ichki obyektlarni o‘zgartirib qo‘yish xavfini tug‘diradi. structuredClone() murakkab turlar va aylanma havolalarni to‘g‘ri chuqur nusxalashning rasmiy vositasidir, ammo funksiyalar va DOM elementlarini nusxalay olmasligini yodda tutish kerak.",
+    "exercise": "structuredClone orqali mustaqil chuqur nusxa yaratishni tahlil qiling.",
+    "exerciseCode": "const data = { nested: { count: 10 } };\nconst copy = structuredClone(data);\ncopy.nested.count = 20;\nconsole.log(data.nested.count);\nconsole.log(copy.nested.count);",
+    "exerciseExpected": [
+      10,
+      20
+    ],
+    "exerciseRuntime": "node",
+    "exerciseAnswer": "Loyihani yechish yo‘li:\n1. structuredClone nested obyekt uchun ham yangi xotira ajratadi.\n2. copy.nested.count o‘zgarganda original dagi count 10 ligicha qoladi.\n3. Natijada 10 va 20 chiqadi.",
+    "resources": [
+      {
+        "title": "MDN: structuredClone()",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/structuredClone"
+      }
+    ],
+    "learningGuide": {
+      "goal": "structuredClone() orqali to‘liq deep copy qilish va DataCloneError cheklovlarini o‘rganish.",
+      "prerequisites": [
+        "object-reference",
+        "destructuring-spread",
+        "json-basics"
+      ],
+      "terms": [
+        {
+          "term": "Deep Copy",
+          "meaning": "Barcha ichki qavatlari bilan birga to‘liq mustaqil nusxa yaratish."
+        },
+        {
+          "term": "DataCloneError",
+          "meaning": "Funksiya yoki DOM elementini structuredClone qilishda otiladigan xato."
+        }
+      ]
+    },
+    "learningPractice": {
+      "debug": {
+        "brokenCode": "const obj = { run() { return 1; } };\n// Xato: Funksiyani structuredClone qilib bo'lmaydi\nconst copy = Object.assign({}, obj);\nconsole.log(typeof copy.run);",
+        "fixedCode": "const obj = { run() { return 1; } };\nconst copy = { ...obj };\nconsole.log(typeof copy.run);",
+        "explanation": "Funksiyali obyektlarni structuredClone() qilib bo‘lmaydi (DataCloneError). Agar funksiya havolasi kerak bo‘lsa, sayoz nusxa ({ ...obj }) ishlatiladi.",
+        "expectedOutput": [
+          "function"
+        ]
+      },
+      "write": {
+        "task": "structuredClone yordamida mustaqil nusxa yarating.",
+        "hint": "structuredClone({ a: { b: 1 } }) dan foydalaning.",
+        "criteria": [
+          "Asl obyekt tuzish",
+          "structuredClone orqali nusxa olish",
+          "Ichki qiymatni o‘zgartirish"
+        ]
+      }
+    }
   }
 ];
 
@@ -13506,6 +13667,44 @@ window.interviewQuestions = [
       "Dvigatel parametrlarni parse qilganda funksiya strict yoki non-strict ekanini oldindan bilishi kerak.",
       "Parametrlardan keyin tana ichida 'use strict' uchrashi taqiqlangan."
     ]
+  },
+  {
+    "id": "q-mdn-web-workers-atomics",
+    "lessonId": "mdn-web-workers-atomics",
+    "title": "Atomics va SharedArrayBuffer",
+    "question": "Bir nechta Web Worker bir vaqtda bitta SharedArrayBuffer ga ma'lumot yozganda race condition ning oldini olish uchun qaysi vositadan foydalaniladi?",
+    "options": [
+      "Oddiy mutex kutubxonasi",
+      "Atomics obyekti (Atomics.store, Atomics.add)",
+      "Faqat setTimeout",
+      "JSON.stringify"
+    ],
+    "answer": 1,
+    "explain": "Atomics obyekti SharedArrayBuffer ustida bo‘linmas (atomar) amallarni bajarishni ta'minlaydi va bir nechta oqimlar bir vaqtda yozganda ma'lumotlar buzilishining oldini oladi.",
+    "walkthrough": [
+      "SharedArrayBuffer oqimlar o‘rtasida umumiy xotira beradi.",
+      "Biroq oddiy yozish poyga holati (race condition) keltirib chiqarishi mumkin.",
+      "Atomics.store, Atomics.load va Atomics.add amallari buni xavfsiz va atomar bajaradi."
+    ]
+  },
+  {
+    "id": "q-mdn-structured-clone",
+    "lessonId": "mdn-structured-clone",
+    "title": "structuredClone() cheklovlari",
+    "question": "Quyidagi obyektni structuredClone() orqali klonlaganda nima yuz beradi?\nconst user = { name: 'Ali', sayHi() { return 'Salom'; } };\nconst clone = structuredClone(user);",
+    "options": [
+      "To‘liq klonlanadi va clone.sayHi() ishlaydi",
+      "sayHi funksiyasi undefined bo‘lib tushadi",
+      "DataCloneError xatosi tashlanadi",
+      "Faqat name o‘tadi, sayHi e'tiborsiz qoldiriladi"
+    ],
+    "answer": 2,
+    "explain": "structuredClone() algoritmi funksiyalarni klonlay olmaydi. Agar obyektda funksiya bo‘lsa, u DataCloneError (DOMException) tashlaydi.",
+    "walkthrough": [
+      "structuredClone Date, Map, Set, ArrayBuffer larni mukammal nusxalaydi.",
+      "Lekin funksiyalar va DOM tugunlarini klonlash taqiqlangan.",
+      "Shuning uchun bu kodda darhol DataCloneError xatosi yuz beradi."
+    ]
   }
 ];
 
@@ -14413,7 +14612,9 @@ window.lessonStages = [
       "mdn-intl",
       "mdn-operators-deep",
       "mdn-statements-declarations",
-      "mdn-functions-deep"
+      "mdn-functions-deep",
+      "mdn-web-workers-atomics",
+      "mdn-structured-clone"
     ]
   }
 ];

@@ -6,9 +6,9 @@ Ochish: `index.html` faylini brauzerda oching. O‘rnatish talab qilinmaydi.
 
 ## Bo‘limlar
 
-- **Darslar** — 84 dars: tushuncha, kod misoli, natija, xulosa va mashq. Hamma narsa 0 dan tushuntirilgan. Har darsda **"O‘qilgan deb belgilash"** tugmasi bor.
+- **Darslar** — 86 dars: tushuncha, kod misoli, natija, xulosa va mashq. Hamma narsa 0 dan tushuntirilgan. Har darsda **"O‘qilgan deb belgilash"** tugmasi bor.
 - **🧠 AI test** — faqat o‘qilgan deb belgilagan darslaring bo‘yicha savol beradi. Xato javob bergan darslardan ko‘proq savol keladi (adaptiv). Shuningdek Gemini yoki DeepSeek API kaliti bilan o‘qilgan darslardan 1, 5 yoki 10 ta yangi savol yaratish mumkin. OpenAI-mos xizmatlar ham saqlangan.
-- **Intervyu testlari** — 114 ta A/B/C/D savol (barcha 84 dars to‘liq qamrab olingan, mavzu va daraja filtri bilan); javobdan keyin tushuntirish va kodni qadam-baqadam tahlil qilish.
+- **Intervyu testlari** — 116 ta A/B/C/D savol (barcha 86 dars to‘liq qamrab olingan, mavzu va daraja filtri bilan); javobdan keyin tushuntirish va kodni qadam-baqadam tahlil qilish.
 - **Kod o‘qish laboratoriyasi** — 24 ta misol, kod satr-ma-satr izohlangan.
 - **Yo‘l xaritasi** — 13 bosqich va o‘zlashtirish belgilari.
 
